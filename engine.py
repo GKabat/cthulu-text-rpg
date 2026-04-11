@@ -1,40 +1,18 @@
 import json
-import random
-
-# ── Bezpieczne Importy ────────────────────────────────────────────────────────
-# Próbujemy zaimportować funkcje od reszty zespołu. 
-# Jeśli plików brakuje, silnik użyje własnych wersji roboczych (Mocków).
-
-try:
-    from game_state import inicjalizuj_stan, aktualizuj_stan, pobierz_stan
-    print("[engine] Połączono z game_state.py")
-except ImportError:
-    print("[engine] OSTRZEŻENIE: Brak game_state.py. Używam atrap funkcji do testów.")
-    def inicjalizuj_stan(conf): return {"obecny_wezel": conf["start_wezel"], "odwiedzone": [], "hp": 100, "sanity": 100}
-    def aktualizuj_stan(s, e): s.update(e)
-    def pobierz_stan(s): return s
-
-try:
-    from mechanics import rzut_koscia, sprawdz_rzut
-    print("[engine] Połączono z mechanics.py")
-except ImportError:
-    print("[engine] OSTRZEŻENIE: Brak mechanics.py. Używam losowania standardowego.")
-    def rzut_koscia(s): return random.randint(1, s)
-    def sprawdz_rzut(w, p): return w >= p
+from game_state import inicjalizuj_stan, aktualizuj_stan, pobierz_stan
 
 
 # ── Wczytywanie fabuły ────────────────────────────────────────────────────────
 
 def wczytaj_fabule(path: str) -> dict:
-    """Wczytuje plik story.json i zwraca słownik węzłów."""
+   
     try:
         with open(path, "r", encoding="utf-8") as f:
             story = json.load(f)
         print(f"[engine] Wczytano fabułę: {len(story)} węzłów.")
         return story
     except FileNotFoundError:
-        print(f"[engine] BŁĄD: Nie znaleziono pliku '{path}'. Zwracam pustą fabułę.")
-        return {}
+        raise FileNotFoundError(f"Nie znaleziono pliku fabuły: '{path}'")
     except json.JSONDecodeError as e:
         raise ValueError(f"Błąd składni w pliku story.json: {e}")
 
@@ -42,92 +20,126 @@ def wczytaj_fabule(path: str) -> dict:
 # ── Rdzeń silnika ─────────────────────────────────────────────────────────────
 
 def pobierz_wezel(fabula: dict, node_id: str) -> dict:
-    """Zwraca węzeł fabuły dla podanego id."""
+   
     if node_id not in fabula:
-        print(f"[engine] BŁĄD: Węzeł '{node_id}' nie istnieje!")
-        return {"tekst": "BŁĄD: Pustka pożarła ten fragment rzeczywistości.", "wybory": [], "zakonczone": True}
+        raise KeyError(f"Węzeł '{node_id}' nie istnieje w fabule!")
     return fabula[node_id]
 
 
 def wykonaj_wybor(fabula: dict, choice: dict, state: dict) -> str:
-    """Przetwarza wybór gracza i zwraca id następnego węzła."""
+   
     condition = choice.get("warunek")
 
-    # Sprawdzanie warunku (jeśli istnieje)
+    # Jeśli wybór wymaga sprawdzenia — weryfikuj warunek
     if condition and not sprawdz_warunek(condition, state):
-        print(f"[engine] Warunek niespełniony!")
+        print(f"[engine] Warunek niespełniony dla wyboru: '{choice['tekst']}'")
+        # Zwracamy bieżący węzeł — nic się nie zmienia
         return state["obecny_wezel"]
 
-    next_id = choice.get("cel")
-    if not next_id:
-        return state["obecny_wezel"]
+    next_id = choice["cel"]
 
-    # Logika zmiany stanu
+    # Zapamiętaj odwiedzony węzeł
     if state["obecny_wezel"] not in state["odwiedzone"]:
         state["odwiedzone"].append(state["obecny_wezel"])
 
+    # Zaktualizuj bieżący węzeł w stanie
     state["obecny_wezel"] = next_id
 
-    # Efekt wejścia do nowego węzła
+    # Zastosuj efekt nowego węzła (jeśli istnieje)
     next_node = pobierz_wezel(fabula, next_id)
     effect = next_node.get("efekt")
     if effect:
         aktualizuj_stan(state, effect)
-    
+        print(f"[engine] Zastosowano efekt węzła '{next_id}': {effect}")
+
+    print(f"[engine] Przejście → {next_id}")
     return next_id
 
 
 def sprawdz_warunek(condition: dict, state: dict) -> bool:
-    """Weryfikuje czy gracz spełnia wymagania wyboru."""
+   
     if condition is None:
         return True
 
-    # Rzut kością
+    # Warunek: rzut kością
     if condition.get("rzut_koscia"):
-        roll = rzut_koscia(20)
-        prog = condition.get("prog", 10)
-        return sprawdz_rzut(roll, prog)
+        from mechanics import rzut_koscia, sprawdz_rzut
+        roll_result = rzut_koscia(20)
+        threshold = condition.get("prog", 10)
+        success = sprawdz_rzut(roll_result, threshold)
+        print(f"[engine] Rzut kością: {roll_result} vs próg {threshold} → {'sukces' if success else 'porażka'}")
+        return success
 
-    # Statystyki
+    # Warunek: minimalne HP
     if "min_hp" in condition:
-        return state.get("hp", 0) >= condition["min_hp"]
-    
-    if "min_sanity" in condition:
-        return state.get("sanity", 0) >= condition["min_sanity"]
+        return state["hp"] >= condition["min_hp"]
 
+    # Warunek: minimalna Sanity
+    if "min_sanity" in condition:
+        return state["sanity"] >= condition["min_sanity"]
+
+    # Nieznany typ warunku — bezpieczny fallback
+    print(f"[engine] Ostrzeżenie: nieznany typ warunku: {condition}")
     return False
 
 
 def czy_koniec(node: dict) -> bool:
-    """Sprawdza czy to już koniec historii."""
+    
     return node.get("zakonczone", False)
 
 
-# ── Autotest (Uruchamia się tylko przy bezpośrednim starcie engine.py) ────────
+# ── Uruchomienie z plików JSON ────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("\n=== URUCHAMIANIE TESTU SILNIKA ===")
-    
-    # Przykładowa fabuła do testów wewnętrznych
-    test_story = {
-        "start": {
-            "tekst": "Widzisz drzwi. Co robisz?",
-            "wybory": [
-                {"tekst": "Otwórz", "cel": "pokoj"},
-                {"tekst": "Wyważ (wymaga rzutu)", "cel": "pokoj", "warunek": {"rzut_koscia": True, "prog": 15}}
-            ],
-            "zakonczone": False
-        },
-        "pokoj": {
-            "tekst": "Ciemny pokój. To koniec.",
-            "wybory": [],
-            "zakonczone": True
-        }
-    }
+    import os
 
-    test_config = {"start_wezel": "start"}
-    state = inicjalizuj_stan(test_config)
-    
-    print("Stan na starcie:", pobierz_stan(state))
-    biezacy_wezel = pobierz_wezel(test_story, state["obecny_wezel"])
-    print("Tekst:", biezacy_wezel["tekst"])
+    config_path = "data/config.json"
+    story_path  = "data/story.json"
+
+    # Wczytaj config
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Nie znaleziono pliku konfiguracji: '{config_path}'")
+
+    # Wczytaj fabułę i zainicjalizuj stan
+    story = wczytaj_fabule(story_path)
+    state = inicjalizuj_stan(config)
+
+    print("=== TEST SILNIKA ===")
+    print(f"Gra: {config.get('tytul')} v{config.get('wersja')}")
+    print(f"Stan początkowy: {pobierz_stan(state)}\n")
+
+    # Pętla testowa — gracz wybiera w konsoli
+    while True:
+        node_id = state["obecny_wezel"]
+        node    = pobierz_wezel(story, node_id)
+
+        print(f"\n[{node_id}]")
+        print(f"{node['tekst']}")
+        print(f"HP: {state['hp']} | Sanity: {state['sanity']}")
+
+        if czy_koniec(node):
+            print("\n=== KONIEC GRY ===")
+            break
+
+        choices = node["wybory"]
+        if not choices:
+            print("Brak wyborów — koniec gry.")
+            break
+
+        for i, choice in enumerate(choices):
+            warunek_info = f" [wymaga: {choice['warunek']}]" if choice.get("warunek") else ""
+            print(f"  [{i}] {choice['tekst']}{warunek_info}")
+
+        try:
+            indeks = int(input("\nWybierz akcję: "))
+            if indeks < 0 or indeks >= len(choices):
+                print("Nieprawidłowy wybór, spróbuj ponownie.")
+                continue
+        except ValueError:
+            print("Wpisz numer wyboru.")
+            continue
+
+        wykonaj_wybor(story, choices[indeks], state)

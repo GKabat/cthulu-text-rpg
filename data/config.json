@@ -1,0 +1,10 @@
+{
+    "tytul": "Cień nad Arkham",
+    "wersja": "1.0",
+    "postac": {
+        "nazwa":  "Student WSB",
+        "hp":     100,
+        "sanity": 100
+    },
+    "start_wezel": "start"
+}
