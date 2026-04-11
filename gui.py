@@ -1,0 +1,1 @@
+# Intefejs graficzny: Osoba 4 (cabaja_nra)

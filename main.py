@@ -1,0 +1,1 @@
+# Punkt wejścia gry: Osoba 5 (abcdef)

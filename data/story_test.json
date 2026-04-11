@@ -1,0 +1,88 @@
+{
+  "start": {
+    "tekst": "Budzisz sie w opuszczonym obozie. Mgla gestnieje. Przed Toba trzy sciezki.",
+    "obrazek": null,
+    "wybory": [
+      {
+        "tekst": "Wejdz do jaskini",
+        "cel": "jaskinia",
+        "warunek": null
+      },
+      {
+        "tekst": "Idz przez las",
+        "cel": "las",
+        "warunek": null
+      },
+      {
+        "tekst": "Sprobuj wywazyc drzwi chaty (wymaga sily)",
+        "cel": "chata_sukces",
+        "warunek": {"rzut_koscia": true, "prog": 12}
+      }
+    ],
+    "efekt": null,
+    "zakonczone": false
+  },
+  "jaskinia": {
+    "tekst": "Ciemnosc pochlania swiatlo Twojej latarki. Slyszysz szept z glebi.",
+    "obrazek": null,
+    "wybory": [
+      {
+        "tekst": "Wroc do startu",
+        "cel": "start",
+        "warunek": null
+      },
+      {
+        "tekst": "Idz dalej do swiatla",
+        "cel": "koniec_dobry",
+        "warunek": null
+      }
+    ],
+    "efekt": {"sanity": -10},
+    "zakonczone": false
+  },
+  "las": {
+    "tekst": "Drzewa zginaja sie nienaturalnie. Cos Cie obserwuje z cienia.",
+    "obrazek": null,
+    "wybory": [
+      {
+        "tekst": "Uciekaj",
+        "cel": "koniec_zly",
+        "warunek": null
+      },
+      {
+        "tekst": "Stan i sluchaj",
+        "cel": "start",
+        "warunek": null
+      }
+    ],
+    "efekt": {"hp": -5, "sanity": -5},
+    "zakonczone": false
+  },
+  "chata_sukces": {
+    "tekst": "Drzwi ustepuja. W srodku znajdujesz mape do latarni morskiej.",
+    "obrazek": null,
+    "wybory": [
+      {
+        "tekst": "Idz do latarni",
+        "cel": "koniec_dobry",
+        "warunek": null
+      }
+    ],
+    "efekt": null,
+    "zakonczone": false
+  },
+  "koniec_dobry": {
+    "tekst": "Docierasz do latarni morskiej. Swit przebija sie przez mgle. Przezyles.",
+    "obrazek": null,
+    "wybory": [],
+    "efekt": null,
+    "zakonczone": true
+  },
+  "koniec_zly": {
+    "tekst": "Mgla pochlania Cie calkowicie. To koniec.",
+    "obrazek": null,
+    "wybory": [],
+    "efekt": null,
+    "zakonczone": true
+  }
+}
