@@ -1,0 +1,103 @@
+{
+    "start": {
+        "tekst": "Stoisz na skraju opuszczonego obozu. Przed tobą trzy ścieżki.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Wejdź do jaskini", "cel": "jaskinia", "warunek": null},
+            {"tekst": "Przeszukaj obóz",  "cel": "oboz",     "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+    "jaskinia": {
+        "tekst": "Wchodzisz do jaskini. Zimne powietrze uderza cię w twarz. Twój umysł drżeje.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Idź głębiej", "cel": "rzut_jaskinia", "warunek": null},
+            {"tekst": "Zawróć",      "cel": "ucieczka",      "warunek": null}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+    "oboz": {
+        "tekst": "Przeszukujesz obóz. Znajdujesz stary namiot i dogasające ognisko.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Zbadaj ognisko", "cel": "ognisko", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+    "rzut_jaskinia": {
+        "tekst": "W głębi jaskini coś się porusza. Musisz działać szybko!",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Walcz!", "cel": "wspólny_punkt", "warunek": {"rzut_koscia": true, "prog": 12}},
+            {"tekst": "Walcz!", "cel": "ucieczka",      "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+    "ognisko": {
+        "tekst": "Przy ognisku znajdujesz dziennik. Sanity spada gdy czytasz ostatnie strony.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Idź dalej", "cel": "wspólny_punkt", "warunek": null}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+    "ucieczka": {
+        "tekst": "Uciekasz. HP spada gdy potykasz się w ciemności — ale żyjesz.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Idź do rozstajów", "cel": "wspólny_punkt", "warunek": null}
+        ],
+        "efekt": {"hp": -10},
+        "zakonczone": false
+    },
+    "wspólny_punkt": {
+        "tekst": "Przy rozstajach stoi starzec. Patrzy na ciebie zimnym wzrokiem.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Zaatakuj starca",   "cel": "zaatakuj", "warunek": null},
+            {"tekst": "Zapytaj o drogę",   "cel": "zapytaj",  "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+    "zaatakuj": {
+        "tekst": "Rzucasz się na starca. Walka jest krótka i brutalna. HP spada o 15.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Idź dalej", "cel": "finał_dobry", "warunek": {"min_hp": 1}},
+            {"tekst": "Idź dalej", "cel": "finał_zły",   "warunek": null}
+        ],
+        "efekt": {"hp": -15},
+        "zakonczone": false
+    },
+    "zapytaj": {
+        "tekst": "Starzec szepcze coś niezrozumiałego. Twój umysł nie znosi tego dźwięku.",
+        "obrazek": null,
+        "wybory": [
+            {"tekst": "Idź do latarni", "cel": "finał_dobry", "warunek": {"min_sanity": 1}},
+            {"tekst": "Idź w głąb rozstajów", "cel": "finał_zły",   "warunek": null}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+    "finał_dobry": {
+        "tekst": "Docierasz do latarni. Światło rozprasza mrok. Przeżyłeś.",
+        "obrazek": null,
+        "wybory": [],
+        "efekt": null,
+        "zakonczone": true
+    },
+    "finał_zły": {
+        "tekst": "HP lub Sanity spadło do zera. Ciemność pochłania cię na zawsze.",
+        "obrazek": null,
+        "wybory": [],
+        "efekt": null,
+        "zakonczone": true
+    }
+}
