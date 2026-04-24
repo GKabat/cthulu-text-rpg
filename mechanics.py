@@ -10,7 +10,3 @@ def sprawdz_prog(wynik, prog=12):
         return True
     else:
         return False
-
-
-moj_rzut = rzut_koscia()
-sukces = sprawdz_prog(moj_rzut)
