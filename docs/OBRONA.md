@@ -1,0 +1,122 @@
+# Sciaga na obrone - "jak krowie na rowie"
+
+Tekst napisany jak student po 2 miesiacach Pythona. Bez zaawansowanych slow.
+Mowisz wlasnymi slowami, nie czytasz z kartki.
+
+---
+
+## 1. Z czego sklada sie projekt? (po co jest kazdy plik)
+
+- **`main.py`** - to jest plik ktory uruchamiamy. Sprawdza czy istnieja pliki z danymi i wlacza okno gry.
+- **`gui.py`** - rysuje okno (menu, ekran gry, przyciski). Uzywam `tkinter` bo to jest "wbudowana" biblioteka Pythona.
+- **`engine.py`** - "silnik" gry. Wczytuje fabule i pilnuje na ktorym wezle jest gracz.
+- **`game_state.py`** - tu trzymam stan gry (HP, Sanity, ekwipunek). To jest zwykly slownik.
+- **`mechanics.py`** - rzut koscia i sprawdzenie czy sie udalo.
+- **`data/config.json`** - ustawienia startowe (tytul gry, startowe HP, Sanity).
+- **`data/story.json`** - cala fabula. Lista "wezlow" - kazdy wezel to scena z wyborami.
+
+## 2. Jak dziala glowna petla gry? (ekran gry)
+
+Funkcja `odswiez_scene()` w `gui.py`:
+1. Sprawdzam ktory wezel jest aktualny (`stan["obecny_wezel"]`).
+2. Pobieram wezel z fabuly.
+3. Wyswietlam tekst i statystyki.
+4. Sprawdzam czy to nie koniec (HP=0, Sanity=0 albo flaga `zakonczone`).
+5. Rysuje przyciski wyborow.
+
+Jak gracz klika przycisk, wywoluje sie `obsluz_wybor(wybor)` -> ten woła `wykonaj_wybor()` z silnika -> i znowu `odswiez_scene()`. I tak w kolko, az do konca gry.
+
+## 3. Co robi kazda zmienna? (najwazniejsze)
+
+- `fabula` (slownik) - cale story.json wczytane z pliku.
+- `stan` (slownik) - aktualny stan gracza:
+  - `obecny_wezel` - id sceny w ktorej teraz jest gracz
+  - `hp` - punkty zycia (0..100)
+  - `sanity` - poczytalnosc (0..100)
+  - `ekwipunek` - lista przedmiotow (np. `["latarnia", "mapa"]`)
+  - `odwiedzone` - lista juz odwiedzonych scen (zeby nie dodac duplikatow)
+- `wezel` - jeden konkretny element fabuly: tekst + wybory + efekt.
+- `wybor` - jedna opcja przycisku: tekst + cel (do ktorej sceny prowadzi) + opcjonalnie warunek.
+
+## 4. Jak dziala rzut koscia?
+
+W `mechanics.py`:
+```python
+def rzut_koscia(zakres=20):
+    return random.randint(1, zakres)
+
+def sprawdz_rzut(wynik, prog):
+    if wynik >= prog:
+        return True
+    else:
+        return False
+```
+
+To zwykla losowa liczba od 1 do 20. Jezeli wybor ma w story.json zapisane np. `"warunek": {"rzut_koscia": true, "prog": 12}`, to silnik losuje liczbe i porownuje ja z 12. Jak >= 12, sukces. Jak nie - porazka.
+
+## 5. Jak dziala "if/elif" w warunkach?
+
+W `engine.py` w funkcji `sprawdz_warunek()` mam kilka rodzajow warunkow:
+- `rzut_koscia` -> losuje
+- `min_hp` -> sprawdza czy HP gracza jest >= minimum
+- `min_sanity` -> tak samo dla Sanity
+- `wymagany_przedmiot` -> sprawdza czy przedmiot jest w ekwipunku
+
+Robie to przez kolejne `if`, jak ktorys pasuje to zwracam wynik. Proste jak konstrukcja cepa.
+
+## 6. Jak dziala petla `while`?
+
+W trybie konsolowym (na samym dole `engine.py`) mam petle `while True:` ktora:
+1. Pobiera wezel.
+2. Drukuje tekst i wybory.
+3. Czeka na wpis gracza.
+4. Wywoluje wybor.
+5. Wraca na poczatek petli.
+
+Petla konczy sie przez `break`, gdy gra dojdzie do wezla z `zakonczone: true` albo nie ma juz wyborow.
+
+## 7. Jak testowalismy (recznie)?
+
+Recznie testowalem chodzac po grze:
+1. **Sciezka happy-path**: start -> oboz (zbieram latarnie) -> przed_chata -> chata (zbieram mape) -> rozstaje -> final_dobry. Sprawdzam czy ekwipunek dziala i czy konczy sie zwyciestwem.
+2. **Sciezka zla**: start -> jaskinia (Sanity -10) -> glebiny -> ucieczka (HP -10) -> rozstaje -> zaatakuj -> final_zly.
+3. **Test rzutu kością**: start -> chata. Czasami sie udaje, czasami nie. Jak nie, leci do `chata_porazka` i tracimy 10 HP.
+4. **Test warunku ekwipunku**: probowalem wejsc do chaty bez latarni - przycisk "Wejdz do chaty" niby jest, ale silnik nie pozwala (warunek niespelniony).
+5. **Test konca przez 0 HP/Sanity**: bije sciane chaty kilka razy az HP spadnie do 0 - gra konczy sie zlym ekranem.
+
+Plus uruchomienie samego silnika z konsoli: `python engine.py` - chodzi po grze bez okna, tylko tekst. To pomoglo mi szybko sprawdzic logike.
+
+---
+
+## 5 typowych pytan od prowadzacego (z gotowymi odpowiedziami)
+
+### Pyt. 1: "Dlaczego trzymasz stan gry w slowniku, a nie w klasie?"
+
+**Odp.:** Bo to prostsze. W klasie musialbym pisac konstruktor, samodzielne metody, dziedziczenie - a u mnie to jest po prostu jedna struktura danych: HP, Sanity, ekwipunek. Slownik wystarczy. Kazdy modul moze go odczytac i zmodyfikowac. Jakby projekt rosl, to mozna by przejsc na klase, ale teraz nie ma takiej potrzeby.
+
+### Pyt. 2: "Co sie stanie jak ktos rozpisze blednie story.json?"
+
+**Odp.:** W `engine.py` jest funkcja `pobierz_wezel()` ktora sprawdza czy id wezla istnieje w fabule. Jak nie - drukuje blad i zwraca `None`. W gracznym trybie to konczy gre (None to nie jest wezel z tekstem). Plus `json.load` sam rzuca wyjatek jak skladnia JSON jest zla, wiec wtedy gra nie wstanie. To jest celowe - lepiej zeby wywalilo sie na starcie niz w polowie rozgrywki.
+
+### Pyt. 3: "Czemu nie uzywasz dekoratorow / klas / async?"
+
+**Odp.:** Bo nie potrzebuje. Gra jest synchroniczna - nie ma operacji ktore trwaja dlugo (zadnych sieci ani plikow z dyskiem w czasie gry). Nie ma metod ktore powtarzaja sie identycznie - nie potrzebuje dekoratorow. Klasy to overkill na 5 funkcji ktore operuja na slowniku. Trzymam sie zasady "najprostsze rozwiazanie ktore dziala" - tak jak nas uczyli na pierwszym roku.
+
+### Pyt. 4: "Jak dodalbys nowa funkcjonalnosc, np. ulepszenie statystyk?"
+
+**Odp.:** Najszybciej dodalbym do `aktualizuj_stan()` w `game_state.py` obsluge nowego pola w `efekt`, np. `"sila": +5`. Plus odpowiednie pole w startowym stanie (`inicjalizuj_stan`). Jezeli ma byc test - dodaje do `sprawdz_warunek()` nowy `if "min_sila" in warunek`. Logiki nie trzeba przepisywac - format danych jest po prostu rozszerzany.
+
+### Pyt. 5: "Czemu uzywasz tkinter a nie pygame / PyQt / wxPython?"
+
+**Odp.:** Bo `tkinter` jest w standardowej bibliotece - nie trzeba nic instalowac. PyQt i pygame trzeba doinstalowac przez pip, co utrudnia oddanie projektu (ktos by musial sobie to skonfigurowac). Tkinter ma wszystko czego potrzebuje: okno, etykiety, przyciski, ramki. Bez fajerwerkow, ale dziala.
+
+---
+
+## Bonus - co mowic jak nie wiesz
+
+- "Pisalem to z kolega, on to zrobil tu, ja tam"
+- "Wiem ze to mozna zrobic ladniej, ale w terminie zostalo tak"
+- "Ten fragment wzorowalem na przykladach z labow"
+- "Sprawdzalem ze dziala, nie sprawdzalem czemu dziala dokladnie tak"
+
+To brzmi jak student, a nie jak wykladowca.

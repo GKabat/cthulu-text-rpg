@@ -1,61 +1,240 @@
-# Intefejs graficzny: Osoba 4 (cabaja_nra)import tkinter as tk
-from tkinter import ttk, filedialog
-from PIL import Image, ImageTk
+# gui.py
+# Proste okno gry oparte na tkinter (standardowa biblioteka).
+# Wyswietla tekst sceny, statystyki i przyciski wyborow.
 
-# --- KONFIGURACJA ŚCIEŻKI ---
-# Użyj tutaj obrazka z kaktusem podaj ścieżkę pliku gdzie się znajduje 
-SCIEZKA_FOTO = r"C:\Users\cabaj\Desktop\game\pobrane.jpg"
+import json
+import tkinter as tk
 
-def wybierz_tlo():
-    sciezka = filedialog.askopenfilename(filetypes=[("Obrazy", "*.jpg *.png")])
-    if sciezka:
-        global bg_image
-        nowy = Image.open(sciezka)
+from engine import wczytaj_fabule, pobierz_wezel, wykonaj_wybor, czy_koniec
+from game_state import inicjalizuj_stan
 
-        # Pobranie rozdzielczości ekranu
-        screen_w = root.winfo_screenwidth()
-        screen_h = root.winfo_screenheight()
 
-        # Dopasowanie obrazu do ekranu
-        nowy = nowy.resize((screen_w, screen_h), Image.LANCZOS)
+CONFIG_PATH = "data/config.json"
+STORY_PATH = "data/story.json"
 
-        bg_image = ImageTk.PhotoImage(nowy)
-        background_label.config(image=bg_image)
 
-def uruchom_gre():
-    print("Gra startuje...")
-    # Tutaj w przyszłości dodasz okno gry
+# Zmienne globalne GUI - wspoldzielone miedzy funkcjami.
+fabula = None
+stan = None
+root = None
+ramka_menu = None
+ramka_gra = None
+etykieta_tekst = None
+etykieta_hp = None
+etykieta_sanity = None
+etykieta_ekw = None
+ramka_wyborow = None
 
-root = tk.Tk()
-root.title("Menu z Twoim Tłem")
-root.geometry("1920x1080")
 
-# 1. Załadowanie obrazka z Twojej ścieżki
-try:
-    image = Image.open(SCIEZKA_FOTO)
+def zaladuj_dane():
+    # Wczytuje config i fabule, tworzy nowy stan gry.
+    global fabula, stan
+    plik = open(CONFIG_PATH, "r", encoding="utf-8")
+    config = json.load(plik)
+    plik.close()
+    fabula = wczytaj_fabule(STORY_PATH)
+    stan = inicjalizuj_stan(config)
 
-    # Pobranie rozdzielczości ekranu
-    screen_w = root.winfo_screenwidth()
-    screen_h = root.winfo_screenheight()
 
-    # Dopasowanie obrazu do ekranu
-    image = image.resize((screen_w, screen_h), Image.LANCZOS)
+def pokaz_menu():
+    ramka_gra.pack_forget()
+    ramka_menu.pack(fill="both", expand=True)
 
-    bg_image = ImageTk.PhotoImage(image)
-except Exception as e:
-    print(f"Błąd ładowania: {e}")
-    # Tło awaryjne, jeśli plik pod tym adresem nie istnieje
-    bg_image = ImageTk.PhotoImage(Image.new('RGB', (1920, 1080), color='gray'))
 
-# 2. Utworzenie tła
-background_label = tk.Label(root, image=bg_image)
-background_label.place(x=0, y=0, relwidth=1, relheight=1)
+def pokaz_gre():
+    ramka_menu.pack_forget()
+    ramka_gra.pack(fill="both", expand=True)
+    odswiez_scene()
 
-# 3. Napisy i przyciski
-btn_start = ttk.Button(root, text="START GRY", width=40, command=uruchom_gre)
-btn_start.place(relx=0.5, rely=0.8, anchor="center", width=400, height=60)
 
-btn_wyjscie = tk.Button(root, text="WYJŚCIE", width=60, bg="yellow", command=root.quit)
-btn_wyjscie.place(relx=0.5, rely=0.94, anchor="center", width=400, height=60)
+def nowa_gra():
+    zaladuj_dane()
+    pokaz_gre()
 
-root.mainloop()
+
+def aktualizuj_statystyki():
+    etykieta_hp.config(text="HP: " + str(stan["hp"]))
+    etykieta_sanity.config(text="Sanity: " + str(stan["sanity"]))
+    if len(stan["ekwipunek"]) == 0:
+        etykieta_ekw.config(text="Ekwipunek: (pusty)")
+    else:
+        etykieta_ekw.config(text="Ekwipunek: " + ", ".join(stan["ekwipunek"]))
+
+
+def wyswietl_wybory(wybory):
+    # Usuwa stare przyciski i tworzy nowe.
+    for widget in ramka_wyborow.winfo_children():
+        widget.destroy()
+
+    i = 0
+    while i < len(wybory):
+        wybor = wybory[i]
+        tekst = wybor["tekst"]
+        if wybor.get("warunek") is not None:
+            tekst = tekst + "  [test!]"
+        # domyslny argument w lambda zamyka biezaca wartosc wyboru
+        przycisk = tk.Button(
+            ramka_wyborow,
+            text=tekst,
+            font=("Georgia", 11),
+            bg="#2a1a0e", fg="#e8d5b0",
+            relief="flat",
+            wraplength=600,
+            command=lambda w=wybor: obsluz_wybor(w),
+        )
+        przycisk.pack(fill="x", padx=20, pady=4)
+        i = i + 1
+
+
+def obsluz_wybor(wybor):
+    wykonaj_wybor(fabula, wybor, stan)
+    odswiez_scene()
+
+
+def odswiez_scene():
+    id_wezla = stan["obecny_wezel"]
+    wezel = pobierz_wezel(fabula, id_wezla)
+
+    etykieta_tekst.config(text=wezel["tekst"])
+    aktualizuj_statystyki()
+
+    # Sprawdz koniec gry: HP/Sanity 0 lub flaga zakonczone.
+    if stan["hp"] <= 0 or stan["sanity"] <= 0 or czy_koniec(wezel):
+        if stan["hp"] <= 0 or stan["sanity"] <= 0:
+            ekran_koncowy("zly", "Twoje HP lub Sanity spadlo do zera. Koniec.")
+        elif czy_koniec(wezel):
+            typ = "dobry"
+            if "zakonczenie" in wezel:
+                typ = wezel["zakonczenie"]
+            ekran_koncowy(typ, wezel["tekst"])
+        return
+
+    wyswietl_wybory(wezel["wybory"])
+
+
+def ekran_koncowy(typ, tekst):
+    for widget in ramka_wyborow.winfo_children():
+        widget.destroy()
+
+    if typ == "dobry":
+        naglowek = "ZWYCIESTWO"
+        kolor = "#7ec87e"
+    else:
+        naglowek = "KONIEC GRY"
+        kolor = "#e05555"
+
+    tk.Label(
+        ramka_wyborow, text=naglowek,
+        font=("Georgia", 18, "bold"),
+        bg="#1a0f0a", fg=kolor,
+    ).pack(pady=10)
+
+    tk.Button(
+        ramka_wyborow, text="Zagraj ponownie",
+        font=("Georgia", 11),
+        bg="#2a1a0e", fg="#e8d5b0", relief="flat",
+        command=nowa_gra,
+    ).pack(fill="x", padx=20, pady=4)
+
+    tk.Button(
+        ramka_wyborow, text="Wroc do menu",
+        font=("Georgia", 11),
+        bg="#2a1a0e", fg="#e8d5b0", relief="flat",
+        command=pokaz_menu,
+    ).pack(fill="x", padx=20, pady=4)
+
+
+def utworz_okno():
+    global root, ramka_menu, ramka_gra
+    global etykieta_tekst, etykieta_hp, etykieta_sanity, etykieta_ekw, ramka_wyborow
+
+    root = tk.Tk()
+    root.title("Cien nad Arkham")
+    root.geometry("800x650")
+    root.configure(bg="#1a0f0a")
+
+    # ── Menu glowne ──────────────────────────────────────────────
+    ramka_menu = tk.Frame(root, bg="#1a0f0a")
+
+    tk.Label(
+        ramka_menu, text="CIEN NAD ARKHAM",
+        font=("Georgia", 26, "bold"),
+        bg="#1a0f0a", fg="#c8a96e",
+    ).pack(pady=80)
+
+    tk.Label(
+        ramka_menu, text="Tekstowe RPG w klimacie Cthulhu",
+        font=("Georgia", 12, "italic"),
+        bg="#1a0f0a", fg="#888",
+    ).pack(pady=10)
+
+    tk.Button(
+        ramka_menu, text="START",
+        font=("Georgia", 13, "bold"),
+        bg="#4a2a1e", fg="#e8d5b0", relief="flat",
+        width=20, height=2,
+        command=nowa_gra,
+    ).pack(pady=20)
+
+    tk.Button(
+        ramka_menu, text="WYJSCIE",
+        font=("Georgia", 11),
+        bg="#2a1a0e", fg="#888", relief="flat",
+        width=20, height=2,
+        command=root.quit,
+    ).pack(pady=4)
+
+    # ── Ekran gry ────────────────────────────────────────────────
+    ramka_gra = tk.Frame(root, bg="#1a0f0a")
+
+    ramka_stat = tk.Frame(ramka_gra, bg="#0d0705")
+    ramka_stat.pack(fill="x")
+
+    etykieta_hp = tk.Label(
+        ramka_stat, text="HP: 100",
+        font=("Georgia", 12, "bold"),
+        bg="#0d0705", fg="#7ec87e",
+    )
+    etykieta_hp.pack(side="left", padx=20, pady=6)
+
+    etykieta_sanity = tk.Label(
+        ramka_stat, text="Sanity: 100",
+        font=("Georgia", 12, "bold"),
+        bg="#0d0705", fg="#7eb8e0",
+    )
+    etykieta_sanity.pack(side="left", padx=20, pady=6)
+
+    tk.Button(
+        ramka_stat, text="Menu",
+        font=("Georgia", 10),
+        bg="#2a1a0e", fg="#888", relief="flat",
+        command=pokaz_menu,
+    ).pack(side="right", padx=10, pady=4)
+
+    etykieta_ekw = tk.Label(
+        ramka_gra, text="Ekwipunek: (pusty)",
+        font=("Georgia", 10, "italic"),
+        bg="#1a0f0a", fg="#aaa",
+    )
+    etykieta_ekw.pack(fill="x", padx=20, pady=4)
+
+    etykieta_tekst = tk.Label(
+        ramka_gra, text="",
+        font=("Georgia", 12),
+        bg="#1a0f0a", fg="#e8d5b0",
+        wraplength=720, justify="left", anchor="w",
+    )
+    etykieta_tekst.pack(fill="x", padx=20, pady=10)
+
+    tk.Frame(ramka_gra, bg="#3a2a1e", height=1).pack(fill="x", padx=20, pady=4)
+
+    ramka_wyborow = tk.Frame(ramka_gra, bg="#1a0f0a")
+    ramka_wyborow.pack(fill="both", expand=True, pady=10)
+
+    ramka_menu.pack(fill="both", expand=True)
+    return root
+
+
+if __name__ == "__main__":
+    okno = utworz_okno()
+    okno.mainloop()
