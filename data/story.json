@@ -1,103 +1,126 @@
 {
     "start": {
-        "tekst": "Stoisz na skraju opuszczonego obozu. Przed tobą trzy ścieżki.",
-        "obrazek": null,
+        "tekst": "Budzisz sie w opuszczonym obozie na skraju lasu Arkham. Mgla sciele sie po ziemi, a w oddali slychac szept. Co robisz?",
+        "obrazek": "assets/start.png",
         "wybory": [
-            {"tekst": "Wejdź do jaskini", "cel": "jaskinia", "warunek": null},
-            {"tekst": "Przeszukaj obóz",  "cel": "oboz",     "warunek": null}
+            {"tekst": "Wejdz do jaskini", "cel": "jaskinia", "warunek": null},
+            {"tekst": "Przeszukaj oboz", "cel": "oboz", "warunek": null},
+            {"tekst": "Sprobuj wywazyc drzwi chaty (test sily)", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"}
         ],
         "efekt": null,
         "zakonczone": false
     },
+
     "jaskinia": {
-        "tekst": "Wchodzisz do jaskini. Zimne powietrze uderza cię w twarz. Twój umysł drżeje.",
-        "obrazek": null,
+        "tekst": "Wchodzisz do jaskini. Zimne powietrze uderza cie w twarz. Slyszysz daleki szept w nieznanym jezyku. Tracisz 10 punktow Sanity.",
+        "obrazek": "assets/jaskinia.png",
         "wybory": [
-            {"tekst": "Idź głębiej", "cel": "rzut_jaskinia", "warunek": null},
-            {"tekst": "Zawróć",      "cel": "ucieczka",      "warunek": null}
+            {"tekst": "Idz glebiej", "cel": "glebiny", "warunek": null},
+            {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
         ],
         "efekt": {"sanity": -10},
         "zakonczone": false
     },
+
     "oboz": {
-        "tekst": "Przeszukujesz obóz. Znajdujesz stary namiot i dogasające ognisko.",
-        "obrazek": null,
+        "tekst": "Przeszukujesz oboz. Pod kocem znajdujesz dziennik. Czytasz ostatni wpis - rece ci drza. Tracisz 5 Sanity.",
+        "obrazek": "assets/oboz.png",
         "wybory": [
-            {"tekst": "Zbadaj ognisko", "cel": "ognisko", "warunek": null}
+            {"tekst": "Idz do jaskini", "cel": "jaskinia", "warunek": null},
+            {"tekst": "Idz do chaty", "cel": "przed_chata", "warunek": null}
+        ],
+        "efekt": {"sanity": -5},
+        "zakonczone": false
+    },
+
+    "przed_chata": {
+        "tekst": "Stoisz przed zamknieta chata. Drzwi sa solidne. Mozesz sprobowac je wywazyc albo wrocic.",
+        "obrazek": "assets/przed_chata.png",
+        "wybory": [
+            {"tekst": "Wywaz drzwi (test sily)", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"},
+            {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
         ],
         "efekt": null,
         "zakonczone": false
     },
-    "rzut_jaskinia": {
-        "tekst": "W głębi jaskini coś się porusza. Musisz działać szybko!",
-        "obrazek": null,
+
+    "chata": {
+        "tekst": "Drzwi ustepuja. Wewnatrz znajdujesz mape prowadzaca do latarni morskiej. To moze byc droga ratunku.",
+        "obrazek": "assets/chata.png",
         "wybory": [
-            {"tekst": "Walcz!", "cel": "wspólny_punkt", "warunek": {"rzut_koscia": true, "prog": 12}},
-            {"tekst": "Walcz!", "cel": "ucieczka",      "warunek": null}
+            {"tekst": "Idz w strone latarni morskiej", "cel": "rozstaje", "warunek": null}
         ],
         "efekt": null,
         "zakonczone": false
     },
-    "ognisko": {
-        "tekst": "Przy ognisku znajdujesz dziennik. Sanity spada gdy czytasz ostatnie strony.",
-        "obrazek": null,
+
+    "chata_porazka": {
+        "tekst": "Drzwi nie ustepuja. Uderzasz w nie ramieniem i tracisz 10 HP. Musisz znalezc inny sposob.",
+        "obrazek": "assets/chata.png",
         "wybory": [
-            {"tekst": "Idź dalej", "cel": "wspólny_punkt", "warunek": null}
-        ],
-        "efekt": {"sanity": -10},
-        "zakonczone": false
-    },
-    "ucieczka": {
-        "tekst": "Uciekasz. HP spada gdy potykasz się w ciemności — ale żyjesz.",
-        "obrazek": null,
-        "wybory": [
-            {"tekst": "Idź do rozstajów", "cel": "wspólny_punkt", "warunek": null}
+            {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
         ],
         "efekt": {"hp": -10},
         "zakonczone": false
     },
-    "wspólny_punkt": {
-        "tekst": "Przy rozstajach stoi starzec. Patrzy na ciebie zimnym wzrokiem.",
-        "obrazek": null,
+
+    "glebiny": {
+        "tekst": "W glebi jaskini cos sie porusza. Ogromny ksztalt wylania sie z mroku. Mozesz walczyc tylko jezeli starczy Ci sil.",
+        "obrazek": "assets/glebiny.png",
         "wybory": [
-            {"tekst": "Zaatakuj starca",   "cel": "zaatakuj", "warunek": null},
-            {"tekst": "Zapytaj o drogę",   "cel": "zapytaj",  "warunek": null}
+            {"tekst": "Walcz (wymaga HP > 30)", "cel": "rozstaje", "warunek": {"min_hp": 30}, "cel_porazka": "ucieczka"},
+            {"tekst": "Uciekaj", "cel": "ucieczka", "warunek": null}
         ],
         "efekt": null,
         "zakonczone": false
     },
-    "zaatakuj": {
-        "tekst": "Rzucasz się na starca. Walka jest krótka i brutalna. HP spada o 15.",
-        "obrazek": null,
+
+    "ucieczka": {
+        "tekst": "Uciekasz w panice. W ciemnosci potykasz sie i tracisz 10 HP, ale dochodzisz do rozstajow.",
+        "obrazek": "assets/ucieczka.png",
         "wybory": [
-            {"tekst": "Idź dalej", "cel": "finał_dobry", "warunek": {"min_hp": 1}},
-            {"tekst": "Idź dalej", "cel": "finał_zły",   "warunek": null}
+            {"tekst": "Idz dalej", "cel": "rozstaje", "warunek": null}
         ],
-        "efekt": {"hp": -15},
+        "efekt": {"hp": -10},
         "zakonczone": false
     },
-    "zapytaj": {
-        "tekst": "Starzec szepcze coś niezrozumiałego. Twój umysł nie znosi tego dźwięku.",
-        "obrazek": null,
+
+    "rozstaje": {
+        "tekst": "Stoisz na rozstajach. Stary czlowiek w czarnym plaszczu patrzy na ciebie zimnym wzrokiem.",
+        "obrazek": "assets/rozstaje.png",
         "wybory": [
-            {"tekst": "Idź do latarni", "cel": "finał_dobry", "warunek": {"min_sanity": 1}},
-            {"tekst": "Idź w głąb rozstajów", "cel": "finał_zły",   "warunek": null}
+            {"tekst": "Zapytaj o droge (wymaga Sanity > 40)", "cel": "final_dobry", "warunek": {"min_sanity": 40}, "cel_porazka": "szept"},
+            {"tekst": "Zaatakuj go", "cel": "final_zly", "warunek": null}
         ],
-        "efekt": {"sanity": -10},
+        "efekt": null,
         "zakonczone": false
     },
-    "finał_dobry": {
-        "tekst": "Docierasz do latarni. Światło rozprasza mrok. Przeżyłeś.",
-        "obrazek": null,
+
+    "szept": {
+        "tekst": "Starzec szepcze cos w nieznanym jezyku. Twoj umysl nie wytrzymuje. Tracisz 30 Sanity.",
+        "obrazek": "assets/szept.png",
+        "wybory": [
+            {"tekst": "Idz dalej w mrok", "cel": "final_zly", "warunek": null}
+        ],
+        "efekt": {"sanity": -30},
+        "zakonczone": false
+    },
+
+    "final_dobry": {
+        "tekst": "Docierasz do latarni morskiej. Swiatlo rozprasza mrok. Przezyles noc w Arkham.",
+        "obrazek": "assets/final_dobry.png",
         "wybory": [],
         "efekt": null,
-        "zakonczone": true
+        "zakonczone": true,
+        "zakonczenie": "dobry"
     },
-    "finał_zły": {
-        "tekst": "HP lub Sanity spadło do zera. Ciemność pochłania cię na zawsze.",
-        "obrazek": null,
+
+    "final_zly": {
+        "tekst": "Mgla pochlania cie calkowicie. Twoja swiadomosc rozplywa sie w ciemnosci. Koniec.",
+        "obrazek": "assets/final_zly.png",
         "wybory": [],
         "efekt": null,
-        "zakonczone": true
+        "zakonczone": true,
+        "zakonczenie": "zly"
     }
 }

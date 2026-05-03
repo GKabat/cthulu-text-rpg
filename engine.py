@@ -1,145 +1,135 @@
+# engine.py
+# Silnik gry: wczytuje fabule i obsluguje przejscia miedzy wezlami.
+
 import json
-from game_state import inicjalizuj_stan, aktualizuj_stan, pobierz_stan
+from game_state import inicjalizuj_stan, aktualizuj_stan
+from mechanics import rzut_koscia, sprawdz_rzut
 
 
-# ── Wczytywanie fabuły ────────────────────────────────────────────────────────
-
-def wczytaj_fabule(path: str) -> dict:
-   
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            story = json.load(f)
-        print(f"[engine] Wczytano fabułę: {len(story)} węzłów.")
-        return story
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Nie znaleziono pliku fabuły: '{path}'")
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Błąd składni w pliku story.json: {e}")
+def wczytaj_fabule(sciezka):
+    # Otwiera plik JSON i zwraca slownik wezlow.
+    plik = open(sciezka, "r", encoding="utf-8")
+    fabula = json.load(plik)
+    plik.close()
+    print("[engine] Wczytano fabule:", len(fabula), "wezlow.")
+    return fabula
 
 
-# ── Rdzeń silnika ─────────────────────────────────────────────────────────────
-
-def pobierz_wezel(fabula: dict, node_id: str) -> dict:
-   
-    if node_id not in fabula:
-        raise KeyError(f"Węzeł '{node_id}' nie istnieje w fabule!")
-    return fabula[node_id]
-
-
-def wykonaj_wybor(fabula: dict, choice: dict, state: dict) -> str:
-   
-    condition = choice.get("warunek")
-
-    # Jeśli wybór wymaga sprawdzenia — weryfikuj warunek
-    if condition and not sprawdz_warunek(condition, state):
-        print(f"[engine] Warunek niespełniony dla wyboru: '{choice['tekst']}'")
-        # Zwracamy bieżący węzeł — nic się nie zmienia
-        return state["obecny_wezel"]
-
-    next_id = choice["cel"]
-
-    # Zapamiętaj odwiedzony węzeł
-    if state["obecny_wezel"] not in state["odwiedzone"]:
-        state["odwiedzone"].append(state["obecny_wezel"])
-
-    # Zaktualizuj bieżący węzeł w stanie
-    state["obecny_wezel"] = next_id
-
-    # Zastosuj efekt nowego węzła (jeśli istnieje)
-    next_node = pobierz_wezel(fabula, next_id)
-    effect = next_node.get("efekt")
-    if effect:
-        aktualizuj_stan(state, effect)
-        print(f"[engine] Zastosowano efekt węzła '{next_id}': {effect}")
-
-    print(f"[engine] Przejście → {next_id}")
-    return next_id
+def pobierz_wezel(fabula, id_wezla):
+    # Zwraca slownik wezla po jego id.
+    if id_wezla not in fabula:
+        print("[engine] BLAD: brak wezla", id_wezla)
+        return None
+    return fabula[id_wezla]
 
 
-def sprawdz_warunek(condition: dict, state: dict) -> bool:
-   
-    if condition is None:
+def sprawdz_warunek(warunek, stan):
+    # Sprawdza czy gracz spelnia warunek wyboru.
+    if warunek is None:
         return True
 
-    # Warunek: rzut kością
-    if condition.get("rzut_koscia"):
-        from mechanics import rzut_koscia, sprawdz_rzut
-        roll_result = rzut_koscia(20)
-        threshold = condition.get("prog", 10)
-        success = sprawdz_rzut(roll_result, threshold)
-        print(f"[engine] Rzut kością: {roll_result} vs próg {threshold} → {'sukces' if success else 'porażka'}")
-        return success
+    if "rzut_koscia" in warunek and warunek["rzut_koscia"] == True:
+        wynik = rzut_koscia(20)
+        prog = warunek.get("prog", 10)
+        sukces = sprawdz_rzut(wynik, prog)
+        print("[engine] Rzut k20:", wynik, "prog:", prog, "->", "SUKCES" if sukces else "PORAZKA")
+        return sukces
 
-    # Warunek: minimalne HP
-    if "min_hp" in condition:
-        return state["hp"] >= condition["min_hp"]
+    if "min_hp" in warunek:
+        return stan["hp"] >= warunek["min_hp"]
 
-    # Warunek: minimalna Sanity
-    if "min_sanity" in condition:
-        return state["sanity"] >= condition["min_sanity"]
+    if "min_sanity" in warunek:
+        return stan["sanity"] >= warunek["min_sanity"]
 
-    # Nieznany typ warunku — bezpieczny fallback
-    print(f"[engine] Ostrzeżenie: nieznany typ warunku: {condition}")
+    print("[engine] Nieznany warunek:", warunek)
     return False
 
 
-def czy_koniec(node: dict) -> bool:
-    
-    return node.get("zakonczone", False)
+def wykonaj_wybor(fabula, wybor, stan):
+    # Sprawdza warunek, przechodzi do nowego wezla i aplikuje efekt.
+    warunek = wybor.get("warunek")
+    if not sprawdz_warunek(warunek, stan):
+        # Warunek niespelniony.
+        # Jezeli wybor ma "cel_porazka" - idziemy tam.
+        # Inaczej zostajemy w tym samym wezle.
+        if "cel_porazka" in wybor:
+            stan["obecny_wezel"] = wybor["cel_porazka"]
+            nowy = pobierz_wezel(fabula, wybor["cel_porazka"])
+            if nowy is not None:
+                aktualizuj_stan(stan, nowy.get("efekt"))
+            return stan["obecny_wezel"]
+        print("[engine] Warunek niespelniony, zostajesz na miejscu.")
+        return stan["obecny_wezel"]
+
+    nowy_id = wybor["cel"]
+    if stan["obecny_wezel"] not in stan["odwiedzone"]:
+        stan["odwiedzone"].append(stan["obecny_wezel"])
+    stan["obecny_wezel"] = nowy_id
+
+    nowy = pobierz_wezel(fabula, nowy_id)
+    if nowy is not None:
+        aktualizuj_stan(stan, nowy.get("efekt"))
+
+    print("[engine] Przejscie ->", nowy_id)
+    return nowy_id
 
 
-# ── Uruchomienie z plików JSON ────────────────────────────────────────────────
+def czy_koniec(wezel):
+    # Zwraca True jezeli wezel jest oznaczony jako koniec gry.
+    return wezel.get("zakonczone", False)
+
+
+# ── Tryb konsolowy do testow (uruchamiany przez: python engine.py) ────────────
 
 if __name__ == "__main__":
-    import os
+    plik_konfig = open("data/config.json", "r", encoding="utf-8")
+    config = json.load(plik_konfig)
+    plik_konfig.close()
 
-    config_path = "data/config.json"
-    story_path  = "data/story.json"
-
-    # Wczytaj config
-    try:
-        with open(config_path, "r", encoding="utf-8") as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Nie znaleziono pliku konfiguracji: '{config_path}'")
-
-    # Wczytaj fabułę i zainicjalizuj stan
-    story = wczytaj_fabule(story_path)
-    state = inicjalizuj_stan(config)
+    fabula = wczytaj_fabule("data/story.json")
+    stan = inicjalizuj_stan(config)
 
     print("=== TEST SILNIKA ===")
-    print(f"Gra: {config.get('tytul')} v{config.get('wersja')}")
-    print(f"Stan początkowy: {pobierz_stan(state)}\n")
+    print("Gra:", config["tytul"], "v" + config["wersja"])
 
-    # Pętla testowa — gracz wybiera w konsoli
     while True:
-        node_id = state["obecny_wezel"]
-        node    = pobierz_wezel(story, node_id)
-
-        print(f"\n[{node_id}]")
-        print(f"{node['tekst']}")
-        print(f"HP: {state['hp']} | Sanity: {state['sanity']}")
-
-        if czy_koniec(node):
-            print("\n=== KONIEC GRY ===")
+        id_wezla = stan["obecny_wezel"]
+        wezel = pobierz_wezel(fabula, id_wezla)
+        if wezel is None:
+            print("Brak wezla. Koniec.")
             break
 
-        choices = node["wybory"]
-        if not choices:
-            print("Brak wyborów — koniec gry.")
+        print()
+        print("[" + id_wezla + "]")
+        print(wezel["tekst"])
+        print("HP:", stan["hp"], "| Sanity:", stan["sanity"])
+
+        if czy_koniec(wezel):
+            print("=== KONIEC GRY ===")
             break
 
-        for i, choice in enumerate(choices):
-            warunek_info = f" [wymaga: {choice['warunek']}]" if choice.get("warunek") else ""
-            print(f"  [{i}] {choice['tekst']}{warunek_info}")
+        wybory = wezel["wybory"]
+        if len(wybory) == 0:
+            print("Brak wyborow. Koniec.")
+            break
 
+        i = 0
+        while i < len(wybory):
+            opis_warunku = ""
+            if wybory[i].get("warunek") is not None:
+                opis_warunku = " [test!]"
+            print(" [" + str(i) + "]", wybory[i]["tekst"] + opis_warunku)
+            i = i + 1
+
+        wpis = input("Wybierz numer: ")
         try:
-            indeks = int(input("\nWybierz akcję: "))
-            if indeks < 0 or indeks >= len(choices):
-                print("Nieprawidłowy wybór, spróbuj ponownie.")
-                continue
+            indeks = int(wpis)
         except ValueError:
-            print("Wpisz numer wyboru.")
+            print("Wpisz liczbe.")
             continue
 
-        wykonaj_wybor(story, choices[indeks], state)
+        if indeks < 0 or indeks >= len(wybory):
+            print("Zly numer.")
+            continue
+
+        wykonaj_wybor(fabula, wybory[indeks], stan)
