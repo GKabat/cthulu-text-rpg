@@ -10,17 +10,18 @@ Mowisz wlasnymi slowami, nie czytasz z kartki.
 - **`main.py`** - to jest plik ktory uruchamiamy. Sprawdza czy istnieja pliki z danymi i wlacza okno gry.
 - **`gui.py`** - rysuje okno (menu, ekran gry, przyciski). Uzywam `tkinter` bo to jest "wbudowana" biblioteka Pythona.
 - **`engine.py`** - "silnik" gry. Wczytuje fabule i pilnuje na ktorym wezle jest gracz.
-- **`game_state.py`** - tu trzymam stan gry (HP, Sanity, ekwipunek). To jest zwykly slownik.
+- **`game_state.py`** - tu trzymam stan gry (HP, Sanity). To jest zwykly slownik.
 - **`mechanics.py`** - rzut koscia i sprawdzenie czy sie udalo.
 - **`data/config.json`** - ustawienia startowe (tytul gry, startowe HP, Sanity).
 - **`data/story.json`** - cala fabula. Lista "wezlow" - kazdy wezel to scena z wyborami.
+- **`assets/`** - folder z grafikami PNG dla scen.
 
 ## 2. Jak dziala glowna petla gry? (ekran gry)
 
 Funkcja `odswiez_scene()` w `gui.py`:
 1. Sprawdzam ktory wezel jest aktualny (`stan["obecny_wezel"]`).
 2. Pobieram wezel z fabuly.
-3. Wyswietlam tekst i statystyki.
+3. Wyswietlam tekst, obrazek i statystyki.
 4. Sprawdzam czy to nie koniec (HP=0, Sanity=0 albo flaga `zakonczone`).
 5. Rysuje przyciski wyborow.
 
@@ -33,9 +34,9 @@ Jak gracz klika przycisk, wywoluje sie `obsluz_wybor(wybor)` -> ten woła `wykon
   - `obecny_wezel` - id sceny w ktorej teraz jest gracz
   - `hp` - punkty zycia (0..100)
   - `sanity` - poczytalnosc (0..100)
-  - `ekwipunek` - lista przedmiotow (np. `["latarnia", "mapa"]`)
+  - `nazwa_postaci` - imie postaci z config.json
   - `odwiedzone` - lista juz odwiedzonych scen (zeby nie dodac duplikatow)
-- `wezel` - jeden konkretny element fabuly: tekst + wybory + efekt.
+- `wezel` - jeden konkretny element fabuly: tekst + obrazek + wybory + efekt.
 - `wybor` - jedna opcja przycisku: tekst + cel (do ktorej sceny prowadzi) + opcjonalnie warunek.
 
 ## 4. Jak dziala rzut koscia?
@@ -56,13 +57,12 @@ To zwykla losowa liczba od 1 do 20. Jezeli wybor ma w story.json zapisane np. `"
 
 ## 5. Jak dziala "if/elif" w warunkach?
 
-W `engine.py` w funkcji `sprawdz_warunek()` mam kilka rodzajow warunkow:
-- `rzut_koscia` -> losuje
+W `engine.py` w funkcji `sprawdz_warunek()` mam trzy rodzaje warunkow:
+- `rzut_koscia` -> losuje liczbe i sprawdza czy >= prog
 - `min_hp` -> sprawdza czy HP gracza jest >= minimum
 - `min_sanity` -> tak samo dla Sanity
-- `wymagany_przedmiot` -> sprawdza czy przedmiot jest w ekwipunku
 
-Robie to przez kolejne `if`, jak ktorys pasuje to zwracam wynik. Proste jak konstrukcja cepa.
+Robie to przez kolejne `if`. Jak ktorys pasuje to zwracam wynik. Proste jak konstrukcja cepa.
 
 ## 6. Jak dziala petla `while`?
 
@@ -73,15 +73,19 @@ W trybie konsolowym (na samym dole `engine.py`) mam petle `while True:` ktora:
 4. Wywoluje wybor.
 5. Wraca na poczatek petli.
 
-Petla konczy sie przez `break`, gdy gra dojdzie do wezla z `zakonczone: true` albo nie ma juz wyborow.
+Petla konczy sie przez `break`, gdy gra dojdzie do wezla z `zakonczone: true` albo HP/Sanity spada do 0.
 
-## 7. Jak testowalismy (recznie)?
+## 7. Jak dziala obrazek sceny?
+
+Tkinter od Pythona 3.9 sam czyta pliki PNG przez `tk.PhotoImage(file="sciezka")`. Nie potrzeba `Pillow`. Jezeli pliku nie ma na dysku, funkcja `wyswietl_obrazek()` po prostu chowa pole obrazka i nic sie nie psuje.
+
+## 8. Jak testowalismy (recznie)?
 
 Recznie testowalem chodzac po grze:
-1. **Sciezka happy-path**: start -> oboz (zbieram latarnie) -> przed_chata -> chata (zbieram mape) -> rozstaje -> final_dobry. Sprawdzam czy ekwipunek dziala i czy konczy sie zwyciestwem.
+1. **Sciezka happy-path**: start -> chata (rzut sukces) -> rozstaje -> zapytaj -> final_dobry. Sprawdzam czy gra konczy sie zwyciestwem.
 2. **Sciezka zla**: start -> jaskinia (Sanity -10) -> glebiny -> ucieczka (HP -10) -> rozstaje -> zaatakuj -> final_zly.
 3. **Test rzutu kością**: start -> chata. Czasami sie udaje, czasami nie. Jak nie, leci do `chata_porazka` i tracimy 10 HP.
-4. **Test warunku ekwipunku**: probowalem wejsc do chaty bez latarni - przycisk "Wejdz do chaty" niby jest, ale silnik nie pozwala (warunek niespelniony).
+4. **Test warunku Sanity**: idz tak zeby Sanity spadlo ponizej 40, potem na rozstajach przycisk "Zapytaj" leci do `szept` zamiast `final_dobry`.
 5. **Test konca przez 0 HP/Sanity**: bije sciane chaty kilka razy az HP spadnie do 0 - gra konczy sie zlym ekranem.
 
 Plus uruchomienie samego silnika z konsoli: `python engine.py` - chodzi po grze bez okna, tylko tekst. To pomoglo mi szybko sprawdzic logike.
@@ -92,7 +96,7 @@ Plus uruchomienie samego silnika z konsoli: `python engine.py` - chodzi po grze 
 
 ### Pyt. 1: "Dlaczego trzymasz stan gry w slowniku, a nie w klasie?"
 
-**Odp.:** Bo to prostsze. W klasie musialbym pisac konstruktor, samodzielne metody, dziedziczenie - a u mnie to jest po prostu jedna struktura danych: HP, Sanity, ekwipunek. Slownik wystarczy. Kazdy modul moze go odczytac i zmodyfikowac. Jakby projekt rosl, to mozna by przejsc na klase, ale teraz nie ma takiej potrzeby.
+**Odp.:** Bo to prostsze. W klasie musialbym pisac konstruktor, samodzielne metody, dziedziczenie - a u mnie to jest po prostu jedna struktura danych: HP, Sanity, obecny wezel. Slownik wystarczy. Kazdy modul moze go odczytac i zmodyfikowac. Jakby projekt rosl, to mozna by przejsc na klase, ale teraz nie ma takiej potrzeby.
 
 ### Pyt. 2: "Co sie stanie jak ktos rozpisze blednie story.json?"
 
@@ -100,15 +104,15 @@ Plus uruchomienie samego silnika z konsoli: `python engine.py` - chodzi po grze 
 
 ### Pyt. 3: "Czemu nie uzywasz dekoratorow / klas / async?"
 
-**Odp.:** Bo nie potrzebuje. Gra jest synchroniczna - nie ma operacji ktore trwaja dlugo (zadnych sieci ani plikow z dyskiem w czasie gry). Nie ma metod ktore powtarzaja sie identycznie - nie potrzebuje dekoratorow. Klasy to overkill na 5 funkcji ktore operuja na slowniku. Trzymam sie zasady "najprostsze rozwiazanie ktore dziala" - tak jak nas uczyli na pierwszym roku.
+**Odp.:** Bo nie potrzebuje. Gra jest synchroniczna - nie ma operacji ktore trwaja dlugo (zadnych sieci ani dlugiego czytania plikow w czasie gry). Nie ma metod ktore powtarzaja sie identycznie - nie potrzebuje dekoratorow. Klasy to overkill na 5 funkcji ktore operuja na slowniku. Trzymam sie zasady "najprostsze rozwiazanie ktore dziala" - tak jak nas uczyli na pierwszym roku.
 
-### Pyt. 4: "Jak dodalbys nowa funkcjonalnosc, np. ulepszenie statystyk?"
+### Pyt. 4: "Jak dodalbys nowa funkcjonalnosc, np. ekwipunek albo ulepszenie statystyk?"
 
-**Odp.:** Najszybciej dodalbym do `aktualizuj_stan()` w `game_state.py` obsluge nowego pola w `efekt`, np. `"sila": +5`. Plus odpowiednie pole w startowym stanie (`inicjalizuj_stan`). Jezeli ma byc test - dodaje do `sprawdz_warunek()` nowy `if "min_sila" in warunek`. Logiki nie trzeba przepisywac - format danych jest po prostu rozszerzany.
+**Odp.:** Najszybciej dodalbym do `aktualizuj_stan()` w `game_state.py` obsluge nowego pola w `efekt`, np. `"sila": +5` albo `"dodaj_przedmiot": "latarnia"`. Plus odpowiednie pole w startowym stanie (`inicjalizuj_stan`). Jezeli ma byc test - dodaje do `sprawdz_warunek()` nowy `if "min_sila" in warunek` albo `if "wymagany_przedmiot" in warunek`. Logiki nie trzeba przepisywac - format danych jest po prostu rozszerzany. Z gory zaplanowalismy taka mozliwosc, ale do MVP to pomijamy.
 
 ### Pyt. 5: "Czemu uzywasz tkinter a nie pygame / PyQt / wxPython?"
 
-**Odp.:** Bo `tkinter` jest w standardowej bibliotece - nie trzeba nic instalowac. PyQt i pygame trzeba doinstalowac przez pip, co utrudnia oddanie projektu (ktos by musial sobie to skonfigurowac). Tkinter ma wszystko czego potrzebuje: okno, etykiety, przyciski, ramki. Bez fajerwerkow, ale dziala.
+**Odp.:** Bo `tkinter` jest w standardowej bibliotece - nie trzeba nic instalowac. PyQt i pygame trzeba doinstalowac przez pip, co utrudnia oddanie projektu (ktos by musial sobie to skonfigurowac). Tkinter ma wszystko czego potrzebuje: okno, etykiety, przyciski, ramki, obrazki PNG. Bez fajerwerkow, ale dziala.
 
 ---
 

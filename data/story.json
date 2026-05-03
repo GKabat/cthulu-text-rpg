@@ -1,6 +1,7 @@
 {
     "start": {
         "tekst": "Budzisz sie w opuszczonym obozie na skraju lasu Arkham. Mgla sciele sie po ziemi, a w oddali slychac szept. Co robisz?",
+        "obrazek": "assets/start.png",
         "wybory": [
             {"tekst": "Wejdz do jaskini", "cel": "jaskinia", "warunek": null},
             {"tekst": "Przeszukaj oboz", "cel": "oboz", "warunek": null},
@@ -12,6 +13,7 @@
 
     "jaskinia": {
         "tekst": "Wchodzisz do jaskini. Zimne powietrze uderza cie w twarz. Slyszysz daleki szept w nieznanym jezyku. Tracisz 10 punktow Sanity.",
+        "obrazek": "assets/jaskinia.png",
         "wybory": [
             {"tekst": "Idz glebiej", "cel": "glebiny", "warunek": null},
             {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
@@ -21,19 +23,21 @@
     },
 
     "oboz": {
-        "tekst": "Przeszukujesz oboz. Pod kocem znajdujesz stara latarnie. Bierzesz ja ze soba.",
+        "tekst": "Przeszukujesz oboz. Pod kocem znajdujesz dziennik. Czytasz ostatni wpis - rece ci drza. Tracisz 5 Sanity.",
+        "obrazek": "assets/oboz.png",
         "wybory": [
-            {"tekst": "Idz do jaskini z latarnia", "cel": "jaskinia", "warunek": null},
+            {"tekst": "Idz do jaskini", "cel": "jaskinia", "warunek": null},
             {"tekst": "Idz do chaty", "cel": "przed_chata", "warunek": null}
         ],
-        "efekt": {"dodaj_przedmiot": "latarnia"},
+        "efekt": {"sanity": -5},
         "zakonczone": false
     },
 
     "przed_chata": {
-        "tekst": "Stoisz przed zamknieta chata. Drzwi sa solidne. Bez czegos co da swiatlo, srodek bedzie pulapka.",
+        "tekst": "Stoisz przed zamknieta chata. Drzwi sa solidne. Mozesz sprobowac je wywazyc albo wrocic.",
+        "obrazek": "assets/przed_chata.png",
         "wybory": [
-            {"tekst": "Wejdz do chaty (potrzebujesz latarni)", "cel": "chata", "warunek": {"wymagany_przedmiot": "latarnia"}},
+            {"tekst": "Wywaz drzwi (test sily)", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"},
             {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
         ],
         "efekt": null,
@@ -41,16 +45,18 @@
     },
 
     "chata": {
-        "tekst": "Drzwi ustepuja. Wewnatrz znajdujesz mape prowadzaca do latarni morskiej. To moze byc droga ratunku!",
+        "tekst": "Drzwi ustepuja. Wewnatrz znajdujesz mape prowadzaca do latarni morskiej. To moze byc droga ratunku.",
+        "obrazek": "assets/chata.png",
         "wybory": [
             {"tekst": "Idz w strone latarni morskiej", "cel": "rozstaje", "warunek": null}
         ],
-        "efekt": {"dodaj_przedmiot": "mapa"},
+        "efekt": null,
         "zakonczone": false
     },
 
     "chata_porazka": {
         "tekst": "Drzwi nie ustepuja. Uderzasz w nie ramieniem i tracisz 10 HP. Musisz znalezc inny sposob.",
+        "obrazek": "assets/chata.png",
         "wybory": [
             {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
         ],
@@ -59,9 +65,10 @@
     },
 
     "glebiny": {
-        "tekst": "W glebi jaskini cos sie porusza. Ogromny ksztalt wylania sie z mroku.",
+        "tekst": "W glebi jaskini cos sie porusza. Ogromny ksztalt wylania sie z mroku. Mozesz walczyc tylko jezeli starczy Ci sil.",
+        "obrazek": "assets/glebiny.png",
         "wybory": [
-            {"tekst": "Walcz (test odwagi, wymaga HP > 30)", "cel": "rozstaje", "warunek": {"min_hp": 30}, "cel_porazka": "ucieczka"},
+            {"tekst": "Walcz (wymaga HP > 30)", "cel": "rozstaje", "warunek": {"min_hp": 30}, "cel_porazka": "ucieczka"},
             {"tekst": "Uciekaj", "cel": "ucieczka", "warunek": null}
         ],
         "efekt": null,
@@ -70,6 +77,7 @@
 
     "ucieczka": {
         "tekst": "Uciekasz w panice. W ciemnosci potykasz sie i tracisz 10 HP, ale dochodzisz do rozstajow.",
+        "obrazek": "assets/ucieczka.png",
         "wybory": [
             {"tekst": "Idz dalej", "cel": "rozstaje", "warunek": null}
         ],
@@ -79,9 +87,9 @@
 
     "rozstaje": {
         "tekst": "Stoisz na rozstajach. Stary czlowiek w czarnym plaszczu patrzy na ciebie zimnym wzrokiem.",
+        "obrazek": "assets/rozstaje.png",
         "wybory": [
             {"tekst": "Zapytaj o droge (wymaga Sanity > 40)", "cel": "final_dobry", "warunek": {"min_sanity": 40}, "cel_porazka": "szept"},
-            {"tekst": "Pokaz mu mape (wymaga mapy)", "cel": "final_dobry", "warunek": {"wymagany_przedmiot": "mapa"}},
             {"tekst": "Zaatakuj go", "cel": "final_zly", "warunek": null}
         ],
         "efekt": null,
@@ -90,6 +98,7 @@
 
     "szept": {
         "tekst": "Starzec szepcze cos w nieznanym jezyku. Twoj umysl nie wytrzymuje. Tracisz 30 Sanity.",
+        "obrazek": "assets/szept.png",
         "wybory": [
             {"tekst": "Idz dalej w mrok", "cel": "final_zly", "warunek": null}
         ],
@@ -99,6 +108,7 @@
 
     "final_dobry": {
         "tekst": "Docierasz do latarni morskiej. Swiatlo rozprasza mrok. Przezyles noc w Arkham.",
+        "obrazek": "assets/final_dobry.png",
         "wybory": [],
         "efekt": null,
         "zakonczone": true,
@@ -107,6 +117,7 @@
 
     "final_zly": {
         "tekst": "Mgla pochlania cie calkowicie. Twoja swiadomosc rozplywa sie w ciemnosci. Koniec.",
+        "obrazek": "assets/final_zly.png",
         "wybory": [],
         "efekt": null,
         "zakonczone": true,

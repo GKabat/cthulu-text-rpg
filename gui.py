@@ -1,8 +1,9 @@
 # gui.py
-# Proste okno gry oparte na tkinter (standardowa biblioteka).
-# Wyswietla tekst sceny, statystyki i przyciski wyborow.
+# Proste okno gry oparte na tkinter (standardowa biblioteka Pythona).
+# Wyswietla obrazek, tekst sceny, statystyki i przyciski wyborow.
 
 import json
+import os
 import tkinter as tk
 
 from engine import wczytaj_fabule, pobierz_wezel, wykonaj_wybor, czy_koniec
@@ -19,11 +20,12 @@ stan = None
 root = None
 ramka_menu = None
 ramka_gra = None
+etykieta_obrazka = None
 etykieta_tekst = None
 etykieta_hp = None
 etykieta_sanity = None
-etykieta_ekw = None
 ramka_wyborow = None
+biezacy_obrazek = None  # zeby nie zostal zwolniony przez garbage collector
 
 
 def zaladuj_dane():
@@ -52,13 +54,40 @@ def nowa_gra():
     pokaz_gre()
 
 
-def aktualizuj_statystyki():
-    etykieta_hp.config(text="HP: " + str(stan["hp"]))
-    etykieta_sanity.config(text="Sanity: " + str(stan["sanity"]))
-    if len(stan["ekwipunek"]) == 0:
-        etykieta_ekw.config(text="Ekwipunek: (pusty)")
+def aktualizuj_statystyki(hp, sanity):
+    # Odswiezanie etykiet HP i Sanity. Czerwony kolor gdy malo.
+    if hp < 30:
+        kolor_hp = "#e05555"
     else:
-        etykieta_ekw.config(text="Ekwipunek: " + ", ".join(stan["ekwipunek"]))
+        kolor_hp = "#7ec87e"
+    if sanity < 30:
+        kolor_sanity = "#e05555"
+    else:
+        kolor_sanity = "#7eb8e0"
+    etykieta_hp.config(text="HP: " + str(hp), fg=kolor_hp)
+    etykieta_sanity.config(text="Sanity: " + str(sanity), fg=kolor_sanity)
+
+
+def wyswietl_obrazek(sciezka):
+    # Wczytuje PNG z dysku. Tkinter natywnie obsluguje PNG od Pythona 3.9.
+    # Jak pliku nie ma, ukrywa pole obrazka.
+    global biezacy_obrazek
+    if sciezka is not None and os.path.exists(sciezka):
+        try:
+            biezacy_obrazek = tk.PhotoImage(file=sciezka)
+            etykieta_obrazka.config(image=biezacy_obrazek)
+            etykieta_obrazka.pack(pady=10)
+            return
+        except tk.TclError:
+            # plik nie jest poprawnym PNG / GIF
+            pass
+    etykieta_obrazka.pack_forget()
+
+
+def wyswietl_scene(tekst, obrazek):
+    # Aktualizuje pole tekstu i obrazek sceny.
+    etykieta_tekst.config(text=tekst)
+    wyswietl_obrazek(obrazek)
 
 
 def wyswietl_wybory(wybory):
@@ -95,24 +124,23 @@ def odswiez_scene():
     id_wezla = stan["obecny_wezel"]
     wezel = pobierz_wezel(fabula, id_wezla)
 
-    etykieta_tekst.config(text=wezel["tekst"])
-    aktualizuj_statystyki()
+    wyswietl_scene(wezel["tekst"], wezel.get("obrazek"))
+    aktualizuj_statystyki(stan["hp"], stan["sanity"])
 
     # Sprawdz koniec gry: HP/Sanity 0 lub flaga zakonczone.
-    if stan["hp"] <= 0 or stan["sanity"] <= 0 or czy_koniec(wezel):
-        if stan["hp"] <= 0 or stan["sanity"] <= 0:
-            ekran_koncowy("zly", "Twoje HP lub Sanity spadlo do zera. Koniec.")
-        elif czy_koniec(wezel):
-            typ = "dobry"
-            if "zakonczenie" in wezel:
-                typ = wezel["zakonczenie"]
-            ekran_koncowy(typ, wezel["tekst"])
+    if stan["hp"] <= 0 or stan["sanity"] <= 0:
+        ekran_koncowy("zly", "Twoje HP lub Sanity spadlo do zera. Koniec.")
+        return
+    if czy_koniec(wezel):
+        typ = wezel.get("zakonczenie", "dobry")
+        ekran_koncowy(typ, wezel["tekst"])
         return
 
     wyswietl_wybory(wezel["wybory"])
 
 
 def ekran_koncowy(typ, tekst):
+    # Pokazuje naglowek konca gry i przyciski "Zagraj ponownie" / "Menu".
     for widget in ramka_wyborow.winfo_children():
         widget.destroy()
 
@@ -146,11 +174,11 @@ def ekran_koncowy(typ, tekst):
 
 def utworz_okno():
     global root, ramka_menu, ramka_gra
-    global etykieta_tekst, etykieta_hp, etykieta_sanity, etykieta_ekw, ramka_wyborow
+    global etykieta_obrazka, etykieta_tekst, etykieta_hp, etykieta_sanity, ramka_wyborow
 
     root = tk.Tk()
     root.title("Cien nad Arkham")
-    root.geometry("800x650")
+    root.geometry("800x700")
     root.configure(bg="#1a0f0a")
 
     # ── Menu glowne ──────────────────────────────────────────────
@@ -211,12 +239,8 @@ def utworz_okno():
         command=pokaz_menu,
     ).pack(side="right", padx=10, pady=4)
 
-    etykieta_ekw = tk.Label(
-        ramka_gra, text="Ekwipunek: (pusty)",
-        font=("Georgia", 10, "italic"),
-        bg="#1a0f0a", fg="#aaa",
-    )
-    etykieta_ekw.pack(fill="x", padx=20, pady=4)
+    # Etykieta na obrazek sceny (pack/pack_forget zalezy od dostepnosci pliku).
+    etykieta_obrazka = tk.Label(ramka_gra, bg="#1a0f0a")
 
     etykieta_tekst = tk.Label(
         ramka_gra, text="",

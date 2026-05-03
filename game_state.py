@@ -10,7 +10,6 @@ def inicjalizuj_stan(config):
         "hp": postac["hp"],
         "sanity": postac["sanity"],
         "nazwa_postaci": postac["nazwa"],
-        "ekwipunek": [],
         "odwiedzone": [],
     }
     return stan
@@ -35,9 +34,6 @@ def aktualizuj_stan(stan, efekt):
             stan["sanity"] = 0
         if stan["sanity"] > 100:
             stan["sanity"] = 100
-
-    if "dodaj_przedmiot" in efekt:
-        stan["ekwipunek"].append(efekt["dodaj_przedmiot"])
 
     return stan
 

@@ -41,9 +41,6 @@ def sprawdz_warunek(warunek, stan):
     if "min_sanity" in warunek:
         return stan["sanity"] >= warunek["min_sanity"]
 
-    if "wymagany_przedmiot" in warunek:
-        return warunek["wymagany_przedmiot"] in stan["ekwipunek"]
-
     print("[engine] Nieznany warunek:", warunek)
     return False
 
@@ -52,8 +49,9 @@ def wykonaj_wybor(fabula, wybor, stan):
     # Sprawdza warunek, przechodzi do nowego wezla i aplikuje efekt.
     warunek = wybor.get("warunek")
     if not sprawdz_warunek(warunek, stan):
-        # Warunek niespelniony - zostajemy w tym samym wezle.
-        # Jezeli wybor ma "cel_porazka", idziemy tam zamiast tego.
+        # Warunek niespelniony.
+        # Jezeli wybor ma "cel_porazka" - idziemy tam.
+        # Inaczej zostajemy w tym samym wezle.
         if "cel_porazka" in wybor:
             stan["obecny_wezel"] = wybor["cel_porazka"]
             nowy = pobierz_wezel(fabula, wybor["cel_porazka"])
@@ -104,7 +102,7 @@ if __name__ == "__main__":
         print()
         print("[" + id_wezla + "]")
         print(wezel["tekst"])
-        print("HP:", stan["hp"], "| Sanity:", stan["sanity"], "| Ekwipunek:", stan["ekwipunek"])
+        print("HP:", stan["hp"], "| Sanity:", stan["sanity"])
 
         if czy_koniec(wezel):
             print("=== KONIEC GRY ===")
@@ -119,7 +117,7 @@ if __name__ == "__main__":
         while i < len(wybory):
             opis_warunku = ""
             if wybory[i].get("warunek") is not None:
-                opis_warunku = " [warunek!]"
+                opis_warunku = " [test!]"
             print(" [" + str(i) + "]", wybory[i]["tekst"] + opis_warunku)
             i = i + 1
 

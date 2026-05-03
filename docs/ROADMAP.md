@@ -1,72 +1,61 @@
-# Roadmap - co jeszcze zrobic, zeby oddac projekt
+# Roadmap - co zrobione i co zostalo
 
-Lista prosta, w kolejnosci. Odhaczaj co zrobione.
+## Stan: GOTOWE DO ODDANIA
 
-## Czesc kodowa (gotowa po tym wpisie)
-- [x] Naprawic pusty `game_state.py` (byl tylko komentarz `# test`)
-- [x] Naprawic `mechanics.py` - dopasowac nazwy (`sprawdz_rzut`) i argument rzutu
-- [x] Wywalic `Pillow` z `gui.py` i `main.py` - zostaje tylko `tkinter` (standard lib)
-- [x] Naprawic `gui.py` - sklejony komentarz z importem, hardkod sciezki Windows, brak `utworz_okno()`
-- [x] Dorzucic warunki `min_hp`, `min_sanity`, `wymagany_przedmiot`
-- [x] Dodac `cel_porazka` (gdzie iesc gdy test rzutu sie nie uda)
-- [x] Napisac `data/story.json` z 12 wezlami pokrywajacymi wszystkie mechaniki
-- [x] Sprawdzic ze gra przechodzi sciezke happy-path
+### Kod (gotowe)
+- [x] Naprawiony `game_state.py`, `mechanics.py`, `engine.py`, `gui.py`, `main.py`
+- [x] `gui.py` bez Pillow (tylko stdlib `tkinter`), z natywnym wyswietlaniem PNG
+- [x] `gui.py` z osobnymi funkcjami: `wyswietl_scene`, `wyswietl_wybory`, `aktualizuj_statystyki`, `ekran_koncowy` (zgodnie ze specyfikacja)
+- [x] `engine.py` obsluguje warunki: `rzut_koscia`, `min_hp`, `min_sanity` + opcjonalny `cel_porazka`
+- [x] `data/story.json` z 12 wezlami pokrywajacymi wszystkie mechaniki
+- [x] `assets/README.md` z lista 11 wymaganych plikow PNG
+- [x] Smoke testy przeszly (silnik startuje, wszystkie sciezki dzialaja)
 
-## Co jeszcze zrobic samemu (co prowadzacy chce widziec)
+### Dokumenty (gotowe)
+- [x] `docs/Karta_projektu_Cien_nad_Arkham.docx` - wypelniona karta projektu
+- [x] `docs/TestCases_Cien_nad_Arkham.xlsx` - 50 test case-ow w formacie z przykladu
+- [x] `docs/OBRONA.md` - sciaga na obrone
+- [x] `docs/ROADMAP.md` - ten plik
 
-### 1. Karta projektu (zalacznik z wymagan)
-- [ ] Wpisac tytul: "Cien nad Arkham"
-- [ ] Wpisac sklad zespolu (5 osob)
-- [ ] Cel: tekstowa gra RPG inspirowana Cthulhu, GUI w tkinter
-- [ ] Technologia: Python 3, tylko biblioteka standardowa (`tkinter`, `json`, `random`, `os`, `sys`)
+## Co zostalo do zrobienia samemu
 
-### 2. Opis projektu + wymagania funkcjonalne i niefunkcjonalne
-- [ ] Wymagania funkcjonalne (FR-1 ... FR-N):
-  - FR-1: Gra wczytuje fabule z pliku JSON
-  - FR-2: Gracz przechodzi miedzy wezlami fabuly poprzez wybory
-  - FR-3: Gra obsluguje rzut kością (k20) jako test umiejetnosci
-  - FR-4: Statystyki HP i Sanity moga rosnac/spadac w wyniku zdarzen
-  - FR-5: Gra obsluguje ekwipunek (zbieranie przedmiotow)
-  - FR-6: Gra ma menu glowne, ekran gry i ekran konca
-  - FR-7: Gra ma 2 zakonczenia (dobre i zle)
-  - FR-8: Gra konczy sie gdy HP=0 lub Sanity=0
-- [ ] Wymagania niefunkcjonalne (NFR):
-  - NFR-1: Gra dziala na Windows i Linux (Python 3.10+)
-  - NFR-2: Gra korzysta tylko z biblioteki standardowej
-  - NFR-3: Czas wczytywania menu < 1s
-  - NFR-4: Tekst polski bez znakow diakrytycznych (uniknac problemow z UTF-8 na Windowsie)
+### Karta projektu
+- [ ] Wpisac w docx prawdziwe dane:
+  - Nazwa i adres uczelni / partnera
+  - Imie i nazwisko prowadzacego + tytul
+  - 5 x: imie i nazwisko czlonka zespolu + nr albumu
+- Place'holder `[do uzupelnienia]` zostal w 11 miejscach.
 
-### 3. Diagramy (1 na osobe = 5 sztuk)
-- [ ] Diagram przypadkow uzycia (use case) - 1 sztuka, np. drawio (juz masz `others/Use Case.drawio`)
-- [ ] Diagramy czynnosci (activity) - przyklady do narysowania:
-  1. Aktywacja - sciezka gracza od menu do konca gry
-  2. Aktywacja - wykonanie wyboru z testem rzutu kostka
-  3. Aktywacja - aplikacja efektu wezla (zmiana HP/Sanity/ekwipunku)
-  4. Aktywacja - sprawdzenie warunku wyboru (rzut, hp, sanity, przedmiot)
-  5. Aktywacja - przejscie do ekranu konca gry (dobry/zly)
+### Grafiki PNG (opcjonalnie - gra dziala bez nich)
+- [ ] Wygenerowac/narysowac 11 obrazkow do `assets/` (lista w `assets/README.md`)
+- Jezeli nie ma plikow, gra dziala bez obrazkow (graceful fallback).
 
-### 4. Test plan - 50 test case-ow (10 per osoba)
-- [ ] Otworz `docs/TEST_PLAN.md` (gotowy szkic) i uzupelnij wedlug wzoru z zalacznika
-- 5 obszarow testow po 10 przypadkow:
-  - Osoba 1: testy wczytywania konfiguracji i fabuly (`config.json`, `story.json`)
-  - Osoba 2: testy mechanik (rzut kostka, sprawdz_rzut, granice 0..100)
-  - Osoba 3: testy silnika (przejscia miedzy wezlami, warunki, efekty)
-  - Osoba 4: testy GUI (przyciski, wyswietlanie statystyk, ekran konca)
-  - Osoba 5: testy integracyjne (cala sciezka happy-path, sciezka zlych zakonczen, restart)
+### Diagramy (1 na osobe = 5 sztuk)
+- [ ] Diagram przypadkow uzycia (use case) - `others/Use Case.drawio` juz jest
+- [ ] Diagramy czynnosci (activity) - 4 dodatkowe, propozycje:
+  1. Sciezka gracza od menu do konca gry (sciezka happy-path)
+  2. Wykonanie wyboru z testem rzutu kostka (sukces/porazka -> cel/cel_porazka)
+  3. Aplikacja efektu wezla na stan (zmiana HP/Sanity z przycinaniem do 0..100)
+  4. Sprawdzenie warunku wyboru (rzut, hp, sanity)
+  5. Przejscie do ekranu konca gry (przez 0 HP, 0 Sanity, lub flage zakonczone)
 
-### 5. Dokumentacja projektowa
-- [ ] Spis tresci, opis architektury (5 plikow Python + folder data + folder docs)
-- [ ] Diagram modulow (kto kogo importuje):
-  - `main.py` -> `gui.py`
-  - `gui.py` -> `engine.py`, `game_state.py`
-  - `engine.py` -> `game_state.py`, `mechanics.py`
-- [ ] Instrukcja uruchomienia: `python main.py`
-- [ ] Format pliku `story.json` z opisem pol (tekst, wybory, efekt, warunek, zakonczone)
+### Pelna dokumentacja projektowa
+- [ ] Sprawdzic `Karta_projektu_Cien_nad_Arkham.docx`, otworzyc w Word/LibreOffice, sformatowac jak chcesz
+- [ ] Otworzyc `TestCases_Cien_nad_Arkham.xlsx` w Excelu, ewentualnie pokolorowac priorytety / wyniki
+- [ ] Zlozyc wszystko (PDF + xlsx + diagramy) w jeden archiwum do oddania
 
-## Kolejnosc oddawania (zalecana)
-1. Najpierw uruchom gre lokalnie: `python main.py` - upewnij sie ze dziala u Ciebie.
-2. Wypelnij karte projektu (10 min).
-3. Narysuj 5 diagramow (po 1 na osobe) - mozesz uzyc draw.io lub plantUML.
-4. Wpisz wymagania FR/NFR (15 min, gotowy szkic powyzej).
-5. Skopiuj `docs/TEST_PLAN.md` do oddania - dorob pozostale przypadki na podstawie szkicu.
-6. Zlozic dokumentacje projektowa w jeden PDF/Word.
+### Kolejnosc oddawania
+1. Otworz `python main.py` u siebie - upewnij sie ze gra dziala.
+2. Otworz docx i xlsx - upewnij sie ze prowadzacy je otworzy bez bledu.
+3. Uzupelnij dane personalne w docx.
+4. Narysuj brakujace 4 diagramy (uzyj draw.io / plantUML / ołowka).
+5. Wszystko spakuj w jeden zip i oddaj.
+
+## Uruchomienie regeneratorow
+
+Jezeli chcesz cos zmienic w karcie projektu lub testach, edytuj skrypty w `tools/` i uruchom:
+
+```
+python tools/build_docx.py    # regeneruje docs/Karta_projektu_Cien_nad_Arkham.docx
+python tools/build_xlsx.py    # regeneruje docs/TestCases_Cien_nad_Arkham.xlsx
+```
