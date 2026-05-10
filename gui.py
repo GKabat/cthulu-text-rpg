@@ -1,6 +1,7 @@
 # gui.py
 # Proste okno gry oparte na tkinter (standardowa biblioteka Pythona).
-# Wyswietla obrazek, tekst sceny, statystyki i przyciski wyborow.
+# Wyswietla obrazek sceny, tekst, statystyki i przyciski wyborow.
+# Po rzucie kostka pokazuje dodatkowo grafike kosci i wynik rzutu.
 
 import json
 import os
@@ -12,6 +13,7 @@ from game_state import inicjalizuj_stan
 
 CONFIG_PATH = "data/config.json"
 STORY_PATH = "data/story.json"
+DICE_PATH = "tiles/dice_roll.png"
 
 
 # Zmienne globalne GUI - wspoldzielone miedzy funkcjami.
@@ -20,12 +22,16 @@ stan = None
 root = None
 ramka_menu = None
 ramka_gra = None
+ramka_rzut = None
 etykieta_obrazka = None
+etykieta_kosci = None
+etykieta_rzut_tekst = None
 etykieta_tekst = None
 etykieta_hp = None
 etykieta_sanity = None
 ramka_wyborow = None
-biezacy_obrazek = None  # zeby nie zostal zwolniony przez garbage collector
+biezacy_obrazek = None  # zeby Tk nie zwolnil PhotoImage przez garbage collector
+obrazek_kosci = None
 
 
 def zaladuj_dane():
@@ -55,7 +61,7 @@ def nowa_gra():
 
 
 def aktualizuj_statystyki(hp, sanity):
-    # Odswiezanie etykiet HP i Sanity. Czerwony kolor gdy malo.
+    # Zielony gdy dobrze, czerwony gdy malo.
     if hp < 30:
         kolor_hp = "#e05555"
     else:
@@ -70,7 +76,6 @@ def aktualizuj_statystyki(hp, sanity):
 
 def wyswietl_obrazek(sciezka):
     # Wczytuje PNG z dysku. Tkinter natywnie obsluguje PNG od Pythona 3.9.
-    # Jak pliku nie ma, ukrywa pole obrazka.
     global biezacy_obrazek
     if sciezka is not None and os.path.exists(sciezka):
         try:
@@ -79,32 +84,61 @@ def wyswietl_obrazek(sciezka):
             etykieta_obrazka.pack(pady=10)
             return
         except tk.TclError:
-            # plik nie jest poprawnym PNG / GIF
             pass
     etykieta_obrazka.pack_forget()
 
 
+def wyswietl_rzut(rzut):
+    # Pokazuje grafike kosci i wynik rzutu nad tekstem sceny.
+    # rzut: slownik {"wynik": int, "prog": int, "sukces": bool} lub None.
+    global obrazek_kosci
+    if rzut is None:
+        ramka_rzut.pack_forget()
+        return
+
+    if os.path.exists(DICE_PATH):
+        try:
+            obrazek_kosci = tk.PhotoImage(file=DICE_PATH)
+            # zmniejsz grafike (oryginal jest dluzy) - subsample 3x
+            obrazek_kosci = obrazek_kosci.subsample(3, 3)
+            etykieta_kosci.config(image=obrazek_kosci)
+        except tk.TclError:
+            etykieta_kosci.config(image="")
+    else:
+        etykieta_kosci.config(image="")
+
+    if rzut["sukces"]:
+        wynik_txt = "SUKCES"
+        kolor = "#7ec87e"
+    else:
+        wynik_txt = "PORAZKA"
+        kolor = "#e05555"
+
+    etykieta_rzut_tekst.config(
+        text="Rzut k20: " + str(rzut["wynik"]) +
+             "  /  prog: " + str(rzut["prog"]) +
+             "  ->  " + wynik_txt,
+        fg=kolor,
+    )
+    ramka_rzut.pack(fill="x", padx=20, pady=4)
+
+
 def wyswietl_scene(tekst, obrazek):
-    # Aktualizuje pole tekstu i obrazek sceny.
     etykieta_tekst.config(text=tekst)
     wyswietl_obrazek(obrazek)
 
 
 def wyswietl_wybory(wybory):
-    # Usuwa stare przyciski i tworzy nowe.
     for widget in ramka_wyborow.winfo_children():
         widget.destroy()
 
     i = 0
     while i < len(wybory):
         wybor = wybory[i]
-        tekst = wybor["tekst"]
-        if wybor.get("warunek") is not None:
-            tekst = tekst + "  [test!]"
         # domyslny argument w lambda zamyka biezaca wartosc wyboru
         przycisk = tk.Button(
             ramka_wyborow,
-            text=tekst,
+            text=wybor["tekst"],
             font=("Georgia", 11),
             bg="#2a1a0e", fg="#e8d5b0",
             relief="flat",
@@ -126,21 +160,26 @@ def odswiez_scene():
 
     wyswietl_scene(wezel["tekst"], wezel.get("obrazek"))
     aktualizuj_statystyki(stan["hp"], stan["sanity"])
+    wyswietl_rzut(stan.get("ostatni_rzut"))
 
-    # Sprawdz koniec gry: HP/Sanity 0 lub flaga zakonczone.
-    if stan["hp"] <= 0 or stan["sanity"] <= 0:
-        ekran_koncowy("zly", "Twoje HP lub Sanity spadlo do zera. Koniec.")
-        return
+    # WAZNE: najpierw sprawdzamy flage zakonczone wezla.
+    # Dzieki temu wezly konczace gre fabularnie (np. atak_potwora z hp -100,
+    # final_szalenstwo z sanity -100) pokazuja swoj wlasny tekst i obrazek
+    # zanim zadziala fallback przez 0 HP / 0 Sanity.
     if czy_koniec(wezel):
         typ = wezel.get("zakonczenie", "dobry")
-        ekran_koncowy(typ, wezel["tekst"])
-        return
+        ekran_koncowy(typ)
+    elif stan["hp"] <= 0 or stan["sanity"] <= 0:
+        # Fallback gdyby gracz utracil wszystko poza wezlem zakonczeniowym.
+        ekran_koncowy("zly")
+    else:
+        wyswietl_wybory(wezel["wybory"])
 
-    wyswietl_wybory(wezel["wybory"])
+    # Czyscimy informacje o rzucie - ma zostac pokazana tylko raz.
+    stan["ostatni_rzut"] = None
 
 
-def ekran_koncowy(typ, tekst):
-    # Pokazuje naglowek konca gry i przyciski "Zagraj ponownie" / "Menu".
+def ekran_koncowy(typ):
     for widget in ramka_wyborow.winfo_children():
         widget.destroy()
 
@@ -173,12 +212,13 @@ def ekran_koncowy(typ, tekst):
 
 
 def utworz_okno():
-    global root, ramka_menu, ramka_gra
-    global etykieta_obrazka, etykieta_tekst, etykieta_hp, etykieta_sanity, ramka_wyborow
+    global root, ramka_menu, ramka_gra, ramka_rzut
+    global etykieta_obrazka, etykieta_kosci, etykieta_rzut_tekst
+    global etykieta_tekst, etykieta_hp, etykieta_sanity, ramka_wyborow
 
     root = tk.Tk()
     root.title("Cien nad Arkham")
-    root.geometry("800x700")
+    root.geometry("820x780")
     root.configure(bg="#1a0f0a")
 
     # ── Menu glowne ──────────────────────────────────────────────
@@ -239,19 +279,32 @@ def utworz_okno():
         command=pokaz_menu,
     ).pack(side="right", padx=10, pady=4)
 
-    # Etykieta na obrazek sceny (pack/pack_forget zalezy od dostepnosci pliku).
+    # Obrazek sceny
     etykieta_obrazka = tk.Label(ramka_gra, bg="#1a0f0a")
 
+    # Ramka rzutu (kosci + tekst). Pack/pack_forget zalezy od stanu.
+    ramka_rzut = tk.Frame(ramka_gra, bg="#0d0705")
+    etykieta_kosci = tk.Label(ramka_rzut, bg="#0d0705")
+    etykieta_kosci.pack(side="left", padx=10, pady=6)
+    etykieta_rzut_tekst = tk.Label(
+        ramka_rzut, text="",
+        font=("Georgia", 11, "bold"),
+        bg="#0d0705", fg="#e8d5b0",
+    )
+    etykieta_rzut_tekst.pack(side="left", padx=10)
+
+    # Tekst sceny
     etykieta_tekst = tk.Label(
         ramka_gra, text="",
         font=("Georgia", 12),
         bg="#1a0f0a", fg="#e8d5b0",
-        wraplength=720, justify="left", anchor="w",
+        wraplength=740, justify="left", anchor="w",
     )
     etykieta_tekst.pack(fill="x", padx=20, pady=10)
 
     tk.Frame(ramka_gra, bg="#3a2a1e", height=1).pack(fill="x", padx=20, pady=4)
 
+    # Przyciski wyborow
     ramka_wyborow = tk.Frame(ramka_gra, bg="#1a0f0a")
     ramka_wyborow.pack(fill="both", expand=True, pady=10)
 

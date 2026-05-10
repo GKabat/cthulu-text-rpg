@@ -1,10 +1,10 @@
 {
-    "tytul": "Cien nad Arkham",
-    "wersja": "1.0",
+    "tytul": "Cień nad Arkham",
+    "wersja": "1.1",
     "postac": {
         "nazwa": "Badacz",
         "hp": 100,
         "sanity": 100
     },
-    "start_wezel": "start"
+    "start_wezel": "intro"
 }

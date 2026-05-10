@@ -11,6 +11,9 @@ def inicjalizuj_stan(config):
         "sanity": postac["sanity"],
         "nazwa_postaci": postac["nazwa"],
         "odwiedzone": [],
+        # Informacja o ostatnim rzucie kostka. None gdy nic nie rzucalismy.
+        # Ustawiana w engine.sprawdz_warunek, czyszczona przez gui po wyswietleniu.
+        "ostatni_rzut": None,
     }
     return stan
 

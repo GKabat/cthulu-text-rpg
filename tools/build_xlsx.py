@@ -3,7 +3,7 @@ Generator pliku TestCases_Cien_nad_Arkham.xlsx.
 Format kolumn zgodny z przykladowym plikiem TestCases (1).xlsx:
   ID | Nazwa testu | Typ Testu | Konfiguracja | Priorytet | Reprodukcja | Kryteria | Wynik | Bug ID | Kryteria niepowodzenia
 
-50 test case-ow, 10 na osobe.
+50 test case-ow, 10 na osobe (5 osob x 10).
 
 Uruchomienie:
     python tools/build_xlsx.py
@@ -14,9 +14,6 @@ import zipfile
 from xml.sax.saxutils import escape
 
 
-# --------------------------------------------------------------------------- dane testow
-
-# Format: (nazwa, typ, konfiguracja, priorytet, reprodukcja, kryteria, wynik, bug_id, kryteria_niepowodzenia)
 TESTS = []
 
 
@@ -24,107 +21,109 @@ def add(nazwa, typ, konfig, prio, reprod, kryt, wynik="Pozytywny", bug="", krit_
     TESTS.append((nazwa, typ, konfig, prio, reprod, kryt, wynik, bug, krit_neg))
 
 
-# ── Osoba 1: Architekt Danych i Fabuly (TC-01..10) - walidacja JSON i wczytywanie ──
+# ── Osoba 1: Architekt Danych i Fabuly (TC-01..10) ──
 
 add("Wczytanie config.json z poprawnym JSON",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. Uruchom python main.py\n2. Sprawdz czy gra wstaje bez bledu",
-    "1. Plik wczytuje sie bez wyjatku\n2. Gra pokazuje menu glowne")
+    "1. Plik wczytuje sie bez wyjatku\n2. Pojawia sie menu glowne")
 
 add("Wczytanie story.json - liczba wezlow",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. Uruchom python engine.py\n2. Sprawdz log w konsoli",
-    "1. W logu pojawia sie 'Wczytano fabule: 12 wezlow.'")
+    "1. W logu pojawia sie 'Wczytano fabule: 11 wezlow.'")
 
 add("Brak pliku config.json",
     "Test destruktywny", "Windows 10 / Linux", "Wysoki",
-    "1. Tymczasowo zmien nazwe data/config.json na _config.json\n2. Uruchom python main.py",
+    "1. Tymczasowo zmien nazwe data/config.json\n2. Uruchom python main.py",
     "1. Program pokazuje komunikat 'BLAD: brakuje plikow' i konczy dzialanie")
 
 add("Brak pliku story.json",
     "Test destruktywny", "Windows 10 / Linux", "Wysoki",
-    "1. Tymczasowo zmien nazwe data/story.json na _story.json\n2. Uruchom python main.py",
+    "1. Tymczasowo zmien nazwe data/story.json\n2. Uruchom python main.py",
     "1. Program pokazuje komunikat 'BLAD: brakuje plikow' i konczy dzialanie")
 
 add("Niepoprawny JSON w story.json",
     "Test destruktywny", "Windows 10 / Linux", "Wysoki",
-    "1. Edytuj story.json - usun jeden zamykajacy nawias }\n2. Uruchom python main.py\n3. Klik START",
+    "1. Edytuj story.json - usun jeden zamykajacy nawias }\n2. Uruchom python main.py i kliknij START",
     "1. Program rzuca wyjatek json.JSONDecodeError\n2. Gra nie wstaje",
-    wynik="Negatywny", bug="", krit_neg="Brak grafycznego komunikatu o bledzie skladni JSON - widac tylko stack trace w konsoli.")
+    wynik="Negatywny",
+    krit_neg="Brak grafycznego komunikatu o bledzie skladni JSON - widac tylko stack trace w konsoli.")
 
 add("Polskie znaki w story.json (UTF-8)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Sredni",
-    "1. Edytuj story.json - dodaj wezel z tekstem zawierajacym polskie znaki\n2. Uruchom gre i przejdz do tego wezla",
-    "1. Tekst wyswietla sie poprawnie z polskimi znakami (zal, czerwony itp.)")
+    "1. Uruchom gre i przejdz do dowolnego wezla\n2. Sprawdz czy polskie znaki (a, e, c, n, o, s, z) renderuja sie poprawnie",
+    "1. Wszystkie polskie znaki sa widoczne bez znakow zastepczych")
 
 add("Klucz 'tytul' w config.json zachowuje wartosc",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Niski",
-    "1. Sprawdz w kodzie ze config['tytul'] = 'Cien nad Arkham'\n2. Uruchom engine.py",
-    "1. W konsoli widzimy 'Gra: Cien nad Arkham v1.0'")
+    "1. Uruchom engine.py\n2. Sprawdz pierwsza linie po '=== TEST SILNIKA ==='",
+    "1. W konsoli pojawia sie 'Gra: Cien nad Arkham v1.1'")
 
-add("Brakujacy klucz 'start_wezel' w config",
+add("Brakujacy klucz 'start_wezel' w config.json",
     "Test destruktywny", "Windows 10 / Linux", "Sredni",
-    "1. Usun klucz 'start_wezel' z config.json\n2. Uruchom python main.py i kliknij START",
+    "1. Usun klucz 'start_wezel' z config.json\n2. Uruchom main.py i kliknij START",
     "1. Program rzuca wyjatek KeyError",
-    wynik="Negatywny", bug="", krit_neg="Brak walidacji configu przed uruchomieniem - blad pojawia sie dopiero po klikniciu START.")
+    wynik="Negatywny",
+    krit_neg="Brak walidacji configu przed uruchomieniem - blad pojawia sie dopiero po klikniciu START.")
 
 add("Wezel docelowy z wyboru musi istniec",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Wysoki",
     "1. Edytuj story.json - dodaj wybor z 'cel': 'nieistniejacy'\n2. Uruchom gre i kliknij ten wybor",
     "1. W konsoli pokazuje sie 'BLAD: brak wezla nieistniejacy'\n2. Gra nie crashuje (zwraca None i konczy plynnie)")
 
-add("Format pola 'efekt' (slownik z 'hp' i 'sanity')",
+add("Format pola 'efekt' aplikuje zmiane HP i Sanity",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Sredni",
-    "1. Ustaw w wezle efekt {'hp': -10, 'sanity': -5}\n2. Wejdz do tego wezla\n3. Sprawdz HP i Sanity w GUI",
-    "1. HP zmniejsza sie o 10\n2. Sanity zmniejsza sie o 5")
+    "1. Z menu START -> intro -> rozdroze\n2. Wybierz 'Zapusc sie do jaskini'\n3. Sprawdz Sanity",
+    "1. Po wejsciu do wezla 'jaskinia' Sanity spada z 100 do 90")
 
 
-# ── Osoba 2: Programista Silnika (TC-11..20) - engine.py i game_state.py ──
+# ── Osoba 2: Programista Silnika (TC-11..20) ──
 
-add("Inicjalizacja stanu gry z domyslnymi wartosciami",
+add("Inicjalizacja stanu gry z wartosciami z config",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. Uruchom python engine.py\n2. Sprawdz pierwsze wyswietlone HP i Sanity",
-    "1. HP = 100\n2. Sanity = 100\n3. obecny_wezel = 'start'")
+    "1. HP = 100\n2. Sanity = 100\n3. obecny_wezel = 'intro'")
 
-add("Przejscie miedzy wezlami przez wybor bez warunku",
+add("Przejscie z intro do rozdroze (pierwszy wybor po wstepie)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
-    "1. Uruchom engine.py\n2. Wpisz '0' (pierwszy wybor: jaskinia)\n3. Sprawdz aktualny wezel",
-    "1. Po wyborze wezel zmienia sie na 'jaskinia'\n2. W konsoli widac 'Przejscie -> jaskinia'")
+    "1. START\n2. Kliknij 'Wstajesz i ruszasz w droge'",
+    "1. Wezel zmienia sie na 'rozdroze'\n2. W konsoli widac 'Przejscie -> rozdroze'")
 
-add("Aplikowanie efektu wezla po wejsciu",
+add("Aplikowanie efektu wezla po wejsciu (jaskinia)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
-    "1. Z 'start' wybierz 'jaskinia' (efekt sanity -10)\n2. Sprawdz Sanity po przejsciu",
-    "1. Sanity spada ze 100 do 90")
+    "1. START -> rozdroze\n2. Wybierz 'Zapusc sie do jaskini'",
+    "1. Wezel: jaskinia\n2. Sanity spada o 10 (do 90)")
 
 add("Sprawdzanie warunku rzutu kostka - sukces",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
-    "1. Uruchom test wielokrotnie engine.py i wybierz 'wywaz drzwi'\n2. Pamietaj losowosc\n3. Powtorz az wypadnie SUKCES",
-    "1. Przy wyniku >= 12 -> przejscie do 'chata'\n2. Brak utraty HP")
+    "1. START -> rozdroze\n2. Klikaj 'Sprobuj wywazyc drzwi chaty' az do SUKCESU (rzut >= 12)",
+    "1. Przejscie do wezla 'chata'\n2. Brak utraty HP\n3. Pojawia sie info o rzucie i grafika kosci")
 
-add("Sprawdzanie warunku rzutu kostka - porazka z cel_porazka",
+add("Sprawdzanie warunku rzutu kostka - porazka (cel_porazka)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
-    "1. Uruchom engine.py i wybieraj 'wywaz drzwi' az do PORAZKI (rzut < 12)",
-    "1. Przy wyniku < 12 -> przejscie do 'chata_porazka'\n2. HP spada o 10")
+    "1. START -> rozdroze\n2. Klikaj 'Sprobuj wywazyc drzwi chaty' az do PORAZKI (rzut < 12)",
+    "1. Przejscie do 'chata_porazka'\n2. HP spada o 10\n3. Pojawia sie info o rzucie i grafika kosci")
 
-add("Sprawdzanie warunku min_hp - niespelniony",
+add("Warunek min_sanity niespelniony - skok do cel_porazka (szept)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Wysoki",
-    "1. Doprowadz HP gracza do 25 (powtorne wywazanie drzwi)\n2. Idz do 'glebiny'\n3. Wybierz 'walcz'",
-    "1. Warunek min_hp 30 niespelniony\n2. Skok do cel_porazka -> 'ucieczka'")
+    "1. Doprowadz Sanity ponizej 50 (np. wejdz do jaskini, glebin, wroc do rozdroze powtarzalnie)\n2. Idz na rozstaje\n3. Wybierz 'Zapytaj o droge'",
+    "1. Warunek min_sanity 50 niespelniony\n2. Skok do wezla 'szept' (zamiast final_dobry)")
 
-add("Sprawdzanie warunku min_sanity - spelniony",
+add("Warunek min_sanity spelniony - przejscie do final_dobry",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Wysoki",
-    "1. Z startu idz wprost na 'rozstaje' (sanity 100)\n2. Wybierz 'Zapytaj o droge'",
-    "1. Warunek min_sanity 40 spelniony\n2. Przejscie do 'final_dobry'")
+    "1. START -> rozdroze (Sanity=100)\n2. Wybierz 'Idz lesnym duktem'\n3. Wybierz 'Zapytaj o droge'",
+    "1. Warunek spelniony\n2. Przejscie do final_dobry\n3. Ekran ZWYCIESTWO")
 
 add("Stan 'odwiedzone' nie zawiera duplikatow",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Niski",
-    "1. Z 'start' idz do 'jaskinia', wroc do 'start', znowu idz do 'jaskinia'\n2. Sprawdz stan['odwiedzone']",
-    "1. Lista odwiedzone zawiera 'start' tylko raz")
+    "1. Idz intro -> rozdroze -> jaskinia -> wroc do rozdroze -> jaskinia\n2. Wydrukuj stan['odwiedzone']",
+    "1. Lista zawiera kazdy wezel tylko raz")
 
-add("Funkcja czy_koniec wykrywa 'zakonczone: true'",
+add("Funkcja czy_koniec wykrywa flage 'zakonczone: true'",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
-    "1. W kodzie wywolaj czy_koniec na wezle 'final_dobry'",
-    "1. Funkcja zwraca True\n2. Dla pozostalych wezlow zwraca False")
+    "1. Wywolaj czy_koniec(fabula['final_dobry'])\n2. Wywolaj czy_koniec(fabula['intro'])",
+    "1. Dla final_dobry zwraca True\n2. Dla intro zwraca False")
 
 add("Pobranie nieistniejacego wezla zwraca None",
     "Test destruktywny", "Windows 10 / Linux", "Sredni",
@@ -132,17 +131,17 @@ add("Pobranie nieistniejacego wezla zwraca None",
     "1. Funkcja drukuje 'BLAD: brak wezla xxx'\n2. Zwraca None\n3. Nie rzuca wyjatku")
 
 
-# ── Osoba 3: Programista Mechanik RPG (TC-21..30) - mechanics.py ──
+# ── Osoba 3: Programista Mechanik RPG (TC-21..30) ──
 
 add("rzut_koscia(20) zwraca liczbe 1..20",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. Wywolaj 100 razy rzut_koscia(20) w petli\n2. Sprawdz min/max",
-    "1. Wszystkie wyniki sa w przedziale 1..20\n2. Zaden wynik nie jest 0 ani 21")
+    "1. Wszystkie wyniki w przedziale 1..20")
 
 add("rzut_koscia(6) zwraca liczbe 1..6",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Sredni",
     "1. Wywolaj 100 razy rzut_koscia(6)\n2. Sprawdz min/max",
-    "1. Wszystkie wyniki sa w przedziale 1..6")
+    "1. Wszystkie wyniki w przedziale 1..6")
 
 add("rzut_koscia bez argumentu uzywa domyslnie k20",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Sredni",
@@ -162,7 +161,7 @@ add("sprawdz_rzut(8, 12) zwraca False (porazka)",
 add("sprawdz_rzut na granicy (rzut == prog) zwraca True",
     "Test brzegowy", "Windows 10 / Linux", "Wysoki",
     "1. Wywolaj sprawdz_rzut(12, 12)",
-    "1. Funkcja zwraca True (>= a nie >)")
+    "1. Funkcja zwraca True (warunek wynik >= prog, nie >)")
 
 add("aktualizuj_stan z efektem hp -10",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
@@ -185,85 +184,90 @@ add("aktualizuj_stan z efektem hp i sanity rownolegle",
     "1. Stan ma hp=95, sanity=90")
 
 
-# ── Osoba 4: Programista Interfejsu (TC-31..40) - gui.py ──
+# ── Osoba 4: Programista Interfejsu (TC-31..40) ──
 
 add("Otwarcie okna gry pokazuje menu glowne",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. Uruchom python main.py",
-    "1. Otwiera sie okno tytulu 'Cien nad Arkham'\n2. Widac napis 'CIEN NAD ARKHAM'\n3. Widac przyciski START i WYJSCIE")
+    "1. Otwiera sie okno 'Cien nad Arkham'\n2. Widac napis CIEN NAD ARKHAM\n3. Widac przyciski START i WYJSCIE")
 
-add("Klikniecie START przelacza na ekran gry",
+add("Klikniecie START przelacza na ekran gry z wstepem fabularnym",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. W menu glownym kliknij START",
-    "1. Menu znika\n2. Pojawia sie tekst pierwszej sceny\n3. Widac przyciski wyborow")
+    "1. Menu znika\n2. Pojawia sie tekst wstepu (intro)\n3. Widac jeden przycisk 'Wstajesz i ruszasz w droge'")
 
 add("Wyswietlanie HP i Sanity na pasku statystyk",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
     "1. Po starcie gry sprawdz pasek na gorze",
     "1. Widac 'HP: 100' w kolorze zielonym\n2. Widac 'Sanity: 100' w kolorze niebieskim")
 
-add("Aktualizacja HP po stracie - kolor czerwony przy <30",
+add("Aktualizacja HP po stracie - kolor czerwony przy < 30",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Wysoki",
-    "1. Doprowadz HP do 25 (kilkukrotne wywazanie drzwi)\n2. Sprawdz kolor etykiety HP",
+    "1. Doprowadz HP do 25 (kilkukrotne nieudane wywazanie drzwi chaty)\n2. Sprawdz kolor etykiety HP",
     "1. Etykieta HP ma kolor czerwony (#e05555)")
 
-add("Wyswietlanie obrazka sceny (PNG)",
-    "Test funkcjonalnosci", "Windows 10 / Linux", "Sredni",
-    "1. Wrzuc plik assets/start.png (300x200)\n2. Uruchom gre i kliknij START",
-    "1. Nad tekstem sceny pojawia sie obrazek\n2. Tekst sceny widoczny pod obrazkiem")
+add("Wyswietlanie obrazka sceny (PNG z folderu tiles/)",
+    "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
+    "1. START\n2. Sprawdz obrazek nad tekstem wstepu",
+    "1. Pojawia sie grafika tiles/camp.png\n2. Tekst sceny widoczny pod obrazkiem")
 
 add("Brak pliku obrazka - graceful fallback",
     "Test destruktywny", "Windows 10 / Linux", "Sredni",
-    "1. Upewnij sie ze assets/start.png nie istnieje\n2. Uruchom gre i kliknij START",
-    "1. Brak crashu\n2. Tekst sceny i przyciski sa widoczne\n3. Nie ma pustego pola po obrazku")
+    "1. Tymczasowo przenies tiles/camp.png poza folder\n2. Uruchom gre i kliknij START",
+    "1. Brak crashu\n2. Tekst sceny i przyciski sa widoczne\n3. Pole obrazka jest schowane")
 
-add("Niepoprawny PNG - graceful fallback",
-    "Test destruktywny", "Windows 10 / Linux", "Sredni",
-    "1. Wrzuc plik assets/start.png ktory nie jest PNG (np. txt zmieniony na .png)\n2. Uruchom gre",
-    "1. Brak crashu\n2. Pole obrazka jest schowane")
-
-add("Klikniecie wyboru wykonuje przejscie",
+add("Wyswietlanie wyniku rzutu kostka (grafika kosci + tekst)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
-    "1. W ekranie gry kliknij pierwszy wybor",
+    "1. START -> rozdroze\n2. Kliknij 'Sprobuj wywazyc drzwi chaty'",
+    "1. Pojawia sie grafika tiles/dice_roll.png\n2. Pojawia sie tekst typu 'Rzut k20: 14 / prog: 12 -> SUKCES'\n3. Po kolejnym wyborze grafika znika")
+
+add("Klikniecie wyboru wykonuje przejscie miedzy wezlami",
+    "Test funkcjonalnosci", "Windows 10 / Linux", "Krytyczny",
+    "1. W ekranie gry kliknij dowolny wybor",
     "1. Tekst sceny zmienia sie na nastepny wezel\n2. Statystyki aktualizuja sie zgodnie z efektem")
 
 add("Ekran konca - zwyciestwo (kolor zielony)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Wysoki",
-    "1. Przejdz cala gre szczesliwa sciezka do final_dobry",
-    "1. Pojawia sie naglowek 'ZWYCIESTWO' w kolorze zielonym\n2. Widac przyciski 'Zagraj ponownie' i 'Wroc do menu'")
+    "1. Przejdz cala gre szczesliwa sciezka do final_dobry\n2. Sprawdz ekran konca",
+    "1. Pojawia sie grafika tiles/win.png\n2. Naglowek 'ZWYCIESTWO' w kolorze zielonym\n3. Widac przyciski 'Zagraj ponownie' i 'Wroc do menu'")
 
-add("Ekran konca - przegrana (kolor czerwony)",
+add("Ekran konca - przegrana fabularna (kolor czerwony)",
     "Test funkcjonalnosci", "Windows 10 / Linux", "Wysoki",
-    "1. Doprowadz HP do 0 (kilkukrotne wywazanie drzwi)",
-    "1. Pojawia sie naglowek 'KONIEC GRY' w kolorze czerwonym\n2. Widac przyciski 'Zagraj ponownie' i 'Wroc do menu'")
+    "1. START -> rozdroze -> rozstaje -> 'Rzuc sie z piesciami'",
+    "1. Wezel atak_potwora pokazuje grafike tiles/wolf.png\n2. Naglowek 'KONIEC GRY' w kolorze czerwonym\n3. HP = 0")
 
 
-# ── Osoba 5: Integrator i QA (TC-41..50) - testy integracyjne e2e ──
+# ── Osoba 5: Integrator i QA (TC-41..50) ──
 
-add("Pelny przebieg gry - sciezka happy path do final_dobry",
+add("Pelny przebieg - happy path przez chate (rzut sukces)",
     "Test integracyjny", "Windows 10 / Linux", "Krytyczny",
-    "1. START\n2. Idz prosto do rozstaji\n3. Zapytaj o droge",
-    "1. Gra konczy sie ekranem ZWYCIESTWO\n2. HP > 0, Sanity > 40")
+    "1. START\n2. intro -> rozdroze\n3. 'Sprobuj wywazyc drzwi chaty' az do SUKCESU\n4. 'Wyrusz droga wskazana na mapie'",
+    "1. Gra konczy sie ZWYCIESTWEM\n2. HP > 0, Sanity > 0\n3. Grafika win.png")
 
-add("Pelny przebieg gry - sciezka final_zly przez atak",
+add("Pelny przebieg - happy path przez rozstaje",
     "Test integracyjny", "Windows 10 / Linux", "Krytyczny",
-    "1. START\n2. Idz na rozstaje dowolna sciezka\n3. Wybierz 'Zaatakuj'",
-    "1. Gra konczy sie ekranem KONIEC GRY")
+    "1. START\n2. intro -> rozdroze -> 'Idz lesnym duktem'\n3. 'Zapytaj o droge'",
+    "1. Gra konczy sie ZWYCIESTWEM\n2. Sanity = 100 (warunek min 50 spelniony)")
 
-add("Pelny przebieg - smierc przez 0 HP",
-    "Test integracyjny", "Windows 10 / Linux", "Wysoki",
-    "1. START\n2. Wywazaj drzwi powtarzalnie az HP spadnie do 0",
-    "1. Gra natychmiast konczy sie ekranem KONIEC GRY")
+add("Utrata calosci sanity jednym wyborem (wpatrz sie w oczy)",
+    "Test integracyjny", "Windows 10 / Linux", "Krytyczny",
+    "1. START -> rozdroze -> jaskinia -> glebiny\n2. Wybierz 'Wpatrz sie w te oczy'",
+    "1. Przejscie do final_szalenstwo\n2. Sanity = 0\n3. Ekran KONIEC GRY z grafika gone_mad.png")
 
-add("Pelny przebieg - smierc przez 0 Sanity",
+add("Utrata calosci hp jednym wyborem (atak na starca)",
+    "Test integracyjny", "Windows 10 / Linux", "Krytyczny",
+    "1. START -> rozdroze -> rozstaje\n2. Wybierz 'Rzuc sie na niego z piesciami'",
+    "1. Przejscie do atak_potwora\n2. HP = 0\n3. Ekran KONIEC GRY z grafika wolf.png")
+
+add("Sciezka szept - nieudany test sanity prowadzi do szalenstwa",
     "Test integracyjny", "Windows 10 / Linux", "Wysoki",
-    "1. START\n2. jaskinia (-10) -> back -> jaskinia... powtorz az Sanity = 0",
-    "1. Gra natychmiast konczy sie ekranem KONIEC GRY")
+    "1. Doprowadz Sanity ponizej 50 (kilka wejsc do jaskini i glebin)\n2. Idz do rozstaje\n3. Wybierz 'Zapytaj o droge'\n4. Kliknij dalej w wezle 'szept'",
+    "1. Skok do szept (cel_porazka)\n2. Sanity spada o 30\n3. Po przycisku - final_szalenstwo")
 
 add("Restart gry przyciskiem 'Zagraj ponownie'",
     "Test integracyjny", "Windows 10 / Linux", "Wysoki",
     "1. Zakoncz gre (dowolnie)\n2. Kliknij 'Zagraj ponownie'",
-    "1. Stan resetuje sie do startowego (HP=100, Sanity=100)\n2. Gra zaczyna od wezla 'start'")
+    "1. Stan resetuje sie (HP=100, Sanity=100)\n2. Gra zaczyna od wezla 'intro'")
 
 add("Powrot do menu z trwajacej gry",
     "Test integracyjny", "Windows 10 / Linux", "Sredni",
@@ -275,29 +279,23 @@ add("Zamkniecie gry przyciskiem WYJSCIE",
     "1. W menu glownym kliknij WYJSCIE",
     "1. Okno zamyka sie\n2. Proces Pythona konczy sie czysto")
 
-add("Wszystkie 12 wezlow jest osiagalnych",
-    "Test integracyjny", "Windows 10 / Linux", "Wysoki",
-    "1. Zagraj wielokrotnie roznymi sciezkami\n2. Pokrec wybory rzutow kostka\n3. Sprawdz ze odwiedzone byly wszystkie",
-    "1. Kazdy z 12 wezlow ma sciezke prowadzaca do niego")
-
 add("Test kompatybilnosci na Windows 10",
     "Test kompatybilnosci", "Windows 10", "Krytyczny",
     "1. Sklonuj repo\n2. python --version (3.10+)\n3. python main.py",
-    "1. Gra wstaje bez bledow\n2. Tkinter renderuje okno poprawnie")
+    "1. Gra wstaje bez bledow\n2. Tkinter renderuje okno\n3. Polskie znaki widoczne")
 
 add("Test kompatybilnosci na Linux (Ubuntu/Mint)",
     "Test kompatybilnosci", "Ubuntu 22.04", "Krytyczny",
     "1. sudo apt install python3-tk\n2. git clone\n3. python3 main.py",
-    "1. Gra wstaje bez bledow\n2. Tkinter renderuje okno poprawnie")
+    "1. Gra wstaje bez bledow\n2. Tkinter renderuje okno\n3. Polskie znaki widoczne")
 
 
-# --------------------------------------------------------------------------- xlsx generation
+# --------------------------------------------------------------------------- xlsx
 
 NS = 'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"'
 
 
 def col_letter(idx):
-    """1 -> A, 27 -> AA"""
     s = ""
     while idx > 0:
         idx, r = divmod(idx - 1, 26)
@@ -317,7 +315,6 @@ def main():
     headers = ["ID", "Nazwa testu", "Typ Testu", "Konfiguracja", "Priorytet",
                "Reprodukcja", "Kryteria", "Wynik", "Bug ID", "Kryteria niepowodzenia"]
 
-    # Build shared strings
     strings = []
     string_index = {}
 
@@ -328,19 +325,16 @@ def main():
             strings.append(text)
         return string_index[text]
 
-    # Pre-register headers
     for h in headers:
         s_idx(h)
 
     rows_xml = []
 
-    # Header row
     cells = []
     for i, h in enumerate(headers):
         cells.append(cell_str(f"{col_letter(i+1)}1", s_idx(h)))
     rows_xml.append(f'<row r="1">{"".join(cells)}</row>')
 
-    # Data rows
     for idx, t in enumerate(TESTS, start=1):
         nazwa, typ, konfig, prio, reprod, kryt, wynik, bug, krit_neg = t
         row_idx = idx + 1
@@ -381,7 +375,6 @@ def main():
 </sheetData>
 </worksheet>'''
 
-    # Build sharedStrings.xml
     si_xml = []
     for s in strings:
         si_xml.append(f'<si><t xml:space="preserve">{escape(s)}</t></si>')

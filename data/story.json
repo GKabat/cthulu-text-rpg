@@ -1,125 +1,112 @@
 {
-    "start": {
-        "tekst": "Budzisz sie w opuszczonym obozie na skraju lasu Arkham. Mgla sciele sie po ziemi, a w oddali slychac szept. Co robisz?",
-        "obrazek": "assets/start.png",
+    "intro": {
+        "tekst": "Budzisz się z głową ciężką jak ołów. Wokół ciebie opuszczony obóz: rozdarty namiot, dogasające ognisko, ślady stóp prowadzące w głąb lasu. Z mgły płynie cichy szept, którego nie potrafisz zrozumieć. Nie pamiętasz, jak się tu znalazłeś.",
+        "obrazek": "tiles/camp.png",
         "wybory": [
-            {"tekst": "Wejdz do jaskini", "cel": "jaskinia", "warunek": null},
-            {"tekst": "Przeszukaj oboz", "cel": "oboz", "warunek": null},
-            {"tekst": "Sprobuj wywazyc drzwi chaty (test sily)", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"}
+            {"tekst": "Wstajesz i ruszasz w drogę.", "cel": "rozdroze", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "rozdroze": {
+        "tekst": "Wśród spróchniałych drzew wije się ścieżka. Przed sobą widzisz trzy kierunki: czarne wejście do jaskini po lewej, ledwie widoczny dukt prowadzący w głąb lasu na wprost, oraz drewniane drzwi opuszczonej chaty po prawej. Drzwi wyglądają, jakby trzymały coś za zawiasami od dawna.",
+        "obrazek": "tiles/wood_road.png",
+        "wybory": [
+            {"tekst": "Zapuść się do jaskini.", "cel": "jaskinia", "warunek": null},
+            {"tekst": "Idź leśnym duktem.", "cel": "rozstaje", "warunek": null},
+            {"tekst": "Spróbuj wyważyć drzwi chaty.", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"}
         ],
         "efekt": null,
         "zakonczone": false
     },
 
     "jaskinia": {
-        "tekst": "Wchodzisz do jaskini. Zimne powietrze uderza cie w twarz. Slyszysz daleki szept w nieznanym jezyku. Tracisz 10 punktow Sanity.",
-        "obrazek": "assets/jaskinia.png",
+        "tekst": "Zimne powietrze uderza cię w twarz, gdy stajesz pod kamiennym łukiem. Z głębi sączy się słaby, nienaturalny blask. Czujesz, jak twój umysł kurczy się przed tym, co czeka dalej.",
+        "obrazek": "tiles/cave_entrance.png",
         "wybory": [
-            {"tekst": "Idz glebiej", "cel": "glebiny", "warunek": null},
-            {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
+            {"tekst": "Idź głębiej, ku światłu.", "cel": "glebiny", "warunek": null},
+            {"tekst": "Wycofaj się na rozdroże.", "cel": "rozdroze", "warunek": null}
         ],
         "efekt": {"sanity": -10},
         "zakonczone": false
     },
 
-    "oboz": {
-        "tekst": "Przeszukujesz oboz. Pod kocem znajdujesz dziennik. Czytasz ostatni wpis - rece ci drza. Tracisz 5 Sanity.",
-        "obrazek": "assets/oboz.png",
-        "wybory": [
-            {"tekst": "Idz do jaskini", "cel": "jaskinia", "warunek": null},
-            {"tekst": "Idz do chaty", "cel": "przed_chata", "warunek": null}
-        ],
-        "efekt": {"sanity": -5},
-        "zakonczone": false
-    },
-
-    "przed_chata": {
-        "tekst": "Stoisz przed zamknieta chata. Drzwi sa solidne. Mozesz sprobowac je wywazyc albo wrocic.",
-        "obrazek": "assets/przed_chata.png",
-        "wybory": [
-            {"tekst": "Wywaz drzwi (test sily)", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"},
-            {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
-        ],
-        "efekt": null,
-        "zakonczone": false
-    },
-
-    "chata": {
-        "tekst": "Drzwi ustepuja. Wewnatrz znajdujesz mape prowadzaca do latarni morskiej. To moze byc droga ratunku.",
-        "obrazek": "assets/chata.png",
-        "wybory": [
-            {"tekst": "Idz w strone latarni morskiej", "cel": "rozstaje", "warunek": null}
-        ],
-        "efekt": null,
-        "zakonczone": false
-    },
-
-    "chata_porazka": {
-        "tekst": "Drzwi nie ustepuja. Uderzasz w nie ramieniem i tracisz 10 HP. Musisz znalezc inny sposob.",
-        "obrazek": "assets/chata.png",
-        "wybory": [
-            {"tekst": "Wroc do obozu", "cel": "start", "warunek": null}
-        ],
-        "efekt": {"hp": -10},
-        "zakonczone": false
-    },
-
     "glebiny": {
-        "tekst": "W glebi jaskini cos sie porusza. Ogromny ksztalt wylania sie z mroku. Mozesz walczyc tylko jezeli starczy Ci sil.",
-        "obrazek": "assets/glebiny.png",
+        "tekst": "Tunel rozszerza się w wielką salę. Ściany pokrywają ryte symbole, które ruszają się, kiedy ich nie patrzysz. W mroku, na końcu sali, coś otwiera oczy. Dwa płomienne, wpatrzone wprost w ciebie.",
+        "obrazek": "tiles/cave_road.png",
         "wybory": [
-            {"tekst": "Walcz (wymaga HP > 30)", "cel": "rozstaje", "warunek": {"min_hp": 30}, "cel_porazka": "ucieczka"},
-            {"tekst": "Uciekaj", "cel": "ucieczka", "warunek": null}
+            {"tekst": "Wpatrz się w te oczy. Musisz wiedzieć.", "cel": "final_szalenstwo", "warunek": null},
+            {"tekst": "Zamknij oczy i wycofaj się powoli.", "cel": "jaskinia", "warunek": null}
         ],
-        "efekt": null,
-        "zakonczone": false
-    },
-
-    "ucieczka": {
-        "tekst": "Uciekasz w panice. W ciemnosci potykasz sie i tracisz 10 HP, ale dochodzisz do rozstajow.",
-        "obrazek": "assets/ucieczka.png",
-        "wybory": [
-            {"tekst": "Idz dalej", "cel": "rozstaje", "warunek": null}
-        ],
-        "efekt": {"hp": -10},
+        "efekt": {"sanity": -10},
         "zakonczone": false
     },
 
     "rozstaje": {
-        "tekst": "Stoisz na rozstajach. Stary czlowiek w czarnym plaszczu patrzy na ciebie zimnym wzrokiem.",
-        "obrazek": "assets/rozstaje.png",
+        "tekst": "Dukt kończy się na rozstajach. Stoi tam stary człowiek owinięty w ciemny płaszcz, oparty o sękaty kij. Patrzy na ciebie spod kaptura, a jego oczy odbijają światło, którego tu nie ma.",
+        "obrazek": "tiles/old_man.png",
         "wybory": [
-            {"tekst": "Zapytaj o droge (wymaga Sanity > 40)", "cel": "final_dobry", "warunek": {"min_sanity": 40}, "cel_porazka": "szept"},
-            {"tekst": "Zaatakuj go", "cel": "final_zly", "warunek": null}
+            {"tekst": "Zapytaj go o drogę do latarni morskiej.", "cel": "final_dobry", "warunek": {"min_sanity": 50}, "cel_porazka": "szept"},
+            {"tekst": "Rzuć się na niego z pięściami.", "cel": "atak_potwora", "warunek": null}
         ],
         "efekt": null,
         "zakonczone": false
     },
 
     "szept": {
-        "tekst": "Starzec szepcze cos w nieznanym jezyku. Twoj umysl nie wytrzymuje. Tracisz 30 Sanity.",
-        "obrazek": "assets/szept.png",
+        "tekst": "Starzec uchyla wargi. Z ust dobywa się dźwięk, który nie należy do żadnego ludzkiego języka. Zwija się w tobie i znajduje miejsca, których nie chciałeś znać.",
+        "obrazek": "tiles/old_man.png",
         "wybory": [
-            {"tekst": "Idz dalej w mrok", "cel": "final_zly", "warunek": null}
+            {"tekst": "Usłyszane słowa cię wciągają.", "cel": "final_szalenstwo", "warunek": null}
         ],
         "efekt": {"sanity": -30},
         "zakonczone": false
     },
 
+    "atak_potwora": {
+        "tekst": "Twoja pięść trafia w pustkę. Płaszcz opada, a pod nim nie ma żadnego starca. Z cienia wynurza się wilcza paszcza, większa niż człowiek, ociekająca czymś czarnym. Nie zdążysz nawet krzyknąć.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [],
+        "efekt": {"hp": -100},
+        "zakonczone": true,
+        "zakonczenie": "zly"
+    },
+
+    "chata": {
+        "tekst": "Drzwi ustępują z głuchym trzaskiem. Wewnątrz zastajesz stół, dziennik i mapę przyszpiloną do ściany rdzawym nożem. Mapa prowadzi do latarni morskiej u wybrzeża, opisanej jako jedyne bezpieczne miejsce w okolicy.",
+        "obrazek": "tiles/wood_road.png",
+        "wybory": [
+            {"tekst": "Wyrusz drogą wskazaną na mapie.", "cel": "final_dobry", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "chata_porazka": {
+        "tekst": "Drzwi nie ustępują. Uderzasz w nie ramieniem raz, drugi, trzeci, aż w boku coś chrupie. Cofasz się dysząc, z bólem rozchodzącym się po piersi.",
+        "obrazek": "tiles/wood_road.png",
+        "wybory": [
+            {"tekst": "Wracaj na rozdroże, pomyśl od nowa.", "cel": "rozdroze", "warunek": null}
+        ],
+        "efekt": {"hp": -10},
+        "zakonczone": false
+    },
+
     "final_dobry": {
-        "tekst": "Docierasz do latarni morskiej. Swiatlo rozprasza mrok. Przezyles noc w Arkham.",
-        "obrazek": "assets/final_dobry.png",
+        "tekst": "Latarnia morska wystaje z mgły jak biały kieł. Światło z jej szczytu rozcina mrok, w którym tonęły lasy Arkham. Klucznik otwiera ci drzwi bez słowa. Przeżyłeś tę noc.",
+        "obrazek": "tiles/win.png",
         "wybory": [],
         "efekt": null,
         "zakonczone": true,
         "zakonczenie": "dobry"
     },
 
-    "final_zly": {
-        "tekst": "Mgla pochlania cie calkowicie. Twoja swiadomosc rozplywa sie w ciemnosci. Koniec.",
-        "obrazek": "assets/final_zly.png",
+    "final_szalenstwo": {
+        "tekst": "Twoje oczy są otwarte, ale nie widzą już niczego z tego świata. Coś zajęło miejsce w środku ciebie i to ono teraz patrzy. Twoje ciało chodzi dalej leśnymi ścieżkami, ale to już nie ty.",
+        "obrazek": "tiles/gone_mad.png",
         "wybory": [],
-        "efekt": null,
+        "efekt": {"sanity": -100},
         "zakonczone": true,
         "zakonczenie": "zly"
     }

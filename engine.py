@@ -25,6 +25,8 @@ def pobierz_wezel(fabula, id_wezla):
 
 def sprawdz_warunek(warunek, stan):
     # Sprawdza czy gracz spelnia warunek wyboru.
+    # Gdy warunek wymaga rzutu kostka, zapisuje wynik do stan["ostatni_rzut"]
+    # zeby GUI mogle pokazac graczowi wynik po dokonaniu wyboru.
     if warunek is None:
         return True
 
@@ -32,7 +34,13 @@ def sprawdz_warunek(warunek, stan):
         wynik = rzut_koscia(20)
         prog = warunek.get("prog", 10)
         sukces = sprawdz_rzut(wynik, prog)
-        print("[engine] Rzut k20:", wynik, "prog:", prog, "->", "SUKCES" if sukces else "PORAZKA")
+        stan["ostatni_rzut"] = {
+            "wynik": wynik,
+            "prog": prog,
+            "sukces": sukces,
+        }
+        print("[engine] Rzut k20:", wynik, "prog:", prog, "->",
+              "SUKCES" if sukces else "PORAZKA")
         return sukces
 
     if "min_hp" in warunek:
@@ -104,8 +112,18 @@ if __name__ == "__main__":
         print(wezel["tekst"])
         print("HP:", stan["hp"], "| Sanity:", stan["sanity"])
 
+        if stan.get("ostatni_rzut"):
+            r = stan["ostatni_rzut"]
+            wynik_txt = "SUKCES" if r["sukces"] else "PORAZKA"
+            print(">> Rzut k20:", r["wynik"], "/ prog:", r["prog"], "->", wynik_txt)
+            stan["ostatni_rzut"] = None
+
         if czy_koniec(wezel):
             print("=== KONIEC GRY ===")
+            break
+
+        if stan["hp"] <= 0 or stan["sanity"] <= 0:
+            print("=== KONIEC GRY (HP/Sanity = 0) ===")
             break
 
         wybory = wezel["wybory"]
@@ -115,10 +133,7 @@ if __name__ == "__main__":
 
         i = 0
         while i < len(wybory):
-            opis_warunku = ""
-            if wybory[i].get("warunek") is not None:
-                opis_warunku = " [test!]"
-            print(" [" + str(i) + "]", wybory[i]["tekst"] + opis_warunku)
+            print(" [" + str(i) + "]", wybory[i]["tekst"])
             i = i + 1
 
         wpis = input("Wybierz numer: ")

@@ -26,9 +26,10 @@
   - 5 x: imie i nazwisko czlonka zespolu + nr albumu
 - Place'holder `[do uzupelnienia]` zostal w 11 miejscach.
 
-### Grafiki PNG (opcjonalnie - gra dziala bez nich)
-- [ ] Wygenerowac/narysowac 11 obrazkow do `assets/` (lista w `assets/README.md`)
-- Jezeli nie ma plikow, gra dziala bez obrazkow (graceful fallback).
+### Grafiki PNG (juz w repo, folder `tiles/`)
+- [x] camp.png, cave_entrance.png, cave_road.png, dice_roll.png, evil_eyes.png,
+      gone_mad.png, old_man.png, win.png, wolf.png, wood_road.png
+- Mozna podmienic na ladniejsze - struktura wezlow w story.json zostanie taka sama.
 
 ### Diagramy (1 na osobe = 5 sztuk)
 - [ ] Diagram przypadkow uzycia (use case) - `others/Use Case.drawio` juz jest
