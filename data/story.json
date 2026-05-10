@@ -14,7 +14,7 @@
         "obrazek": "tiles/wood_road.png",
         "wybory": [
             {"tekst": "Zapuść się do jaskini.", "cel": "jaskinia", "warunek": null},
-            {"tekst": "Idź leśnym duktem.", "cel": "rozstaje", "warunek": null},
+            {"tekst": "Idź leśnym duktem.", "cel": "polana", "warunek": null},
             {"tekst": "Spróbuj wyważyć drzwi chaty.", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"}
         ],
         "efekt": null,
@@ -43,14 +43,76 @@
         "zakonczone": false
     },
 
+    "polana": {
+        "tekst": "Dukt wyprowadza cię na niewielką polanę. Pośrodku, między pniami, stoi wilk. Większy niż każdy, którego widziałeś, z karkiem zjeżonym i wargami uniesionymi nad białymi kłami. Patrzy na ciebie spokojnie, jakby od dawna wiedział, że przyjdziesz.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [
+            {"tekst": "Stań do walki.", "cel": "triumf_wilk", "warunek": {"rzut_koscia": true, "prog": 13}, "cel_porazka": "kleski_wilk"},
+            {"tekst": "Cofnij się powoli i okrąż polanę bokiem.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "triumf_wilk": {
+        "tekst": "Bestia rzuca się na ciebie, ale ty robisz krok w bok. Twoja ręka znajduje kamień, kamień znajduje skroń. Wilk pada bez głosu. Klękasz nad ciałem i wyłamujesz jeden z górnych kłów. Trzymasz go w dłoni jak drogocenny medalion.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [
+            {"tekst": "Idź dalej leśnym duktem.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"dodaj_przedmiot": "kieł wilka"},
+        "zakonczone": false
+    },
+
+    "kleski_wilk": {
+        "tekst": "Wilk jest szybszy. Kły rozcinają ci ramię, zanim zdążysz się zasłonić. Padasz w błoto, krwawisz i zwijasz się odruchowo, czekając na cios, który nie nadchodzi. Kiedy podnosisz głowę, polana jest pusta.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [
+            {"tekst": "Zatamuj krew i ruszaj dalej.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"hp": -25},
+        "zakonczone": false
+    },
+
     "rozstaje": {
-        "tekst": "Dukt kończy się na rozstajach. Stoi tam stary człowiek owinięty w ciemny płaszcz, oparty o sękaty kij. Patrzy na ciebie spod kaptura, a jego oczy odbijają światło, którego tu nie ma.",
+        "tekst": "Dukt kończy się na rozstajach. Stoi tam stary człowiek owinięty w ciemny płaszcz, oparty o sękaty kij. Patrzy na ciebie spod kaptura, a jego oczy odbijają światło, którego tu nie ma. W oddali, między drzewami, niesie się dziwny szept.",
         "obrazek": "tiles/old_man.png",
         "wybory": [
             {"tekst": "Zapytaj go o drogę do latarni morskiej.", "cel": "final_dobry", "warunek": {"min_sanity": 50}, "cel_porazka": "szept"},
-            {"tekst": "Rzuć się na niego z pięściami.", "cel": "atak_potwora", "warunek": null}
+            {"tekst": "Wsłuchaj się w szept dochodzący z lasu.", "cel": "dziwny_szept", "warunek": null},
+            {"tekst": "Rzuć się na niego z pięściami.", "cel": "walka_z_cieniem", "warunek": null}
         ],
         "efekt": null,
+        "zakonczone": false
+    },
+
+    "dziwny_szept": {
+        "tekst": "Wchodzisz między drzewa, kierując się za dźwiękiem. Im głębiej, tym wyraźniejszy. Coś w nim drapie po wnętrzu czaszki, sączy się między myśli. Próbujesz utrzymać uwagę, oddzielić siebie od tego dźwięku.",
+        "obrazek": "tiles/cave_entrance.png",
+        "wybory": [
+            {"tekst": "Spróbuj zrozumieć szept i nie dać mu się porwać.", "cel": "slodki_smiech", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "krzyki"}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+
+    "slodki_smiech": {
+        "tekst": "W szepcie odnajdujesz porządek. Z chaosu wyłania się dziecięcy śmiech – jasny, beztroski, niemożliwy w tym lesie. Z powodów, których nie umiesz nazwać, śmiech ten cię nie przeraża. Pokrzepia. Oddychasz głębiej i czujesz, jak coś w głowie się poukłada.",
+        "obrazek": "tiles/camp.png",
+        "wybory": [
+            {"tekst": "Wracaj na rozstaje.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"sanity": 20},
+        "zakonczone": false
+    },
+
+    "krzyki": {
+        "tekst": "Szept eksploduje. Z każdej strony, z każdego drzewa, dobywają się krzyki – potępieńcze, zlewające się w jeden chór, który wykrzykuje twoje imię i przepowiada, kiedy umrzesz. Cofasz się chwiejnie, dłońmi zatykając uszy.",
+        "obrazek": "tiles/evil_eyes.png",
+        "wybory": [
+            {"tekst": "Wycofaj się na rozstaje.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"sanity": -20},
         "zakonczone": false
     },
 
@@ -64,9 +126,9 @@
         "zakonczone": false
     },
 
-    "atak_potwora": {
-        "tekst": "Twoja pięść trafia w pustkę. Płaszcz opada, a pod nim nie ma żadnego starca. Z cienia wynurza się wilcza paszcza, większa niż człowiek, ociekająca czymś czarnym. Nie zdążysz nawet krzyknąć.",
-        "obrazek": "tiles/wolf.png",
+    "walka_z_cieniem": {
+        "tekst": "Twoja pięść trafia w pustkę. Płaszcz opada, a pod nim nie ma żadnego starca – tylko cień, który zaciska się wokół twojej piersi. Czujesz, jak coś w środku ciebie po prostu gaśnie.",
+        "obrazek": "tiles/evil_eyes.png",
         "wybory": [],
         "efekt": {"hp": -100},
         "zakonczone": true,
