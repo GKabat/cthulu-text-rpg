@@ -286,21 +286,27 @@ def utworz_okno():
     WRAPLENGTH_PRZYCISK = szer_kontentu - 80
 
     # ── Menu glowne ──────────────────────────────────────────────
+    # Uzywamy Canvas zamiast Frame+Label, zeby polozyc ramke NA WIERZCHU
+    # kontentu (jak w starych przygodowkach). Canvas natywnie obsluguje
+    # alfa PNG - srodek ramki przepuszcza widok kontentu, brzegi
+    # przykrywaja wszystko co tam wystaje.
     ramka_menu = tk.Frame(root, bg="#1a0f0a")
-
-    if obrazek_ramki is not None:
-        tlo_menu = tk.Label(ramka_menu, image=obrazek_ramki, bg="#1a0f0a", borderwidth=0)
-        tlo_menu.place(x=0, y=0)
-
-    # WAZNE: niektore wersje Tk nie kompozytuja kanalu alpha PNG wzgledem
-    # bg Label'a (na ekranie pojawia sie szachownica). Dlatego kladziemy
-    # solidny Frame na wierzch Label'a, ktory wlasnym tlem przykrywa
-    # przezroczysty srodek ramki. Tu sa elementy menu.
-    kontent_menu = tk.Frame(ramka_menu, bg="#1a0f0a")
-    kontent_menu.place(
-        x=MARG_BOK, y=MARG_GORA,
-        width=szer_kontentu, height=wys_kontentu,
+    canvas_menu = tk.Canvas(
+        ramka_menu, width=SZER_OKNA, height=WYS_OKNA,
+        bg="#1a0f0a", highlightthickness=0,
     )
+    canvas_menu.place(x=0, y=0)
+
+    # Kontent menu jako Frame osadzony w Canvas (najpierw, zeby byl pod ramka).
+    kontent_menu = tk.Frame(canvas_menu, bg="#1a0f0a")
+    canvas_menu.create_window(
+        0, 0, anchor="nw", window=kontent_menu,
+        width=SZER_OKNA, height=WYS_OKNA,
+    )
+
+    # Ramka jako image w Canvas - dodana po kontent_menu, czyli na wierzchu.
+    if obrazek_ramki is not None:
+        canvas_menu.create_image(0, 0, anchor="nw", image=obrazek_ramki)
 
     tk.Label(
         kontent_menu, text="CIEN NAD ARKHAM",
@@ -331,18 +337,24 @@ def utworz_okno():
     ).place(relx=0.5, rely=0.70, anchor="center")
 
     # ── Ekran gry ────────────────────────────────────────────────
+    # Canvas tak samo jak w menu - ramka na wierzchu kontent_gra.
     ramka_gra = tk.Frame(root, bg="#1a0f0a")
+    canvas_gra = tk.Canvas(
+        ramka_gra, width=SZER_OKNA, height=WYS_OKNA,
+        bg="#1a0f0a", highlightthickness=0,
+    )
+    canvas_gra.place(x=0, y=0)
 
-    if obrazek_ramki is not None:
-        tlo_gra = tk.Label(ramka_gra, image=obrazek_ramki, bg="#1a0f0a", borderwidth=0)
-        tlo_gra.place(x=0, y=0)
-
-    # Kontent gry - w srodku ramki, z marginesami na ozdobne brzegi.
-    kontent_gra = tk.Frame(ramka_gra, bg="#1a0f0a")
-    kontent_gra.place(
-        x=MARG_BOK, y=MARG_GORA,
+    # Kontent gry - osadzony w Canvas, z marginesami na ozdobne brzegi ramki.
+    kontent_gra = tk.Frame(canvas_gra, bg="#1a0f0a")
+    canvas_gra.create_window(
+        MARG_BOK, MARG_GORA, anchor="nw", window=kontent_gra,
         width=szer_kontentu, height=wys_kontentu,
     )
+
+    # Ramka image na wierzchu kontentu.
+    if obrazek_ramki is not None:
+        canvas_gra.create_image(0, 0, anchor="nw", image=obrazek_ramki)
 
     # Pasek statystyk u gory kontentu
     ramka_stat = tk.Frame(kontent_gra, bg="#0d0705")
