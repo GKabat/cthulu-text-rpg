@@ -79,16 +79,23 @@ Petla konczy sie przez `break`, gdy gra dojdzie do wezla z `zakonczone: true` al
 
 Tkinter od Pythona 3.9 sam czyta pliki PNG przez `tk.PhotoImage(file="sciezka")`. Nie potrzeba `Pillow`. Jezeli pliku nie ma na dysku, funkcja `wyswietl_obrazek()` po prostu chowa pole obrazka i nic sie nie psuje.
 
+Grafiki sa w folderze `tiles/` (np. `tiles/camp.png`, `tiles/old_man.png`). Kazdy wezel w `data/story.json` ma pole `obrazek` ze sciezka do pliku.
+
+## 8. Jak dziala wyswietlanie wyniku rzutu?
+
+Gdy gracz klika wybor wymagajacy rzutu kostka, w `engine.sprawdz_warunek()` losuje sie wynik k20 i jest zapisywany do `stan["ostatni_rzut"]`. Funkcja `wyswietl_rzut()` w GUI sprawdza ten klucz po kazdym wyborze - jak nie jest None, pokazuje grafike kosci (`tiles/dice_roll.png`) i tekst typu "Rzut k20: 14 / prog: 12 -> SUKCES" w osobnej ramce nad opisem sceny. Po wyswietleniu czyscimy klucz, zeby informacja nie zostala na stale.
+
 ## 8. Jak testowalismy (recznie)?
 
 Recznie testowalem chodzac po grze:
-1. **Sciezka happy-path**: start -> chata (rzut sukces) -> rozstaje -> zapytaj -> final_dobry. Sprawdzam czy gra konczy sie zwyciestwem.
-2. **Sciezka zla**: start -> jaskinia (Sanity -10) -> glebiny -> ucieczka (HP -10) -> rozstaje -> zaatakuj -> final_zly.
-3. **Test rzutu kością**: start -> chata. Czasami sie udaje, czasami nie. Jak nie, leci do `chata_porazka` i tracimy 10 HP.
-4. **Test warunku Sanity**: idz tak zeby Sanity spadlo ponizej 40, potem na rozstajach przycisk "Zapytaj" leci do `szept` zamiast `final_dobry`.
-5. **Test konca przez 0 HP/Sanity**: bije sciane chaty kilka razy az HP spadnie do 0 - gra konczy sie zlym ekranem.
+1. **Sciezka happy-path przez rozstaje**: intro -> rozdroze -> rozstaje -> "Zapytaj o droge" (sanity 100, warunek min 50 spelniony) -> final_dobry. Konczy sie ZWYCIESTWEM.
+2. **Sciezka happy-path przez chate**: intro -> rozdroze -> "Wywaz drzwi chaty" (rzut udany >= 12) -> chata -> mapa -> final_dobry.
+3. **Sciezka utraty sanity (single-click)**: intro -> rozdroze -> jaskinia (-10 san) -> glebiny (-10) -> "Wpatrz sie w te oczy" -> final_szalenstwo (-100 san). Sanity zeruje sie jednym wyborem.
+4. **Sciezka utraty hp (single-click)**: intro -> rozdroze -> rozstaje -> "Rzuc sie z piesciami" -> atak_potwora (hp -100). HP zeruje sie jednym wyborem.
+5. **Sciezka szeptu (warunek niespelniony)**: doprowadz Sanity ponizej 50 (np. przez kilka wejsc do jaskini), potem rozstaje -> "Zapytaj o droge" -> trafiamy do szept (cel_porazka) zamiast final_dobry.
+6. **Test rzutu kostka**: rozdroze -> "Wywaz drzwi chaty". Czasami sukces (chata), czasami porazka (chata_porazka, hp -10). Po rzucie GUI pokazuje grafike kosci i wynik.
 
-Plus uruchomienie samego silnika z konsoli: `python engine.py` - chodzi po grze bez okna, tylko tekst. To pomoglo mi szybko sprawdzic logike.
+Plus uruchomienie samego silnika z konsoli: `python engine.py` - chodzi po grze bez okna, tylko tekst. To pomoglo mi szybko sprawdzic logike bez czekania az narysuje sie GUI.
 
 ---
 
