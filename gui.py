@@ -51,6 +51,10 @@ biezacy_obrazek = None
 obrazek_kosci = None
 obrazek_ramki = None
 
+# Szerokosc zawijania tekstu - ustalana w utworz_okno wg rozmiaru kontentu.
+WRAPLENGTH_TEKST = 900
+WRAPLENGTH_PRZYCISK = 820
+
 
 def zaladuj_dane():
     global fabula, stan
@@ -164,7 +168,7 @@ def wyswietl_wybory(wybory):
             font=("Georgia", 11),
             bg="#2a1a0e", fg="#e8d5b0",
             relief="flat",
-            wraplength=820,
+            wraplength=WRAPLENGTH_PRZYCISK,
             command=lambda w=wybor: obsluz_wybor(w),
         )
         przycisk.pack(fill="x", padx=20, pady=4)
@@ -236,13 +240,16 @@ def utworz_okno():
     global etykieta_obrazka, etykieta_kosci, etykieta_rzut_tekst
     global etykieta_tekst, etykieta_hp, etykieta_sanity, etykieta_ekw, ramka_wyborow
     global obrazek_ramki
+    global SZER_OKNA, WYS_OKNA, MARG_GORA, MARG_DOL, MARG_BOK
+    global WRAPLENGTH_TEKST, WRAPLENGTH_PRZYCISK
 
     root = tk.Tk()
     root.title("Cien nad Arkham")
-    root.geometry(str(SZER_OKNA) + "x" + str(WYS_OKNA))
     root.configure(bg="#000000")
 
-    # Wczytujemy ramke raz - wspoldzielona przez menu i ekran gry.
+    # ── Wczytywanie ramki + dopasowanie do ekranu ────────────────
+    # Ramka frame.png ma 1184x912. Na malych ekranach (np. 1366x768)
+    # to za duzo - skalujemy 2x w dol przez subsample, co daje 592x456.
     obrazek_ramki = None
     if os.path.exists(FRAME_PATH):
         try:
@@ -250,43 +257,78 @@ def utworz_okno():
         except tk.TclError:
             obrazek_ramki = None
 
+    szer_ekranu = root.winfo_screenwidth()
+    wys_ekranu = root.winfo_screenheight()
+
+    # Jezeli ekran nie pomiesci pelnej ramki (1184x912 + miejsce na pasek
+    # zadan i tytul okna), uzywamy wersji zmniejszonej 2x.
+    if szer_ekranu < 1240 or wys_ekranu < 1000:
+        if obrazek_ramki is not None:
+            obrazek_ramki = obrazek_ramki.subsample(2, 2)
+        SZER_OKNA = 592
+        WYS_OKNA = 456
+        MARG_GORA = 45
+        MARG_DOL = 55
+        MARG_BOK = 65
+    else:
+        SZER_OKNA = 1184
+        WYS_OKNA = 912
+        MARG_GORA = 90
+        MARG_DOL = 110
+        MARG_BOK = 130
+
+    root.geometry(str(SZER_OKNA) + "x" + str(WYS_OKNA))
+
+    szer_kontentu = SZER_OKNA - 2 * MARG_BOK
+    wys_kontentu = WYS_OKNA - MARG_GORA - MARG_DOL
+
+    WRAPLENGTH_TEKST = szer_kontentu - 40
+    WRAPLENGTH_PRZYCISK = szer_kontentu - 80
+
     # ── Menu glowne ──────────────────────────────────────────────
     ramka_menu = tk.Frame(root, bg="#1a0f0a")
 
-    # WAZNE: bg Label'a tla MUSI byc taki sam jak tlo srodka ramki -
-    # ramka jest PNG z alpha, przezroczyste obszary pokazuja kolor Label'a.
-    # Bez bg Tk uzyje domyslnego szarego, co da widoczne "okienka" w srodku.
     if obrazek_ramki is not None:
         tlo_menu = tk.Label(ramka_menu, image=obrazek_ramki, bg="#1a0f0a", borderwidth=0)
         tlo_menu.place(x=0, y=0)
 
+    # WAZNE: niektore wersje Tk nie kompozytuja kanalu alpha PNG wzgledem
+    # bg Label'a (na ekranie pojawia sie szachownica). Dlatego kladziemy
+    # solidny Frame na wierzch Label'a, ktory wlasnym tlem przykrywa
+    # przezroczysty srodek ramki. Tu sa elementy menu.
+    kontent_menu = tk.Frame(ramka_menu, bg="#1a0f0a")
+    kontent_menu.place(
+        x=MARG_BOK, y=MARG_GORA,
+        width=szer_kontentu, height=wys_kontentu,
+    )
+
     tk.Label(
-        ramka_menu, text="CIEN NAD ARKHAM",
-        font=("Georgia", 30, "bold"),
+        kontent_menu, text="CIEN NAD ARKHAM",
+        font=("Georgia", 26, "bold"),
         bg="#1a0f0a", fg="#c8a96e",
     ).place(relx=0.5, rely=0.30, anchor="center")
 
     tk.Label(
-        ramka_menu, text="Tekstowe RPG w klimacie Cthulhu",
-        font=("Georgia", 13, "italic"),
+        kontent_menu, text="Tekstowe RPG w klimacie Cthulhu",
+        font=("Georgia", 12, "italic"),
         bg="#1a0f0a", fg="#888",
-    ).place(relx=0.5, rely=0.36, anchor="center")
+    ).place(relx=0.5, rely=0.40, anchor="center")
 
     tk.Button(
-        ramka_menu, text="START",
-        font=("Georgia", 14, "bold"),
+        kontent_menu, text="START",
+        font=("Georgia", 13, "bold"),
         bg="#4a2a1e", fg="#e8d5b0", relief="flat",
-        width=20, height=2,
+        width=18, height=2,
         command=nowa_gra,
-    ).place(relx=0.5, rely=0.50, anchor="center")
+    ).place(relx=0.5, rely=0.55, anchor="center")
 
     tk.Button(
-        ramka_menu, text="WYJSCIE",
-        font=("Georgia", 12),
+        kontent_menu, text="WYJSCIE",
+        font=("Georgia", 11),
         bg="#2a1a0e", fg="#888", relief="flat",
-        width=20, height=2,
+        width=18, height=2,
         command=root.quit,
-    ).place(relx=0.5, rely=0.58, anchor="center")
+    ).place(relx=0.5, rely=0.70, anchor="center")
 
     # ── Ekran gry ────────────────────────────────────────────────
     ramka_gra = tk.Frame(root, bg="#1a0f0a")
@@ -299,8 +341,7 @@ def utworz_okno():
     kontent_gra = tk.Frame(ramka_gra, bg="#1a0f0a")
     kontent_gra.place(
         x=MARG_BOK, y=MARG_GORA,
-        width=SZER_OKNA - 2 * MARG_BOK,
-        height=WYS_OKNA - MARG_GORA - MARG_DOL,
+        width=szer_kontentu, height=wys_kontentu,
     )
 
     # Pasek statystyk u gory kontentu
@@ -355,7 +396,7 @@ def utworz_okno():
         kontent_gra, text="",
         font=("Georgia", 12),
         bg="#1a0f0a", fg="#e8d5b0",
-        wraplength=900, justify="left", anchor="w",
+        wraplength=WRAPLENGTH_TEKST, justify="left", anchor="w",
     )
     etykieta_tekst.pack(fill="x", padx=20, pady=10)
 
