@@ -11,6 +11,7 @@ def inicjalizuj_stan(config):
         "sanity": postac["sanity"],
         "nazwa_postaci": postac["nazwa"],
         "odwiedzone": [],
+        "ekwipunek": [],
         # Informacja o ostatnim rzucie kostka. None gdy nic nie rzucalismy.
         # Ustawiana w engine.sprawdz_warunek, czyszczona przez gui po wyswietleniu.
         "ostatni_rzut": None,
@@ -19,8 +20,13 @@ def inicjalizuj_stan(config):
 
 
 def aktualizuj_stan(stan, efekt):
-    # Zmienia HP i Sanity wedlug efektu, np. {"hp": -10, "sanity": -5}.
-    # Wartosci sa trzymane w przedziale 0..100.
+    # Zmienia HP, Sanity i ekwipunek wedlug efektu.
+    # Przyklady efektow:
+    #   {"hp": -10}                         - utrata 10 hp
+    #   {"sanity": -10}                     - utrata 10 sanity
+    #   {"sanity": 20}                      - dodanie 20 sanity (max 100)
+    #   {"hp": -5, "sanity": -10}           - oba na raz
+    #   {"dodaj_przedmiot": "kiel wilka"}   - przedmiot do ekwipunku
     if efekt is None:
         return stan
 
@@ -37,6 +43,9 @@ def aktualizuj_stan(stan, efekt):
             stan["sanity"] = 0
         if stan["sanity"] > 100:
             stan["sanity"] = 100
+
+    if "dodaj_przedmiot" in efekt:
+        stan["ekwipunek"].append(efekt["dodaj_przedmiot"])
 
     return stan
 
