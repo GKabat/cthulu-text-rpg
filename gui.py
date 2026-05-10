@@ -21,9 +21,12 @@ FRAME_PATH = "tiles/frame.png"
 SZER_OKNA = 1184
 WYS_OKNA = 912
 
-# Margines wewnetrzny zostawiajacy miejsce na ozdobne brzegi ramki.
-# Kontent gry mieci sie w obszarze (SZER_OKNA - 2*MARGINES) x (WYS_OKNA - 2*MARGINES).
-MARGINES = 70
+# Marginesy wewnetrzne zostawiajace miejsce na ozdobne brzegi ramki.
+# Kontent gry mieci sie w obszarze (SZER - 2*MARG_BOK) x (WYS - MARG_GORA - MARG_DOL).
+# Wartosci dobrane do tiles/frame.png. Zwieksz jezeli ramka jest cieta.
+MARG_GORA = 90
+MARG_DOL = 110
+MARG_BOK = 130
 
 
 # Zmienne globalne GUI.
@@ -250,8 +253,11 @@ def utworz_okno():
     # ── Menu glowne ──────────────────────────────────────────────
     ramka_menu = tk.Frame(root, bg="#1a0f0a")
 
+    # WAZNE: bg Label'a tla MUSI byc taki sam jak tlo srodka ramki -
+    # ramka jest PNG z alpha, przezroczyste obszary pokazuja kolor Label'a.
+    # Bez bg Tk uzyje domyslnego szarego, co da widoczne "okienka" w srodku.
     if obrazek_ramki is not None:
-        tlo_menu = tk.Label(ramka_menu, image=obrazek_ramki, borderwidth=0)
+        tlo_menu = tk.Label(ramka_menu, image=obrazek_ramki, bg="#1a0f0a", borderwidth=0)
         tlo_menu.place(x=0, y=0)
 
     tk.Label(
@@ -286,15 +292,15 @@ def utworz_okno():
     ramka_gra = tk.Frame(root, bg="#1a0f0a")
 
     if obrazek_ramki is not None:
-        tlo_gra = tk.Label(ramka_gra, image=obrazek_ramki, borderwidth=0)
+        tlo_gra = tk.Label(ramka_gra, image=obrazek_ramki, bg="#1a0f0a", borderwidth=0)
         tlo_gra.place(x=0, y=0)
 
-    # Kontent gry - w srodku ramki, z marginesem na ozdobne brzegi.
+    # Kontent gry - w srodku ramki, z marginesami na ozdobne brzegi.
     kontent_gra = tk.Frame(ramka_gra, bg="#1a0f0a")
     kontent_gra.place(
-        x=MARGINES, y=MARGINES,
-        width=SZER_OKNA - 2 * MARGINES,
-        height=WYS_OKNA - 2 * MARGINES,
+        x=MARG_BOK, y=MARG_GORA,
+        width=SZER_OKNA - 2 * MARG_BOK,
+        height=WYS_OKNA - MARG_GORA - MARG_DOL,
     )
 
     # Pasek statystyk u gory kontentu
