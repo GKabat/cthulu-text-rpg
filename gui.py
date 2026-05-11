@@ -55,6 +55,10 @@ obrazek_ramki = None
 WRAPLENGTH_TEKST = 900
 WRAPLENGTH_PRZYCISK = 820
 
+# Maksymalna wysokosc obrazka sceny - ustalana w utworz_okno wg trybu (full/half).
+# Wieksze tile sa zmniejszane przez subsample (integer divisor).
+MAX_WYS_OBRAZKA = 260
+
 
 def zaladuj_dane():
     global fabula, stan
@@ -103,10 +107,18 @@ def aktualizuj_ekwipunek(ekwipunek):
 
 def wyswietl_obrazek(sciezka):
     # Tkinter natywnie obsluguje PNG od Pythona 3.9.
+    # Jezeli obrazek jest wyzszy niz MAX_WYS_OBRAZKA, zmniejszamy go
+    # przez subsample (integer divisor: 2, 3, 4 ...) zeby sie miescil.
     global biezacy_obrazek
     if sciezka is not None and os.path.exists(sciezka):
         try:
-            biezacy_obrazek = tk.PhotoImage(file=sciezka)
+            img = tk.PhotoImage(file=sciezka)
+            factor = 1
+            while img.height() // factor > MAX_WYS_OBRAZKA:
+                factor = factor + 1
+            if factor > 1:
+                img = img.subsample(factor, factor)
+            biezacy_obrazek = img
             etykieta_obrazka.config(image=biezacy_obrazek)
             etykieta_obrazka.pack(pady=10)
             return
@@ -241,7 +253,7 @@ def utworz_okno():
     global etykieta_tekst, etykieta_hp, etykieta_sanity, etykieta_ekw, ramka_wyborow
     global obrazek_ramki
     global SZER_OKNA, WYS_OKNA, MARG_GORA, MARG_DOL, MARG_BOK
-    global WRAPLENGTH_TEKST, WRAPLENGTH_PRZYCISK
+    global WRAPLENGTH_TEKST, WRAPLENGTH_PRZYCISK, MAX_WYS_OBRAZKA
 
     root = tk.Tk()
     root.title("Cien nad Arkham")
@@ -267,15 +279,17 @@ def utworz_okno():
             obrazek_ramki = obrazek_ramki.subsample(2, 2)
         SZER_OKNA = 592
         WYS_OKNA = 456
-        MARG_GORA = 70
-        MARG_DOL = 70
-        MARG_BOK = 80
+        MARG_GORA = 62
+        MARG_DOL = 66
+        MARG_BOK = 76
+        MAX_WYS_OBRAZKA = 130
     else:
         SZER_OKNA = 1184
         WYS_OKNA = 912
-        MARG_GORA = 140
-        MARG_DOL = 140
-        MARG_BOK = 160
+        MARG_GORA = 132
+        MARG_DOL = 136
+        MARG_BOK = 156
+        MAX_WYS_OBRAZKA = 260
 
     root.geometry(str(SZER_OKNA) + "x" + str(WYS_OKNA))
 
