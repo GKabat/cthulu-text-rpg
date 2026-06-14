@@ -1,0 +1,10 @@
+{
+    "tytul": "Cień nad Arkham",
+    "wersja": "2.0",
+    "postac": {
+        "nazwa": "Badacz",
+        "hp": 100,
+        "sanity": 100
+    },
+    "start_wezel": "intro"
+}
