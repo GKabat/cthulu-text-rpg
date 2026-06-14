@@ -1,0 +1,175 @@
+{
+    "intro": {
+        "tekst": "Budzisz się z głową ciężką jak nasiąknięta deszczem ziemia. Wokół rozpełzł się opuszczony obóz: rozdarty namiot, ognisko zdławione do kilku sennych węgli, ślady stóp grzęznące w mchu i ginące w głębi lasu. Z mgły sączy się szept - cienki, cierpliwy, ułożony w słowa, których twój język wzdraga się powtórzyć. Nie pamiętasz własnego imienia ani tego, co przywiodło cię w to miejsce.",
+        "obrazek": "tiles/camp.png",
+        "wybory": [
+            {"tekst": "Podnieść się i ruszyć przed siebie.", "cel": "rozdroze", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "rozdroze": {
+        "tekst": "Ścieżka wije się między spróchniałymi pniami, które stoją zbyt nieruchomo jak na żywy las. Przed tobą rozdziela się na trzy. Po lewej czerń jaskini, z której bije chłód starszy niż kamień. Na wprost ledwie widoczny dukt tonie w mroku. Po prawej drewniane drzwi opuszczonej chaty - wzdęte od wilgoci, jakby od dawna trzymały coś za zawiasami.",
+        "obrazek": "tiles/wood_road.png",
+        "wybory": [
+            {"tekst": "Zejść w czeluść jaskini.", "cel": "jaskinia", "warunek": null},
+            {"tekst": "Pójść leśnym duktem.", "cel": "polana", "warunek": null},
+            {"tekst": "Naprzeć ramieniem na drzwi chaty.", "cel": "chata", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "jaskinia": {
+        "tekst": "Powietrze pod kamiennym łukiem jest zimne jak dotyk topielca. Z głębi sączy się blask, którego barwy nie nazwie żaden ludzki język - nie żółty, nie zielony, lecz coś, co oko przyjmuje wbrew sobie. Czujesz, jak twoja myśl kurczy się i cofa, jakby już wiedziała, co czeka dalej.",
+        "obrazek": "tiles/cave_entrance.png",
+        "wybory": [
+            {"tekst": "Zagłębić się ku światłu.", "cel": "glebiny", "warunek": null},
+            {"tekst": "Wycofać się na rozdroże.", "cel": "rozdroze", "warunek": null}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+
+    "glebiny": {
+        "tekst": "Tunel rozstępuje się w salę zbyt wielką, by zmieścić ją pod tym wzgórzem. Ściany pokrywają ryte znaki, które pełzną i przestawiają się, ilekroć przestajesz na nie patrzeć. W najdalszym mroku coś otwiera oczy - dwa płomienie bez ciepła, wpatrzone w ciebie z cierpliwością, jaką ma tylko wieczność.",
+        "obrazek": "tiles/cave_road.png",
+        "wybory": [
+            {"tekst": "Wytrzymać to spojrzenie. Musisz zrozumieć.", "cel": "final_szalenstwo", "warunek": null},
+            {"tekst": "Zamknąć oczy i cofać się powoli.", "cel": "jaskinia", "warunek": null}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+
+    "polana": {
+        "tekst": "Dukt wyprowadza cię na polanę zatopioną w sinym świetle bez źródła. Pośród pni stoi wilk - większy niż każdy, jakiego widziałeś, z karkiem zjeżonym i wargą uniesioną nad białym kłem. Nie warczy. Patrzy spokojnie, jakby od początku wiedział, że przyjdziesz, i jakby twoje przyjście niczego nie zmieniało.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [
+            {"tekst": "Stanąć z nim do walki.", "cel": "triumf_wilk", "warunek": {"rzut_koscia": true, "prog": 13}, "cel_porazka": "kleski_wilk"},
+            {"tekst": "Cofać się powoli, obchodząc polanę bokiem.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "triumf_wilk": {
+        "tekst": "Bestia rzuca się na ciebie, lecz ty robisz krok w bok. Dłoń znajduje kamień, kamień znajduje skroń. Wilk osuwa się bez głosu. Klękasz nad stygnącym cielskiem i wyłamujesz jeden z górnych kłów - biały, ciężki, ciepły jeszcze od cudzego życia. Zaciskasz na nim palce jak na talizmanie przeciw czemuś, czego nie umiesz nazwać.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [
+            {"tekst": "Ruszyć dalej leśnym duktem.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"dodaj_przedmiot": "kieł wilka"},
+        "zakonczone": false
+    },
+
+    "kleski_wilk": {
+        "tekst": "Wilk jest szybszy od myśli. Kły rozcinają ci ramię, nim zdążysz unieść rękę. Padasz w błoto, krew miesza się z deszczem, a ty kulisz się odruchowo, czekając ciosu, który nie nadchodzi. Gdy wreszcie unosisz głowę, polana jest pusta, a cisza zdaje się drwić z twojego strachu.",
+        "obrazek": "tiles/wolf.png",
+        "wybory": [
+            {"tekst": "Zatamować krew i iść dalej.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"hp": -25},
+        "zakonczone": false
+    },
+
+    "rozstaje": {
+        "tekst": "Dukt urywa się na rozstajach. Stoi tam starzec owinięty w płaszcz czarny jak wnętrze studni, wsparty o sękaty kij. Spod kaptura patrzą oczy, które odbijają światło, choć tu żadnego światła nie ma. Gdzieś między drzewami niesie się ten sam szept, co na początku - jakbyś nigdy się od niego nie oddalił.",
+        "obrazek": "tiles/old_man.png",
+        "wybory": [
+            {"tekst": "Zapytać go o drogę do latarni morskiej.", "cel": "final_dobry", "warunek": {"min_sanity": 50}, "cel_porazka": "szept"},
+            {"tekst": "Wsłuchać się w szept dochodzący z lasu.", "cel": "dziwny_szept", "warunek": null},
+            {"tekst": "Rzucić się na niego z pięściami.", "cel": "walka_z_cieniem", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "dziwny_szept": {
+        "tekst": "Wchodzisz między drzewa, idąc za dźwiękiem. Im głębiej, tym jest wyraźniejszy - drapie po wewnętrznej stronie czaszki, sączy się w szczeliny między myślami i układa tam własne. Zaciskasz zęby, próbując oddzielić siebie od głosu, póki jeszcze wiesz, gdzie kończysz się ty, a zaczyna on.",
+        "obrazek": "tiles/cave_entrance.png",
+        "wybory": [
+            {"tekst": "Spróbować pojąć szept, nie dając się porwać.", "cel": "slodki_smiech", "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "krzyki"}
+        ],
+        "efekt": {"sanity": -10},
+        "zakonczone": false
+    },
+
+    "slodki_smiech": {
+        "tekst": "W chaosie szeptu nagle odnajdujesz porządek. Spod niego wyłania się dziecięcy śmiech - jasny, beztroski, niemożliwy w tym lesie i o tej godzinie. Z powodów, których nie umiesz nazwać, śmiech ten nie przeraża cię, lecz koi. Oddychasz głębiej i czujesz, jak rozsypane myśli wracają na swoje miejsca.",
+        "obrazek": "tiles/camp.png",
+        "wybory": [
+            {"tekst": "Wrócić na rozstaje.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"sanity": 20},
+        "zakonczone": false
+    },
+
+    "krzyki": {
+        "tekst": "Szept pęka jak przegniła tama. Z każdego drzewa, z każdej strony, buchają krzyki - potępieńcze, zlewające się w jeden chór, który wykrzykuje twoje imię i wylicza godzinę twojej śmierci. Cofasz się, potykając o własne nogi, dłońmi zatykając uszy, lecz głos jest już w środku ciebie.",
+        "obrazek": "tiles/evil_eyes.png",
+        "wybory": [
+            {"tekst": "Wycofać się na rozstaje.", "cel": "rozstaje", "warunek": null}
+        ],
+        "efekt": {"sanity": -20},
+        "zakonczone": false
+    },
+
+    "szept": {
+        "tekst": "Starzec uchyla wargi. Wypływa z nich dźwięk, który nie należy do żadnej mowy zrodzonej pod słońcem. Zwija się w tobie, schodzi niżej, niż sięga myśl, i odnajduje miejsca, o których istnieniu wolałbyś nigdy się nie dowiedzieć. Coś w tobie otwiera się na oścież i nie da się już domknąć.",
+        "obrazek": "tiles/old_man.png",
+        "wybory": [
+            {"tekst": "Pozwolić, by słowa wciągnęły cię w głąb.", "cel": "final_szalenstwo", "warunek": null}
+        ],
+        "efekt": {"sanity": -30},
+        "zakonczone": false
+    },
+
+    "walka_z_cieniem": {
+        "tekst": "Twoja pięść trafia w pustkę. Płaszcz opada miękko, lecz pod nim nie ma żadnego starca - jest tylko cień, który zaciska się wokół twojej piersi jak zimna obręcz. Czujesz, jak coś w środku ciebie - płomyk, którego nigdy nie nazwałeś - po prostu gaśnie.",
+        "obrazek": "tiles/evil_eyes.png",
+        "wybory": [],
+        "efekt": {"hp": -100},
+        "zakonczone": true,
+        "zakonczenie": "zly"
+    },
+
+    "chata": {
+        "tekst": "Drzwi ustępują z głuchym trzaskiem zmurszałego drewna. W środku stół, otwarty dziennik i mapa przyszpilona do ściany rdzawym ostrzem. Zapiski mówią o latarni morskiej na wybrzeżu - jedynym miejscu, którego mgła i to, co w niej mieszka, dotąd nie tknęły. Ktoś podkreślił te słowa tak mocno, że pióro przedarło papier.",
+        "obrazek": "tiles/wood_road.png",
+        "wybory": [
+            {"tekst": "Wyruszyć drogą wskazaną na mapie.", "cel": "final_dobry", "warunek": null}
+        ],
+        "efekt": null,
+        "zakonczone": false
+    },
+
+    "chata_porazka": {
+        "tekst": "Drzwi nie ustępują. Napierasz ramieniem raz, drugi, trzeci, aż w boku coś chrupie sucho i ból rozlewa się po żebrach gorącą falą. Cofasz się, dysząc, a próchno drzwi zdaje się drwić z twojej słabości.",
+        "obrazek": "tiles/wood_road.png",
+        "wybory": [
+            {"tekst": "Wrócić na rozdroże i obmyślić to na nowo.", "cel": "rozdroze", "warunek": null}
+        ],
+        "efekt": {"hp": -10},
+        "zakonczone": false
+    },
+
+    "final_dobry": {
+        "tekst": "Latarnia wyrasta z mgły jak biały kieł wbity w gardło nocy. Światło z jej szczytu rozcina mrok, w którym tonęły lasy Arkham, i po raz pierwszy tej nocy czujesz, że ciemność się cofa. Klucznik otwiera ci drzwi bez słowa i bez pytań, jakby od dawna wiedział, że przyjdziesz. Przeżyłeś - a tej nocy to więcej, niż dane było wielu.",
+        "obrazek": "tiles/win.png",
+        "wybory": [],
+        "efekt": null,
+        "zakonczone": true,
+        "zakonczenie": "dobry"
+    },
+
+    "final_szalenstwo": {
+        "tekst": "Twoje oczy są otwarte, lecz nie widzą już niczego z tego świata. Coś zajęło miejsce za nimi i to ono teraz patrzy przez ciebie - na las, na mgłę, na gwiazdy ułożone w niewłaściwym porządku. Twoje ciało brnie dalej leśnymi ścieżkami, posłuszne i ciche, ale ten, kto nim idzie, nie nosi już twojego imienia.",
+        "obrazek": "tiles/gone_mad.png",
+        "wybory": [],
+        "efekt": {"sanity": -100},
+        "zakonczone": true,
+        "zakonczenie": "zly"
+    }
+}
