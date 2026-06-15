@@ -44,7 +44,7 @@
     },
 
     "polana": {
-        "tekst": "Dukt wyprowadza cię na polanę zatopioną w sinym świetle bez źródła. Pośród pni stoi wilk - większy niż każdy, jakiego widziałeś, z karkiem zjeżonym i wargą uniesioną nad białym kłem. Nie warczy. Patrzy spokojnie, jakby od początku wiedział, że przyjdziesz, i jakby twoje przyjście niczego nie zmieniało.",
+        "tekst": "Dukt wyprowadza cię na polanę zatopioną w sinym świetle bez źródła. Pośród pni stoi wilk - większy od każdego, jakiego widziałeś, z karkiem zjeżonym i wargą uniesioną nad białym kłem. Nie warczy. Patrzy spokojnie, jakby od początku wiedział, że przyjdziesz, i jakby twoje przyjście niczego nie zmieniało.",
         "obrazek": "tiles/wolf.png",
         "wybory": [
             {"tekst": "Stanąć z nim do walki.", "cel": "triumf_wilk", "warunek": {"rzut_koscia": true, "prog": 13}, "cel_porazka": "kleski_wilk"},
@@ -65,7 +65,7 @@
     },
 
     "kleski_wilk": {
-        "tekst": "Wilk jest szybszy od myśli. Kły rozcinają ci ramię, nim zdążysz unieść rękę. Padasz w błoto, krew miesza się z deszczem, a ty kulisz się odruchowo, czekając ciosu, który nie nadchodzi. Gdy wreszcie unosisz głowę, polana jest pusta, a cisza zdaje się drwić z twojego strachu.",
+        "tekst": "Wilk jest szybszy od myśli. Kły rozcinają ci ramię, nim zdążysz unieść rękę. Padasz w błoto, krew miesza się z deszczem, a ty kulisz się odruchowo, czekając ciosu, który nie nadchodzi. Gdy wreszcie unosisz głowę, wilka już nie ma - cofnął się w mrok między pniami bezgłośnie jak cień, a cisza zdaje się drwić z twojego strachu.",
         "obrazek": "tiles/wolf.png",
         "wybory": [
             {"tekst": "Zatamować krew i iść dalej.", "cel": "rozstaje", "warunek": null}
@@ -107,7 +107,7 @@
     },
 
     "krzyki": {
-        "tekst": "Szept pęka jak przegniła tama. Z każdego drzewa, z każdej strony, buchają krzyki - potępieńcze, zlewające się w jeden chór, który wykrzykuje twoje imię i wylicza godzinę twojej śmierci. Cofasz się, potykając o własne nogi, dłońmi zatykając uszy, lecz głos jest już w środku ciebie.",
+        "tekst": "Szept pęka jak przegniła tama. Z każdego drzewa, z każdej strony, buchają krzyki - potępieńcze, zlewające się w jeden chór, który wykrzykuje twoje imię i wylicza godzinę twojej śmierci. Cofasz się, potykając się o własne nogi, dłońmi zatykając uszy, lecz głos jest już w środku ciebie.",
         "obrazek": "tiles/evil_eyes.png",
         "wybory": [
             {"tekst": "Wycofać się na rozstaje.", "cel": "rozstaje", "warunek": null}
@@ -130,7 +130,7 @@
         "tekst": "Twoja pięść trafia w pustkę. Płaszcz opada miękko, lecz pod nim nie ma żadnego starca - jest tylko cień, który zaciska się wokół twojej piersi jak zimna obręcz. Czujesz, jak coś w środku ciebie - płomyk, którego nigdy nie nazwałeś - po prostu gaśnie.",
         "obrazek": "tiles/evil_eyes.png",
         "wybory": [],
-        "efekt": {"hp": -100},
+        "efekt": {"sanity": -100},
         "zakonczone": true,
         "zakonczenie": "zly"
     },
@@ -156,7 +156,7 @@
     },
 
     "final_dobry": {
-        "tekst": "Latarnia wyrasta z mgły jak biały kieł wbity w gardło nocy. Światło z jej szczytu rozcina mrok, w którym tonęły lasy Arkham, i po raz pierwszy tej nocy czujesz, że ciemność się cofa. Klucznik otwiera ci drzwi bez słowa i bez pytań, jakby od dawna wiedział, że przyjdziesz. Przeżyłeś - a tej nocy to więcej, niż dane było wielu.",
+        "tekst": "Latarnia wyrasta z mgły jak biały kieł wbity w gardło nocy. Światło z jej szczytu rozcina mrok, w którym tonęły lasy Arkham, i po raz pierwszy tej nocy czujesz, że ciemność się cofa. Jeśli wciąż ściskasz w dłoni wilczy kieł, dopiero teraz rozluźniasz na nim palce - talizman dotrwał z tobą do końca. Klucznik otwiera ci drzwi bez słowa i bez pytań, jakby od dawna wiedział, że przyjdziesz. Przeżyłeś - a tej nocy to więcej, niż dane było wielu.",
         "obrazek": "tiles/win.png",
         "wybory": [],
         "efekt": null,
