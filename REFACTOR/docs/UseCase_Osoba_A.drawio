@@ -1,0 +1,67 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.5">
+  <diagram name="Osoba A - Uruchomienie i menu" id="usecaseA0001">
+    <mxGraphModel dx="1346" dy="749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="a-box" parent="1" style="html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=20;dashed=1;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="630" width="690" x="170" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="a-title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;fontStyle=1;fontSize=18;" value="System: Uruchomienie, okno i menu" vertex="1">
+          <mxGeometry height="40" width="380" x="330" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="a-actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Gracz" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="a-uru" parent="1" style="ellipse;" value="Uruchomienie gry" vertex="1">
+          <mxGeometry height="50" width="120" x="210" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="a-pliki" parent="1" style="ellipse;" value="Sprawdzenie plików&#xa;danych" vertex="1">
+          <mxGeometry height="60" width="150" x="470" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="a-okno" parent="1" style="ellipse;" value="Zbudowanie okna gry" vertex="1">
+          <mxGeometry height="50" width="150" x="470" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="a-menu" parent="1" style="ellipse;" value="Wyświetlenie menu" vertex="1">
+          <mxGeometry height="50" width="150" x="470" y="345" as="geometry" />
+        </mxCell>
+        <mxCell id="a-nowa" parent="1" style="ellipse;" value="Rozpoczęcie nowej gry" vertex="1">
+          <mxGeometry height="50" width="150" x="210" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="a-zapis" parent="1" style="ellipse;" value="Zapis gry" vertex="1">
+          <mxGeometry height="50" width="120" x="220" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="a-wczyt" parent="1" style="ellipse;" value="Wczytanie zapisu&#xa;(Kontynuuj)" vertex="1">
+          <mxGeometry height="60" width="150" x="210" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="a-wyj" parent="1" style="ellipse;" value="Wyjście z gry" vertex="1">
+          <mxGeometry height="50" width="120" x="220" y="675" as="geometry" />
+        </mxCell>
+        <mxCell id="a-e1" parent="1" source="a-actor" target="a-uru" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-e2" parent="1" source="a-actor" target="a-nowa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-e3" parent="1" source="a-actor" target="a-zapis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-e4" parent="1" source="a-actor" target="a-wczyt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-e5" parent="1" source="a-actor" target="a-wyj" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-i1" parent="1" source="a-uru" target="a-pliki" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-i2" parent="1" source="a-uru" target="a-okno" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a-i3" parent="1" source="a-uru" target="a-menu" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
