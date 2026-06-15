@@ -116,7 +116,7 @@ Kolejność: węzeł startowy, potem reszta w kolejności z pliku.
 - **Efekt przy wejściu:** brak
 - **Zakończenie:** -
 - **Tekst:**
-  > Dukt wyprowadza cię na polanę zatopioną w sinym świetle bez źródła. Pośród pni stoi wilk - większy niż każdy, jakiego widziałeś, z karkiem zjeżonym i wargą uniesioną nad białym kłem. Nie warczy. Patrzy spokojnie, jakby od początku wiedział, że przyjdziesz, i jakby twoje przyjście niczego nie zmieniało.
+  > Dukt wyprowadza cię na polanę zatopioną w sinym świetle bez źródła. Pośród pni stoi wilk - większy od każdego, jakiego widziałeś, z karkiem zjeżonym i wargą uniesioną nad białym kłem. Nie warczy. Patrzy spokojnie, jakby od początku wiedział, że przyjdziesz, i jakby twoje przyjście niczego nie zmieniało.
 - **Wybory:**
   1. "Stanąć z nim do walki." -> `triumf_wilk`  [warunek: rzut k20 >= 13; porażka -> `kleski_wilk`]
   2. "Cofać się powoli, obchodząc polanę bokiem." -> `rozstaje`
@@ -135,7 +135,7 @@ Kolejność: węzeł startowy, potem reszta w kolejności z pliku.
 - **Efekt przy wejściu:** HP -25
 - **Zakończenie:** -
 - **Tekst:**
-  > Wilk jest szybszy od myśli. Kły rozcinają ci ramię, nim zdążysz unieść rękę. Padasz w błoto, krew miesza się z deszczem, a ty kulisz się odruchowo, czekając ciosu, który nie nadchodzi. Gdy wreszcie unosisz głowę, polana jest pusta, a cisza zdaje się drwić z twojego strachu.
+  > Wilk jest szybszy od myśli. Kły rozcinają ci ramię, nim zdążysz unieść rękę. Padasz w błoto, krew miesza się z deszczem, a ty kulisz się odruchowo, czekając ciosu, który nie nadchodzi. Gdy wreszcie unosisz głowę, wilka już nie ma - cofnął się w mrok między pniami bezgłośnie jak cień, a cisza zdaje się drwić z twojego strachu.
 - **Wybory:**
   1. "Zatamować krew i iść dalej." -> `rozstaje`
 
@@ -173,7 +173,7 @@ Kolejność: węzeł startowy, potem reszta w kolejności z pliku.
 - **Efekt przy wejściu:** Sanity -20
 - **Zakończenie:** -
 - **Tekst:**
-  > Szept pęka jak przegniła tama. Z każdego drzewa, z każdej strony, buchają krzyki - potępieńcze, zlewające się w jeden chór, który wykrzykuje twoje imię i wylicza godzinę twojej śmierci. Cofasz się, potykając o własne nogi, dłońmi zatykając uszy, lecz głos jest już w środku ciebie.
+  > Szept pęka jak przegniła tama. Z każdego drzewa, z każdej strony, buchają krzyki - potępieńcze, zlewające się w jeden chór, który wykrzykuje twoje imię i wylicza godzinę twojej śmierci. Cofasz się, potykając się o własne nogi, dłońmi zatykając uszy, lecz głos jest już w środku ciebie.
 - **Wybory:**
   1. "Wycofać się na rozstaje." -> `rozstaje`
 
@@ -188,7 +188,7 @@ Kolejność: węzeł startowy, potem reszta w kolejności z pliku.
 
 ### `walka_z_cieniem`
 - **Obrazek:** `tiles/evil_eyes.png`
-- **Efekt przy wejściu:** HP -100
+- **Efekt przy wejściu:** Sanity -100
 - **Zakończenie:** KONIEC GRY (zly)
 - **Tekst:**
   > Twoja pięść trafia w pustkę. Płaszcz opada miękko, lecz pod nim nie ma żadnego starca - jest tylko cień, który zaciska się wokół twojej piersi jak zimna obręcz. Czujesz, jak coś w środku ciebie - płomyk, którego nigdy nie nazwałeś - po prostu gaśnie.
@@ -217,7 +217,7 @@ Kolejność: węzeł startowy, potem reszta w kolejności z pliku.
 - **Efekt przy wejściu:** brak
 - **Zakończenie:** ZWYCIĘSTWO (dobry)
 - **Tekst:**
-  > Latarnia wyrasta z mgły jak biały kieł wbity w gardło nocy. Światło z jej szczytu rozcina mrok, w którym tonęły lasy Arkham, i po raz pierwszy tej nocy czujesz, że ciemność się cofa. Klucznik otwiera ci drzwi bez słowa i bez pytań, jakby od dawna wiedział, że przyjdziesz. Przeżyłeś - a tej nocy to więcej, niż dane było wielu.
+  > Latarnia wyrasta z mgły jak biały kieł wbity w gardło nocy. Światło z jej szczytu rozcina mrok, w którym tonęły lasy Arkham, i po raz pierwszy tej nocy czujesz, że ciemność się cofa. Jeśli wciąż ściskasz w dłoni wilczy kieł, dopiero teraz rozluźniasz na nim palce - talizman dotrwał z tobą do końca. Klucznik otwiera ci drzwi bez słowa i bez pytań, jakby od dawna wiedział, że przyjdziesz. Przeżyłeś - a tej nocy to więcej, niż dane było wielu.
 - **Wybory:** brak (węzeł końcowy)
 
 ### `final_szalenstwo`
@@ -264,7 +264,7 @@ Dla każdego węzła: wszystkie węzły, do których można z niego trafić
 
 ## 8. Zakończenia
 
-- **`walka_z_cieniem`** - KONIEC GRY (zly); efekt wejścia: HP -100.
+- **`walka_z_cieniem`** - KONIEC GRY (zly); efekt wejścia: Sanity -100.
 - **`final_dobry`** - ZWYCIĘSTWO (dobry); efekt wejścia: brak.
 - **`final_szalenstwo`** - KONIEC GRY (zly); efekt wejścia: Sanity -100.
 - **Ciche zakończenie (zly)** - dowolny węzeł, gdy po wejściu HP <= 0 lub Sanity <= 0
