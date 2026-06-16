@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.5">
+  <diagram name="Osoba B - Wyświetlanie sceny" id="usecaseB0001">
+    <mxGraphModel dx="1346" dy="749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b-box" parent="1" style="html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=20;dashed=1;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="490" width="710" x="170" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="b-title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;fontStyle=1;fontSize=18;" value="System: Wyświetlanie sceny i ekrany" vertex="1">
+          <mxGeometry height="40" width="400" x="330" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="b-actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Gracz" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="b-scena" parent="1" style="ellipse;" value="Wyświetlenie sceny" vertex="1">
+          <mxGeometry height="60" width="140" x="210" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="b-wybor" parent="1" style="ellipse;" value="Dokonanie wyboru" vertex="1">
+          <mxGeometry height="50" width="135" x="215" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="b-stat" parent="1" style="ellipse;" value="Pokazanie statystyk&#xa;(HP / Sanity / ekwipunek)" vertex="1">
+          <mxGeometry height="60" width="190" x="480" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="b-pod" parent="1" style="ellipse;" value="Pokazanie podpowiedzi&#xa;efektów na przyciskach" vertex="1">
+          <mxGeometry height="60" width="190" x="480" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="b-rzut" parent="1" style="ellipse;" value="Wyświetlenie wyniku&#xa;rzutu kością" vertex="1">
+          <mxGeometry height="60" width="170" x="490" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="b-koniec" parent="1" style="ellipse;" value="Wyświetlenie ekranu&#xa;końca gry" vertex="1">
+          <mxGeometry height="60" width="170" x="490" y="475" as="geometry" />
+        </mxCell>
+        <mxCell id="b-e1" parent="1" source="b-actor" target="b-scena" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-e2" parent="1" source="b-actor" target="b-wybor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-i1" parent="1" source="b-scena" target="b-stat" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-i2" parent="1" source="b-scena" target="b-pod" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-i3" parent="1" source="b-wybor" target="b-scena" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-x1" parent="1" source="b-rzut" target="b-scena" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b-x2" parent="1" source="b-koniec" target="b-scena" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

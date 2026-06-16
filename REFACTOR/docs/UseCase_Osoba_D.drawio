@@ -1,0 +1,61 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.5">
+  <diagram name="Osoba D - Stan i dane" id="usecaseD0001">
+    <mxGraphModel dx="1346" dy="749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="d-box" parent="1" style="html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=20;dashed=1;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="540" width="720" x="160" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="d-title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;fontStyle=1;fontSize=18;" value="System: Stan gry i dane" vertex="1">
+          <mxGeometry height="40" width="320" x="350" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="d-actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Gracz" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="d-file" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Pliki danych&#xa;(JSON)" vertex="1">
+          <mxGeometry height="60" width="30" x="910" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="d-init" parent="1" style="ellipse;" value="Utworzenie stanu&#xa;początkowego" vertex="1">
+          <mxGeometry height="60" width="190" x="210" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="d-wczyt" parent="1" style="ellipse;" value="Wczytanie danych gry&#xa;(story.json / config.json)" vertex="1">
+          <mxGeometry height="60" width="210" x="600" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="d-akt" parent="1" style="ellipse;" value="Aktualizacja statystyk" vertex="1">
+          <mxGeometry height="60" width="180" x="210" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="d-clamp" parent="1" style="ellipse;" value="Przycięcie wartości&#xa;do zakresu 0-100" vertex="1">
+          <mxGeometry height="60" width="190" x="480" y="395" as="geometry" />
+        </mxCell>
+        <mxCell id="d-item" parent="1" style="ellipse;" value="Dodanie przedmiotu&#xa;do ekwipunku" vertex="1">
+          <mxGeometry height="60" width="200" x="480" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="d-kopia" parent="1" style="ellipse;" value="Pobranie kopii stanu" vertex="1">
+          <mxGeometry height="50" width="170" x="210" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="d-e1" parent="1" source="d-actor" target="d-init" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-e2" parent="1" source="d-actor" target="d-akt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-e3" parent="1" source="d-actor" target="d-kopia" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-e4" parent="1" source="d-file" target="d-wczyt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-i1" parent="1" source="d-init" target="d-wczyt" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-i2" parent="1" source="d-akt" target="d-clamp" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d-x1" parent="1" source="d-item" target="d-akt" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.5">
+  <diagram name="Osoba C - Silnik i kości" id="usecaseC0001">
+    <mxGraphModel dx="1346" dy="749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c-box" parent="1" style="html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=20;dashed=1;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="520" width="700" x="160" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="c-title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;autosize=1;resizable=0;fontStyle=1;fontSize=18;" value="System: Silnik gry i mechanika kości" vertex="1">
+          <mxGeometry height="40" width="420" x="300" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="c-actor" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Gracz" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="c-file" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Plik fabuły&#xa;(JSON)" vertex="1">
+          <mxGeometry height="60" width="30" x="900" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="c-przej" parent="1" style="ellipse;" value="Przejście do nowej&#xa;sceny" vertex="1">
+          <mxGeometry height="60" width="150" x="210" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="c-war" parent="1" style="ellipse;" value="Sprawdzenie warunku" vertex="1">
+          <mxGeometry height="50" width="150" x="470" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="c-rzut" parent="1" style="ellipse;" value="Rzut kością k20" vertex="1">
+          <mxGeometry height="50" width="130" x="690" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="c-efekt" parent="1" style="ellipse;" value="Nałożenie efektu&#xa;sceny na stan" vertex="1">
+          <mxGeometry height="60" width="180" x="470" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="c-koniec" parent="1" style="ellipse;" value="Wykrycie końca gry" vertex="1">
+          <mxGeometry height="50" width="150" x="455" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="c-fab" parent="1" style="ellipse;" value="Wczytanie fabuły&#xa;z pliku" vertex="1">
+          <mxGeometry height="60" width="150" x="640" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="c-e1" parent="1" source="c-actor" target="c-przej" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c-e2" parent="1" source="c-file" target="c-fab" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c-i1" parent="1" source="c-przej" target="c-war" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c-i2" parent="1" source="c-przej" target="c-efekt" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c-x1" parent="1" source="c-rzut" target="c-war" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c-x2" parent="1" source="c-koniec" target="c-przej" style="html=1;verticalAlign=bottom;labelBackgroundColor=none;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
