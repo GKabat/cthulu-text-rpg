@@ -21,12 +21,6 @@ def inicjalizuj_stan(config):
 
 def aktualizuj_stan(stan, efekt):
     # Zmienia HP, Sanity i ekwipunek wedlug efektu.
-    # Przyklady efektow:
-    #   {"hp": -10}                         - utrata 10 hp
-    #   {"sanity": -10}                     - utrata 10 sanity
-    #   {"sanity": 20}                      - dodanie 20 sanity (max 100)
-    #   {"hp": -5, "sanity": -10}           - oba na raz
-    #   {"dodaj_przedmiot": "kiel wilka"}   - przedmiot do ekwipunku
     if efekt is None:
         return stan
 
