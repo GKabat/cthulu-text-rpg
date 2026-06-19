@@ -90,11 +90,12 @@ def czy_koniec(wezel):
 # ── Tryb konsolowy do testow (uruchamiany przez: python engine.py) ────────────
 
 if __name__ == "__main__":
-    plik_konfig = open("data/config.json", "r", encoding="utf-8")
+    EDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    plik_konfig = open(os.path.join(EDIR, "data", "config.json"), "r", encoding="utf-8")
     config = json.load(plik_konfig)
     plik_konfig.close()
 
-    fabula = wczytaj_fabule("data/story.json")
+    fabula = wczytaj_fabule(os.path.join(EDIR, "data", "story.json"))
     stan = inicjalizuj_stan(config)
 
     print("=== TEST SILNIKA ===")

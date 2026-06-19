@@ -5,9 +5,10 @@ import os
 import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(SCRIPT_DIR)
 
-CONFIG = os.path.join(SCRIPT_DIR, "data", "config.json")
-STORY = os.path.join(SCRIPT_DIR, "data", "story.json")
+CONFIG = os.path.join(ROOT, "data", "config.json")
+STORY = os.path.join(ROOT, "data", "story.json")
 
 
 def sprawdz_pliki():

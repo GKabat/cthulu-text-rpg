@@ -15,11 +15,11 @@ from game_state import inicjalizuj_stan
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(SCRIPT_DIR)
 
-CONFIG_PATH = os.path.join(SCRIPT_DIR, "data", "config.json")
-STORY_PATH = os.path.join(SCRIPT_DIR, "data", "story.json")
-FRAME_PATH = os.path.join(SCRIPT_DIR, "tiles", "frame.png")
-KOSC_PATH = os.path.join(SCRIPT_DIR, "tiles", "dice_roll.png")
-SAVE_PATH = os.path.join(SCRIPT_DIR, "data", "save.json")   # zapis gry, jeden slot
+CONFIG_PATH = os.path.join(ROOT, "data", "config.json")
+STORY_PATH = os.path.join(ROOT, "data", "story.json")
+FRAME_PATH = os.path.join(ROOT, "tiles", "frame.png")
+KOSC_PATH = os.path.join(ROOT, "tiles", "dice_roll.png")
+SAVE_PATH = os.path.join(ROOT, "data", "save.json")   # zapis gry, jeden slot
 
 
 # rozmiar ramki frame.png i gdzie ma ona przezroczysty otwor (jako ulamki,
