@@ -1,28 +1,36 @@
 # Cień nad Arkham
 
-Tekstowa gra paragrafowa (RPG) w klimacie grozy (inspiracje H.P. Lovecraftem
-i E.A. Poem). Projekt zaliczeniowy z przedmiotu **Projekt wdrożeniowy**
-(kierunek Informatyka). Napisana w Pythonie, w bibliotece **tkinter**.
+Tekstowa gra przygodowa w klimacie grozy kosmicznej, inspirowana twórczością
+H.P. Lovecrafta i E.A. Poego. Napisana w Pythonie z użyciem biblioteki tkinter.
+Projekt zaliczeniowy z przedmiotu **Projekt wdrożeniowy** (I rok Informatyki).
 
-## O grze
+---
 
-Budzisz się jako badacz w opuszczonym obozie w lasach wokół Arkham. Czytasz
-opisy scen i wybierasz, co zrobić. Bohater ma dwa wskaźniki — **HP** (życie)
-i **Sanity** (poczytalność), oba w zakresie 0–100. Część wyborów rozstrzyga
-**rzut kością k20**. Gra prowadzi przez 17 scen do jednego z **trzech
-zakończeń** (zwycięstwo albo dwa złe końce).
+## Opis
 
-## Jak uruchomić
+Gracz wciela się w Badacza, który budzi się w opuszczonym obozie w lasach wokół
+Arkham. Rozgrywka polega na czytaniu opisów scen i dokonywaniu wyborów, które
+kształtują dalszy przebieg historii. Bohater posiada dwa wskaźniki kondycji:
 
-Wymagania: **Python 3** z biblioteką **tkinter** (wchodzi w skład standardowej
-biblioteki — nie trzeba nic instalować).
+- **HP** (życie fizyczne) — zakres 0–100
+- **Sanity** (poczytalność) — zakres 0–100
+
+Część wyborów wymaga pomyślnego rzutu kością **k20**. Gra obejmuje 17 scen
+i prowadzi do jednego z trzech zakończeń.
+
+## Wymagania
+
+- Python 3.x
+- Biblioteka `tkinter` (wchodzi w skład standardowej biblioteki Pythona — brak
+  dodatkowych zależności)
+
+## Uruchomienie
 
 ```bash
 python REFACTOR/main.py
 ```
 
-Tryb tekstowy (konsolowy, do szybkiego sprawdzania logiki) uruchamia się
-z wnętrza katalogu nowej wersji:
+Dostępny jest też tryb konsolowy (do testowania logiki bez GUI):
 
 ```bash
 cd REFACTOR
@@ -31,71 +39,77 @@ python engine.py
 
 ## Rozgrywka
 
-- **Menu:** Nowa gra / Kontynuuj (aktywne, gdy istnieje zapis) / Wyjście.
-- **Ekran gry:** opis sceny, obrazek, statystyki (HP, Sanity, ekwipunek) oraz
-  przyciski wyborów. Każdy przycisk ma podpowiedź, co dany wybór robi.
-- **Rzut kością:** gdy wybór wymaga testu, pod przyciskami pokazuje się grafika
-  kości i wynik (np. `Rzut k20: 14 / prog 12 -> SUKCES`).
-- **Zapis / wczytanie:** przyciski w grze oraz „Kontynuuj" w menu
-  (jeden slot zapisu: `REFACTOR/data/save.json`).
+**Menu główne** oferuje trzy opcje: Nowa gra, Kontynuuj (dostępne po zapisaniu
+partii) oraz Wyjście.
+
+**Ekran gry** zawiera:
+- opis aktualnej sceny
+- statystyki postaci (HP, Sanity, ekwipunek) widoczne w górnej części ramki
+- przyciski wyborów z podpowiedzią efektu każdego z nich
+- grafikę kości k20 oraz wynik rzutu, gdy dany wybór wymaga testu
+
+**Zapis i wczytanie** — jeden slot zapisany w `REFACTOR/data/save.json`.
 
 ## Struktura projektu
 
 ```
 cthulu-text-rpg/
-├── REFACTOR/            # aktualna wersja gry
-│   ├── main.py          # uruchomienie
-│   ├── gui.py           # okno i interfejs (tkinter)
-│   ├── engine.py        # silnik: przejścia między scenami, warunki
+├── REFACTOR/
+│   ├── main.py          # punkt wejścia — sprawdzenie plików i start GUI
+│   ├── gui.py           # okno, menu, wyświetlanie scen, zapis/wczytanie
+│   ├── engine.py        # silnik: przejścia między scenami, warunki, efekty
 │   ├── game_state.py    # stan gracza (HP, Sanity, ekwipunek)
-│   ├── mechanics.py     # rzut kością k20
-│   ├── data/            # story.json (fabuła), config.json (ustawienia)
-│   ├── tiles/           # ramka i grafika kości (lokalne)
-│   ├── tests/           # test_gra.py (testy logiki)
-│   └── docs/            # pełna dokumentacja (poniżej)
-├── tiles/               # grafiki scen (wspólne)
-└── ARCHIWUM/            # poprzednia, schowana wersja
+│   ├── mechanics.py     # rzut kością k20 i ocena wyniku
+│   ├── data/
+│   │   ├── story.json   # fabuła: 17 węzłów, wybory, warunki, efekty
+│   │   └── config.json  # konfiguracja startowa postaci
+│   ├── tiles/           # grafika ramki i kości
+│   ├── tests/
+│   │   └── test_gra.py  # 26 testów jednostkowych
+│   └── docs/            # dokumentacja projektu
+├── tiles/               # grafiki scen
+└── ARCHIWUM/            # archiwum poprzedniej wersji
 ```
 
 ## Testy
-
-Logikę gry sprawdza zestaw testów uruchamianych jednym poleceniem:
 
 ```bash
 python REFACTOR/tests/test_gra.py
 ```
 
-Wynik: `PRZESZLO 26 / 26`. Pełny zestaw 40 przypadków testowych (10 na osobę)
-jest w `REFACTOR/docs/TestCases_Cien_nad_Arkham.xlsx` oraz `REFACTOR/docs/TESTY.md`.
+Wynik: `PRZESZLO 26 / 26`. Szczegółowe przypadki testowe (40 testów, 10 na osobę)
+dostępne są w `REFACTOR/docs/TestCases_Cien_nad_Arkham.xlsx` i `REFACTOR/docs/TESTY.md`.
 
 ## Dokumentacja
 
-W katalogu `REFACTOR/docs/`:
+Katalog `REFACTOR/docs/` zawiera:
 
-- **OPIS_DZIALANIA.md** — jak działa program, od ogółu do szczegółu.
-- **OPIS_OSOBA_A/B/C/D.md** — szczegółowy opis części każdej z 4 osób.
-- **FABULA.md** — pełna specyfikacja fabuły i mechaniki.
-- **TESTY.md** + **TestCases_Cien_nad_Arkham.xlsx** — przypadki testowe.
-- **DEFEKTY.md** — rejestr wykrytych defektów.
-- **UseCase_System.drawio**, **UseCase_Osoba_A/B/C/D.drawio** — diagramy Use Case.
-- **DiagramKlas.drawio** — diagram klas (model pojęciowy).
-- **Karta projektu.docx** — karta projektu.
+| Plik | Zawartość |
+|---|---|
+| `OPIS_DZIALANIA.md` | Opis działania programu od ogółu do szczegółu |
+| `OPIS_OSOBA_GK/AC/SK/BJ.md` | Szczegółowy opis zakresu każdego z członków zespołu |
+| `FABULA.md` | Specyfikacja fabuły: drzewo scen, efekty, warunki |
+| `TESTY.md` | Metodyka i lista 40 przypadków testowych |
+| `TestCases_Cien_nad_Arkham.xlsx` | Arkusz przypadków testowych |
+| `DEFEKTY.md` | Rejestr wykrytych defektów (6 pozycji) |
+| `UseCase_System.drawio` | Diagram Use Case całego systemu |
+| `UseCase_Osoba_GK/AC/SK/BJ.drawio` | Diagramy Use Case per osoba |
+| `DiagramKlas.drawio` | Diagram klas (model pojęciowy, UML) |
+| `Karta projektu.docx` | Karta projektu |
 
-Pliki `.drawio` otwiera się w [draw.io / diagrams.net](https://app.diagrams.net).
+Pliki `.drawio` można otwierać w [draw.io / diagrams.net](https://app.diagrams.net).
 
 ## Zespół
 
-Projekt 4-osobowy. Podział pracy na moduły:
-
-| Osoba | Zakres |
+| Inicjały | Zakres odpowiedzialności |
 |---|---|
-| A | uruchomienie, okno i menu, zapis/wczytywanie (`main.py`, część `gui.py`) |
-| B | wyświetlanie scen i ekranów, podpowiedzi (część `gui.py`) |
-| C | silnik fabuły i mechanika kości (`engine.py`, `mechanics.py`) |
-| D | stan gry oraz dane: fabuła i konfiguracja (`game_state.py`, `data/`) |
+| GK | Uruchomienie, okno i menu, zapis/wczytywanie (`main.py`, część `gui.py`) |
+| AC | Wyświetlanie scen i ekranów, podpowiedzi efektów (część `gui.py`) |
+| SK | Silnik fabuły i mechanika kości (`engine.py`, `mechanics.py`) |
+| BJ | Stan gry oraz dane: fabuła i konfiguracja (`game_state.py`, `data/`) |
 
-## Uwagi
+## Uwagi techniczne
 
-Gra korzysta wyłącznie ze standardowej biblioteki Pythona (tkinter, json,
-random, os). Stan gry trzymany jest w słowniku, a fabuła w pliku JSON — dzięki
-temu treść można zmieniać bez ruszania kodu.
+Projekt korzysta wyłącznie ze standardowej biblioteki Pythona (`tkinter`, `json`,
+`random`, `os`). Fabuła jest w całości zdefiniowana w pliku `story.json` — treść
+i strukturę scen można modyfikować bez zmiany kodu źródłowego.
