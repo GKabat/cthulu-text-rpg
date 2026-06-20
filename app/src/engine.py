@@ -4,6 +4,7 @@
 import json
 from game_state import inicjalizuj_stan, aktualizuj_stan
 from mechanics import rzut_koscia, sprawdz_rzut
+import os
 
 
 def wczytaj_fabule(sciezka):
