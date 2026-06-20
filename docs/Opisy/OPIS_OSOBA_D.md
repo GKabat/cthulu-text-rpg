@@ -1,4 +1,4 @@
-# Osoba D — Stan gry oraz dane (fabuła i konfiguracja)
+# Osoba D - Stan gry oraz dane (fabuła i konfiguracja)
 
 Ten dokument opisuje **bardzo szczegółowo** część, za którą odpowiada Osoba D.
 Po przeczytaniu powinieneś umieć omówić każdą swoją funkcję linijka po linijce,
@@ -6,11 +6,11 @@ wytłumaczyć format danych oraz uzasadnić podjęte decyzje.
 
 ## 1. Co należy do Ciebie
 
-- cały `game_state.py` — tworzenie i zmienianie stanu bohatera,
-- `data/config.json` — ustawienia startowe,
-- `data/story.json` — cała fabuła (wszystkie sceny i wybory).
+- cały `game_state.py` - tworzenie i zmienianie stanu bohatera,
+- `app/data/config.json` - ustawienia startowe,
+- `app/data/story.json` - cała fabuła (wszystkie sceny i wybory).
 
-W skrócie: Twoja część to **dane i ich obsługa** — z jednej strony „kartka" ze
+W skrócie: Twoja część to **dane i ich obsługa** - z jednej strony „kartka" ze
 statystykami bohatera, z drugiej cały scenariusz gry. Nie rysujesz ani nie
 przeliczasz przejść, ale to Twoje struktury danych napędzają cały program.
 
@@ -19,13 +19,13 @@ przeliczasz przejść, ale to Twoje struktury danych napędzają cały program.
 - `inicjalizuj_stan` jest wołane przez `zaladuj_dane` (Osoba A) na początku gry.
 - `aktualizuj_stan` jest wołane przez `wykonaj_wybor` (Osoba C) przy każdym
   wejściu do sceny.
-- `data/story.json` czyta `wczytaj_fabule` (Osoba C); `data/config.json` czyta
+- `app/data/story.json` czyta `wczytaj_fabule` (Osoba C); `app/data/config.json` czyta
   `zaladuj_dane` (Osoba A).
 - Podpowiedzi (Osoba B) opisują efekty, które Ty zdefiniowałeś w `story.json`.
 
 ---
 
-## 3. `game_state.py` — stan bohatera
+## 3. `game_state.py` - stan bohatera
 
 ### `inicjalizuj_stan(config)`
 ```python
@@ -43,12 +43,12 @@ def inicjalizuj_stan(config):
     return stan
 ```
 Tworzy **nowy stan gry** na podstawie ustawień. Pola:
-- `obecny_wezel` — nazwa sceny startowej (z `config["start_wezel"]`, czyli „intro"),
-- `hp`, `sanity` — punkty startowe (z `config`, czyli po 100),
-- `nazwa_postaci` — imię bohatera,
-- `odwiedzone` — pusta lista odwiedzonych scen,
-- `ekwipunek` — pusta lista przedmiotów,
-- `ostatni_rzut` — `None`, bo na starcie nie było żadnego rzutu.
+- `obecny_wezel` - nazwa sceny startowej (z `config["start_wezel"]`, czyli „intro"),
+- `hp`, `sanity` - punkty startowe (z `config`, czyli po 100),
+- `nazwa_postaci` - imię bohatera,
+- `odwiedzone` - pusta lista odwiedzonych scen,
+- `ekwipunek` - pusta lista przedmiotów,
+- `ostatni_rzut` - `None`, bo na starcie nie było żadnego rzutu.
 
 **Decyzja:** stan to **słownik**, a nie obiekt klasy. To najprostsza struktura
 „klucz → wartość" i w zupełności wystarcza. Każdy moduł może go odczytać i
@@ -72,19 +72,19 @@ def aktualizuj_stan(stan, efekt):
     return stan
 ```
 Nakłada efekt sceny na stan. Trzy możliwe składniki efektu (mogą wystąpić razem):
-- `"hp"` — dodaje (lub odejmuje, gdy liczba ujemna) punkty życia,
-- `"sanity"` — to samo dla poczytalności,
-- `"dodaj_przedmiot"` — dokłada nazwę przedmiotu do ekwipunku.
+- `"hp"` - dodaje (lub odejmuje, gdy liczba ujemna) punkty życia,
+- `"sanity"` - to samo dla poczytalności,
+- `"dodaj_przedmiot"` - dokłada nazwę przedmiotu do ekwipunku.
 
-Jeśli efekt to `None` (scena bez efektu) — nic nie zmieniamy.
+Jeśli efekt to `None` (scena bez efektu) - nic nie zmieniamy.
 
-**Najważniejsza rzecz — „przycinanie" (clamping):**
+**Najważniejsza rzecz - „przycinanie" (clamping):**
 ```python
 if stan["hp"] < 0:   stan["hp"] = 0
 if stan["hp"] > 100: stan["hp"] = 100
 ```
 Po każdej zmianie pilnujemy, by wartość została w zakresie **0–100**. Bez tego
-HP mogłoby spaść do −50 albo urosnąć do 130 — co nie miałoby sensu. Dwa proste
+HP mogłoby spaść do −50 albo urosnąć do 130 - co nie miałoby sensu. Dwa proste
 `if`-y załatwiają sprawę.
 
 **Decyzja:** efekt to słownik z opcjonalnymi kluczami. Sprawdzamy każdy przez
@@ -100,13 +100,13 @@ Zwraca **kopię** stanu. `stan.copy()` tworzy nowy słownik z tymi samymi
 wartościami. Dzięki temu, kto dostanie kopię, może ją zmieniać, nie psując
 oryginału.
 
-**Uwaga (na obronie):** to tzw. *płytka kopia* — kopiuje wierzchni słownik. Dla
+**Uwaga (na obronie):** to tzw. *płytka kopia* - kopiuje wierzchni słownik. Dla
 tej gry wystarcza, bo statystyki to liczby. Funkcja jest przygotowana „na zapas",
 jako bezpieczny sposób udostępniania stanu na zewnątrz.
 
 ---
 
-## 4. `data/config.json` — ustawienia startowe
+## 4. `app/data/config.json` - ustawienia startowe
 
 ```json
 {
@@ -124,15 +124,15 @@ To „metryczka" gry: tytuł, wersja, dane postaci (imię, startowe HP i Sanity)
 nazwa sceny, od której zaczynamy (`start_wezel`).
 
 **Decyzja:** wartości startowe są w pliku, a nie wpisane w kodzie. Żeby zmienić
-startowe życie czy scenę początkową, wystarczy edytować `config.json` — bez
+startowe życie czy scenę początkową, wystarczy edytować `config.json` - bez
 ruszania programu.
 
 ---
 
-## 5. `data/story.json` — fabuła (Twoja największa część)
+## 5. `app/data/story.json` - fabuła (Twoja największa część)
 
 To cała historia gry zapisana jako **słownik węzłów**. Kluczem jest nazwa sceny,
-wartością — jej opis. Przykład jednej sceny:
+wartością - jej opis. Przykład jednej sceny:
 
 ```json
 "rozdroze": {
@@ -150,23 +150,23 @@ wartością — jej opis. Przykład jednej sceny:
 ```
 
 ### Pola sceny (węzła)
-- `tekst` — opis do przeczytania (druga osoba, np. „Budzisz się...").
-- `obrazek` — ścieżka do grafiki sceny (np. `tiles/wood_road.png`).
-- `wybory` — lista opcji. Każdy wybór ma:
-  - `tekst` — napis na przycisku,
-  - `cel` — nazwa sceny, do której prowadzi,
-  - `warunek` — `null` (brak) albo słownik z warunkiem:
+- `tekst` - opis do przeczytania (druga osoba, np. „Budzisz się...").
+- `obrazek` - ścieżka do grafiki sceny (np. `tiles/wood_road.png`).
+- `wybory` - lista opcji. Każdy wybór ma:
+  - `tekst` - napis na przycisku,
+  - `cel` - nazwa sceny, do której prowadzi,
+  - `warunek` - `null` (brak) albo słownik z warunkiem:
     `{"rzut_koscia": true, "prog": N}` / `{"min_sanity": N}` / `{"min_hp": N}`,
-  - `cel_porazka` (opcjonalnie) — scena, do której idziemy, gdy warunek się nie
+  - `cel_porazka` (opcjonalnie) - scena, do której idziemy, gdy warunek się nie
     powiedzie.
-- `efekt` — co zmienia wejście do sceny: `null` albo np. `{"sanity": -10}`,
+- `efekt` - co zmienia wejście do sceny: `null` albo np. `{"sanity": -10}`,
   `{"hp": -25}`, `{"dodaj_przedmiot": "kieł wilka"}`.
-- `zakonczone` — `true`, jeśli to koniec gry; wtedy dochodzi `zakonczenie` o
+- `zakonczone` - `true`, jeśli to koniec gry; wtedy dochodzi `zakonczenie` o
   wartości `"dobry"` (ekran ZWYCIESTWO) lub `"zly"` (ekran KONIEC GRY).
 
 ### Budowa fabuły (17 scen)
 Fabuła ma 17 węzłów. Najważniejsze „rozgałęzienia":
-- **start `intro` → `rozdroze`** — rozdroże z trzema drogami (jaskinia, las,
+- **start `intro` → `rozdroze`** - rozdroże z trzema drogami (jaskinia, las,
   chata),
 - droga **jaskini** prowadzi do utraty Sanity i może skończyć się szaleństwem,
 - droga **lasu** prowadzi do wilka (rzut k20) i do drugiego rozdroża ze starcem,
@@ -174,7 +174,7 @@ Fabuła ma 17 węzłów. Najważniejsze „rozgałęzienia":
 - trzy zakończenia: `final_dobry` (ZWYCIESTWO), `final_szalenstwo` i
   `walka_z_cieniem` (KONIEC GRY).
 
-**Spójność danych — o co trzeba dbać:**
+**Spójność danych - o co trzeba dbać:**
 - każdy `cel` i `cel_porazka` musi wskazywać **istniejącą** scenę (inaczej gra
   trafi w pustkę),
 - każdy wybór z `rzut_koscia` powinien mieć `prog`,
@@ -189,25 +189,25 @@ dotykania kodu Pythona. Programista i scenarzysta mogą pracować niezależnie.
 
 ## 6. Decyzje projektowe w Twojej części
 
-1. **Stan jako słownik** — najprostsza struktura, łatwa do odczytu, zmiany i
+1. **Stan jako słownik** - najprostsza struktura, łatwa do odczytu, zmiany i
    zapisania (`json.dump`).
-2. **Przycinanie 0–100** — statystyki zawsze mają sens.
-3. **Efekt jako słownik z opcjonalnymi kluczami** — dowolna kombinacja HP /
+2. **Przycinanie 0–100** - statystyki zawsze mają sens.
+3. **Efekt jako słownik z opcjonalnymi kluczami** - dowolna kombinacja HP /
    Sanity / przedmiotu; łatwe do rozszerzenia.
-4. **Wartości startowe w `config.json`** — zmiana bez ruszania kodu.
-5. **Fabuła w `story.json`** — oddzielenie treści od programu.
-6. **`cel_porazka` w danych** — rozgałęzienie „sukces / porażka" zapisane w
+4. **Wartości startowe w `config.json`** - zmiana bez ruszania kodu.
+5. **Fabuła w `story.json`** - oddzielenie treści od programu.
+6. **`cel_porazka` w danych** - rozgałęzienie „sukces / porażka" zapisane w
    danych, nie w kodzie.
 
 ## 7. Co możesz powiedzieć na obronie
 
-- **„Czemu stan to słownik, a nie klasa?”** — bo to prosta struktura
+- **„Czemu stan to słownik, a nie klasa?”** - bo to prosta struktura
   klucz–wartość, w zupełności wystarcza, a w dodatku zapis to jeden `json.dump`.
-- **„Jak działa utrata życia?”** — `aktualizuj_stan` dodaje wartość efektu do HP
+- **„Jak działa utrata życia?”** - `aktualizuj_stan` dodaje wartość efektu do HP
   i przycina wynik do zakresu 0–100.
-- **„Jak zbudowana jest jedna scena?”** — to słownik z tekstem, obrazkiem, listą
+- **„Jak zbudowana jest jedna scena?”** - to słownik z tekstem, obrazkiem, listą
   wyborów, efektem i flagą końca.
-- **„Po co fabuła w osobnym pliku?”** — żeby zmieniać historię bez ruszania kodu;
+- **„Po co fabuła w osobnym pliku?”** - żeby zmieniać historię bez ruszania kodu;
   treść jest oddzielona od programu.
 
 ## 8. Twoje testy

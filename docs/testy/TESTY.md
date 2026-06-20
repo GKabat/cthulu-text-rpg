@@ -44,16 +44,16 @@ Funkcje: `sprawdz_pliki`, `utworz_okno`, `zaladuj_dane`, `pokaz_menu`.
 
 | ID | Co testujemy | Warunki wstępne / dane | Kroki | Oczekiwany wynik | Prio. |
 |---|---|---|---|---|---|
-| A1 | `sprawdz_pliki` - brak danych | usuń/ukryj `data/story.json` | uruchom grę | program kończy się (`sys.exit(1)`) i wypisuje "BLAD: brakuje pliku: ...story.json" | W |
+| A1 | `sprawdz_pliki` - brak danych | usuń/ukryj `app/data/story.json` | uruchom grę | program kończy się (`sys.exit(1)`) i wypisuje "BLAD: brakuje pliku: ...story.json" | W |
 | A2 | `sprawdz_pliki` - komplet | oba pliki `config.json` i `story.json` istnieją | uruchom grę | brak przerwania, gra rusza dalej | W |
 | A3 | `utworz_okno` - okno | - | wywołaj `utworz_okno()` | powstaje okno o tytule "Cien nad Arkham" z Canvasem wypełniającym okno | W |
-| A4 | `utworz_okno` - wczytanie ramki | plik `tiles/frame.png` istnieje | utwórz okno | `obrazek_ramki` nie jest `None` (ramka wczytana) | Ś |
-| A5 | `utworz_okno` - wczytanie kości | plik `tiles/dice_roll.png` istnieje | utwórz okno | `obrazek_kosci` nie jest `None`, jest przeskalowany | Ś |
+| A4 | `utworz_okno` - wczytanie ramki | plik `app/tiles/frame.png` istnieje | utwórz okno | `obrazek_ramki` nie jest `None` (ramka wczytana) | Ś |
+| A5 | `utworz_okno` - wczytanie kości | plik `app/tiles/dice_roll.png` istnieje | utwórz okno | `obrazek_kosci` nie jest `None`, jest przeskalowany | Ś |
 | A6 | `utworz_okno` - mały ekran | ekran < 1240 px szer. lub < 1000 px wys. | utwórz okno | rozmiar okna 592 × 456, ramka pomniejszona 2× | Ś |
 | A7 | `utworz_okno` - duży ekran | ekran ≥ 1240 × 1000 | utwórz okno | rozmiar okna 1184 × 912 | Ś |
 | A8 | `zaladuj_dane` - stan startowy | poprawne `config.json` | wywołaj `zaladuj_dane()` | `fabula` i `stan` ustawione; stan: HP 100, Sanity 100, węzeł "intro", ekwipunek pusty | W |
-| A9 | `pokaz_menu` - KONTYNUUJ zablokowane | brak pliku `data/save.json` | otwórz menu | przycisk KONTYNUUJ jest nieaktywny (disabled) | Ś |
-| A10 | `pokaz_menu` - KONTYNUUJ aktywne | istnieje `data/save.json` | otwórz menu | przycisk KONTYNUUJ jest aktywny i wczytuje zapis | W |
+| A9 | `pokaz_menu` - KONTYNUUJ zablokowane | brak pliku `app/data/save.json` | otwórz menu | przycisk KONTYNUUJ jest nieaktywny (disabled) | Ś |
+| A10 | `pokaz_menu` - KONTYNUUJ aktywne | istnieje `app/data/save.json` | otwórz menu | przycisk KONTYNUUJ jest aktywny i wczytuje zapis | W |
 
 ---
 
@@ -96,7 +96,7 @@ Funkcje: `rzut_koscia`, `sprawdz_rzut`, `wczytaj_fabule`, `pobierz_wezel`,
 
 ---
 
-## Sekcja D - Stan gry i dane (`game_state.py` + `data/story.json`, `config.json`)
+## Sekcja D - Stan gry i dane (`game_state.py` + `app/data/story.json`, `config.json`)
 
 Funkcje: `inicjalizuj_stan`, `aktualizuj_stan`, `pobierz_stan` + walidacja danych.
 

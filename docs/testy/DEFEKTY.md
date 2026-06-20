@@ -1,4 +1,4 @@
-# Rejestr defektów — Cień nad Arkham
+# Rejestr defektów - Cień nad Arkham
 
 Lista defektów wykrytych podczas testów. Każdy wpis zawiera: ID, tytuł,
 istotność, środowisko, kroki reprodukcji, opis problemu, rezultat oczekiwany
@@ -11,7 +11,7 @@ i korelację z przypadkami testowymi.
 
 ---
 
-## DEF-1 — Wczytanie zapisu z nieistniejącą sceną kończy się wyjątkiem
+## DEF-1 - Wczytanie zapisu z nieistniejącą sceną kończy się wyjątkiem
 
 - **ID:** DEF-1
 - **Tytuł:** Wczytanie zapisu z nieistniejącą sceną kończy się wyjątkiem
@@ -20,7 +20,7 @@ i korelację z przypadkami testowymi.
 - **Potwierdzony:** tak (odtworzony wyjątek)
 - **Kroki reprodukcji:**
   1. Uruchom grę, kliknij **NOWA GRA** i przejdź do dowolnej sceny.
-  2. Kliknij **Zapisz** (powstanie `data/save.json`).
+  2. Kliknij **Zapisz** (powstanie `app/data/save.json`).
   3. Zamknij grę, otwórz `save.json` w edytorze i zmień `"obecny_wezel"` na
      nazwę nieistniejącej sceny, np. `"scena_ktorej_nie_ma"`.
   4. Uruchom grę ponownie i kliknij **KONTYNUUJ**.
@@ -38,7 +38,7 @@ i korelację z przypadkami testowymi.
 
 ---
 
-## DEF-2 — „Zapisz" nadpisuje istniejący zapis bez ostrzeżenia
+## DEF-2 - „Zapisz" nadpisuje istniejący zapis bez ostrzeżenia
 
 - **ID:** DEF-2
 - **Tytuł:** „Zapisz" nadpisuje istniejący zapis bez ostrzeżenia
@@ -49,7 +49,7 @@ i korelację z przypadkami testowymi.
   1. Uruchom grę, zagraj chwilę i kliknij **Zapisz**.
   2. Zagraj dalej, przejdź do innej sceny.
   3. Kliknij **Zapisz** ponownie.
-- **Co się dzieje:** Drugi zapis od razu nadpisuje `data/save.json` bez żadnego
+- **Co się dzieje:** Drugi zapis od razu nadpisuje `app/data/save.json` bez żadnego
   pytania. Poprzedni stan jest tracony bezpowrotnie.
 - **Rezultat oczekiwany:** Potwierdzenie przed nadpisaniem istniejącego zapisu.
 - **Rezultat faktyczny:** Cichy nadpis bez ostrzeżenia.

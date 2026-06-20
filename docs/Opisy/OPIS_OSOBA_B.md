@@ -1,4 +1,4 @@
-# Osoba B — Renderowanie sceny, podpowiedzi i ekrany końca
+# Osoba B - Renderowanie sceny, podpowiedzi i ekrany końca
 
 Ten dokument opisuje **bardzo szczegółowo** część, za którą odpowiada Osoba B.
 Po przeczytaniu powinieneś umieć omówić każdą swoją funkcję linijka po linijce
@@ -7,13 +7,13 @@ oraz uzasadnić podjęte decyzje.
 ## 1. Co należy do Ciebie
 
 Z pliku `gui.py`:
-- `odswiez_scene` — główne rysowanie sceny (najważniejsza funkcja),
-- `obsluz_wybor` — obsługa kliknięcia w wybór,
-- `ekran_koncowy` — ekran zwycięstwa / końca gry,
+- `odswiez_scene` - główne rysowanie sceny (najważniejsza funkcja),
+- `obsluz_wybor` - obsługa kliknięcia w wybór,
+- `ekran_koncowy` - ekran zwycięstwa / końca gry,
 - pomocnicze: `wyczysc_kontent`, `ramka_na_wierzch`, `wczytaj_obrazek`,
 - podpowiedzi: `opis_efektu`, `opis_celu`, `podpowiedz_efektu`.
 
-W skrócie: Twoja część odpowiada za **to, co gracz widzi w trakcie gry** — scenę,
+W skrócie: Twoja część odpowiada za **to, co gracz widzi w trakcie gry** - scenę,
 statystyki, przyciski z podpowiedziami, grafikę rzutu i ekrany końcowe. Osoba A
 buduje okno i menu; Ty wypełniasz wnętrze treścią.
 
@@ -70,13 +70,13 @@ if k > 1:
     img = img.subsample(k, k)
 return img
 ```
-Wczytuje PNG i — jeśli jest za duży — **pomniejsza go** metodą `subsample(k, k)`
+Wczytuje PNG i - jeśli jest za duży - **pomniejsza go** metodą `subsample(k, k)`
 (bierze co k-ty piksel). Pętla zwiększa `k`, dopóki obrazek nie zmieści się w
 zadanym prostokącie `max_w × max_h`. Zabezpieczenie `if k > 12: break` chroni
 przed nieskończoną pętlą. Jeśli pliku nie ma, funkcja zwraca `None`.
 
 **Decyzja:** `subsample` zmniejsza tylko o całkowite wielokrotności (2×, 3×...),
-ale jest wbudowany w tkinter — nie potrzebujemy biblioteki do grafiki (Pillow).
+ale jest wbudowany w tkinter - nie potrzebujemy biblioteki do grafiki (Pillow).
 
 ---
 
@@ -99,7 +99,7 @@ return ", ".join(czesci)
 ```
 Zamienia słownik efektu na tekst. Dla `{"hp": -25}` zwróci `"HP -25"`, dla
 `{"sanity": 20}` → `"Sanity +20"` (przy wartości dodatniej dokleja `+`), a dla
-`{"dodaj_przedmiot": "kieł wilka"}` → `"+kieł wilka"`. Gdy efektu nie ma —
+`{"dodaj_przedmiot": "kieł wilka"}` → `"+kieł wilka"`. Gdy efektu nie ma -
 zwraca pusty napis.
 
 ### `opis_celu(wezel)`
@@ -113,7 +113,7 @@ if wezel.get("zakonczone"):
 return ef if ef else "dalej"
 ```
 Opisuje, co czeka w scenie, do której prowadzi wybór: jej efekt, a jeśli to
-scena końcowa — informację „ZWYCIĘSTWO" lub „KONIEC GRY". Gdy nic szczególnego —
+scena końcowa - informację „ZWYCIĘSTWO" lub „KONIEC GRY". Gdy nic szczególnego -
 zwraca „dalej".
 
 ### `podpowiedz_efektu(wybor)`
@@ -122,7 +122,7 @@ zwraca „dalej".
   sukcesu i porażki, np.
   `rzut k20 >= 12   |   sukces: dalej   |   porażka: HP -10`.
 - **wybór zwykły**: pokazuje warunek (jeśli jest) i efekt celu, np. `Sanity -10`;
-  gdy nic się nie zmienia — `bez zmian`.
+  gdy nic się nie zmienia - `bez zmian`.
 
 **Decyzja (ważna na obronie):** podpowiedzi są **liczone z danych**, a nie
 wpisane ręcznie. Gdy Osoba D zmieni efekt sceny, podpowiedź zaktualizuje się
@@ -130,7 +130,7 @@ sama. To mniej pracy i brak ryzyka, że opis rozjedzie się z fabułą.
 
 ---
 
-## 5. `odswiez_scene()` — serce widoku
+## 5. `odswiez_scene()` - serce widoku
 
 Najważniejsza funkcja Osoby B. Rysuje całą scenę od nowa. Kroki:
 
@@ -143,7 +143,7 @@ vpad = OH * 0.04
 ```
 `pad` i `vpad` to marginesy liczone od rozmiaru otworu (czyli też skalowane).
 
-**2. Górny pasek — statystyki (wyśrodkowane):**
+**2. Górny pasek - statystyki (wyśrodkowane):**
 ```python
 if stan["hp"] < 30: kolor_hp = KOLOR_ZLY
 else:               kolor_hp = KOLOR_HP_OK
@@ -159,9 +159,9 @@ wartość spadnie poniżej 30 (ostrzeżenie).
 **Decyzja:** statystyki są na środku, bo przy krawędziach chowałyby się za
 ozdobami kamiennej ramki.
 
-**3. Ekwipunek** — napis „Ekwipunek: (pusty)" albo lista przedmiotów.
+**3. Ekwipunek** - napis „Ekwipunek: (pusty)" albo lista przedmiotów.
 
-**4. Przyciski górne** — „Menu" (prawy róg), „Zapisz" i „Wczytaj" (lewy róg).
+**4. Przyciski górne** - „Menu" (prawy róg), „Zapisz" i „Wczytaj" (lewy róg).
 Wołają funkcje Osoby A (`pokaz_menu`, `zapisz_gre`, `wczytaj_gre`).
 
 **5. Obrazek i tekst sceny:**
@@ -177,10 +177,10 @@ bbox = canvas.bbox(item_tekst)
 if bbox is not None:
     y = bbox[3] + OH*0.025
 ```
-`y` to „kursor" w pionie — rośnie w miarę dokładania elementów. Obrazek
+`y` to „kursor" w pionie - rośnie w miarę dokładania elementów. Obrazek
 dokładamy do listy `obrazki_ref`, **inaczej tkinter usunąłby go z pamięci** i
 zniknąłby z ekranu. `canvas.bbox(item_tekst)` zwraca prostokąt zajmowany przez
-tekst — z jego dolnej krawędzi (`bbox[3]`) wiemy, gdzie zacząć rysować przyciski.
+tekst - z jego dolnej krawędzi (`bbox[3]`) wiemy, gdzie zacząć rysować przyciski.
 
 **Decyzja:** używamy `bbox`, bo tekst zawija się na różną liczbę linii i nie
 wiemy z góry, ile zajmie miejsca.
@@ -204,7 +204,7 @@ Najpierw sprawdzamy koniec gry: scena oznaczona jako końcowa **albo** spadek HP
 Sanity do zera → ekran końcowy. W przeciwnym razie dla każdego wyboru tworzymy
 przycisk, którego napis to tekst wyboru **plus podpowiedź** w drugiej linii.
 `command=lambda w=wybor: obsluz_wybor(w)` zapamiętuje, który to wybór (zapis
-`w=wybor` „przymraża" bieżącą wartość — bez tego wszystkie przyciski wskazywałyby
+`w=wybor` „przymraża" bieżącą wartość - bez tego wszystkie przyciski wskazywałyby
 ostatni wybór). `winfo_reqheight()` zwraca wysokość przycisku, żeby wiedzieć, ile
 zejść w dół z kursorem.
 
@@ -250,30 +250,30 @@ canvas.create_text(OCX, y, text=naglowek, ...)
 # + przyciski "Zagraj ponownie" (nowa_gra) i "Wroc do menu" (pokaz_menu)
 ```
 Rysuje napis końcowy w odpowiednim kolorze i dwa przyciski. Tekst zakończonej
-sceny zostaje na ekranie (nie czyścimy go) — gracz widzi i opis, i werdykt.
+sceny zostaje na ekranie (nie czyścimy go) - gracz widzi i opis, i werdykt.
 
 ---
 
 ## 6. Decyzje projektowe w Twojej części
 
-1. **Tagi `"kontent"` / `"ramka"`** — łatwe czyszczenie ekranu z pominięciem ramki.
-2. **Lista `obrazki_ref`** — trzyma obrazki, żeby tkinter ich nie skasował.
-3. **Kursor `y` + `canvas.bbox`** — układanie elementów pod sobą mimo zmiennej
+1. **Tagi `"kontent"` / `"ramka"`** - łatwe czyszczenie ekranu z pominięciem ramki.
+2. **Lista `obrazki_ref`** - trzyma obrazki, żeby tkinter ich nie skasował.
+3. **Kursor `y` + `canvas.bbox`** - układanie elementów pod sobą mimo zmiennej
    długości tekstu.
-4. **`lambda w=wybor`** — poprawne zapamiętanie wyboru w przycisku.
-5. **Podpowiedzi liczone z danych** — automatyczna zgodność z fabułą.
-6. **Statystyki wyśrodkowane** — nie chowają się za ramką.
+4. **`lambda w=wybor`** - poprawne zapamiętanie wyboru w przycisku.
+5. **Podpowiedzi liczone z danych** - automatyczna zgodność z fabułą.
+6. **Statystyki wyśrodkowane** - nie chowają się za ramką.
 7. **Rzut pokazywany tylko raz** (zerowanie `ostatni_rzut`).
 
 ## 7. Co możesz powiedzieć na obronie
 
-- **„Jak rysowana jest scena?”** — `odswiez_scene` czyści ekran, pobiera węzeł i
+- **„Jak rysowana jest scena?”** - `odswiez_scene` czyści ekran, pobiera węzeł i
   układa pod sobą statystyki, obrazek, tekst i przyciski; na końcu podnosi ramkę.
-- **„Skąd biorą się podpowiedzi na przyciskach?”** — `podpowiedz_efektu` czyta
+- **„Skąd biorą się podpowiedzi na przyciskach?”** - `podpowiedz_efektu` czyta
   efekt i warunek wyboru z danych i sam buduje opis.
-- **„Czemu obrazki trzymacie w liście?”** — bo tkinter usuwa obrazki, do których
+- **„Czemu obrazki trzymacie w liście?”** - bo tkinter usuwa obrazki, do których
   nikt się nie odwołuje; lista utrzymuje je przy życiu.
-- **„Jak rozpoznajecie koniec gry?”** — `czy_koniec` (scena końcowa) albo spadek
+- **„Jak rozpoznajecie koniec gry?”** - `czy_koniec` (scena końcowa) albo spadek
   HP/Sanity do zera; wtedy wołamy `ekran_koncowy`.
 
 ## 8. Twoje testy

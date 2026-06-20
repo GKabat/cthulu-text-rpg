@@ -3,7 +3,7 @@
 > Dokument referencyjny opisujący KOMPLETNĄ zawartość gry w sposób jednoznaczny.
 > Czytelnik docelowy: inny model językowy (LLM) lub programista, który ma
 > w pełni zrozumieć / odtworzyć logikę gry bez dostępu do kodu.
-> Źródło prawdy: `REFACTOR/data/story.json` + `REFACTOR/data/config.json`.
+> Źródło prawdy: `app/data/story.json` + `app/data/config.json`.
 > Dokument wygenerowany automatycznie z tych plików (sekcje koncepcyjne dopisane ręcznie).
 
 ## 1. Czym jest gra

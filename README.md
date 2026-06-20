@@ -11,8 +11,8 @@ Gracz wciela się w Badacza, który budzi się w opuszczonym obozie w lasach wok
 Arkham. Rozgrywka polega na czytaniu opisów scen i dokonywaniu wyborów, które
 kształtują dalszy przebieg historii. Bohater posiada dwa wskaźniki kondycji:
 
-- **HP** (życie fizyczne) — zakres 0–100
-- **Sanity** (poczytalność) — zakres 0–100
+- **HP** (życie fizyczne) - zakres 0–100
+- **Sanity** (poczytalność) - zakres 0–100
 
 Część wyborów wymaga pomyślnego rzutu kością **k20**. Gra obejmuje 17 scen
 i prowadzi do jednego z trzech zakończeń.
@@ -20,7 +20,7 @@ i prowadzi do jednego z trzech zakończeń.
 ## Wymagania
 
 - Python 3.x
-- Biblioteka `tkinter` (wchodzi w skład standardowej biblioteki Pythona — brak
+- Biblioteka `tkinter` (wchodzi w skład standardowej biblioteki Pythona - brak
   dodatkowych zależności)
 
 ## Uruchomienie
@@ -46,7 +46,7 @@ partii) oraz Wyjście.
 - przyciski wyborów z podpowiedzią efektu każdego z nich
 - grafikę kości k20 oraz wynik rzutu, gdy dany wybór wymaga testu
 
-**Zapis i wczytanie** — jeden slot zapisany w `data/save.json`.
+**Zapis i wczytanie** - jeden slot zapisany w `app/data/save.json`.
 
 ## Struktura projektu
 
@@ -54,7 +54,7 @@ partii) oraz Wyjście.
 cthulu-text-rpg/
 ├── app/
 │   ├── src/
-│   │   ├── main.py          # punkt wejścia — sprawdzenie plików i start GUI
+│   │   ├── main.py          # punkt wejścia - sprawdzenie plików i start GUI
 │   │   ├── gui.py           # okno, menu, wyświetlanie scen, zapis/wczytanie
 │   │   ├── engine.py        # silnik: przejścia między scenami, warunki, efekty
 │   │   ├── game_state.py    # stan gracza (HP, Sanity, ekwipunek)
@@ -90,7 +90,7 @@ Katalog `docs/` zawiera:
 | `Karta projektu.docx` | Karta projektu |
 | `testy/TESTY.md` | Metodyka i lista 40 przypadków testowych |
 | `testy/TestCases_Cien_nad_Arkham.xlsx` | Arkusz przypadków testowych |
-| `testy/DEFEKTY.md` | Rejestr wykrytych defektów (6 pozycji) |
+| `testy/DEFEKTY.md` | Rejestr wykrytych defektów (2 pozycje) |
 | `use_cases/UseCase_System.drawio` | Diagram Use Case całego systemu |
 | `use_cases/UseCase_Osoba_GK/AC/SK/BJ.drawio` | Diagramy Use Case per osoba |
 
@@ -103,7 +103,7 @@ Pliki `.drawio` można otwierać w [draw.io / diagrams.net](https://app.diagrams
 | GK | Uruchomienie, okno i menu, zapis/wczytywanie (`main.py`, część `gui.py`) |
 | AC | Wyświetlanie scen i ekranów, podpowiedzi efektów (część `gui.py`) |
 | SK | Silnik fabuły i mechanika kości (`engine.py`, `mechanics.py`) |
-| BJ | Stan gry oraz dane: fabuła i konfiguracja (`game_state.py`, `data/`) |
+| BJ | Stan gry oraz dane: fabuła i konfiguracja (`game_state.py`, `app/data/`) |
 
 ## Uwagi techniczne
 

@@ -1,4 +1,4 @@
-# Osoba C — Silnik fabuły i mechanika kości
+# Osoba C - Silnik fabuły i mechanika kości
 
 Ten dokument opisuje **bardzo szczegółowo** część, za którą odpowiada Osoba C.
 Po przeczytaniu powinieneś umieć omówić każdą swoją funkcję linijka po linijce
@@ -6,17 +6,17 @@ oraz uzasadnić podjęte decyzje.
 
 ## 1. Co należy do Ciebie
 
-- cały `mechanics.py` — losowanie kości i sprawdzanie progu,
-- cały `engine.py` — wczytanie fabuły i przechodzenie między scenami.
+- cały `mechanics.py` - losowanie kości i sprawdzanie progu,
+- cały `engine.py` - wczytanie fabuły i przechodzenie między scenami.
 
-W skrócie: Twoja część to **zasady gry** — jak działa rzut kością i jak gra
+W skrócie: Twoja część to **zasady gry** - jak działa rzut kością i jak gra
 przechodzi z jednej sceny do drugiej. Nie rysujesz nic na ekranie (to Osoba B),
 ale to Ty decydujesz, *dokąd* gracz trafi i *czy* mu się udało.
 
 ## 2. Jak Twoja część łączy się z resztą
 
 - `engine.py` korzysta z `mechanics.py` (`rzut_koscia`, `sprawdz_rzut`) oraz z
-  `game_state.py` (`aktualizuj_stan`) — czyli z Twojej własnej mechaniki i z
+  `game_state.py` (`aktualizuj_stan`) - czyli z Twojej własnej mechaniki i z
   funkcji Osoby D.
 - Osoba B (`obsluz_wybor`) woła Twój `wykonaj_wybor`, a `odswiez_scene` używa
   `pobierz_wezel` i `czy_koniec`.
@@ -24,7 +24,7 @@ ale to Ty decydujesz, *dokąd* gracz trafi i *czy* mu się udało.
 
 ---
 
-## 3. `mechanics.py` — kości
+## 3. `mechanics.py` - kości
 
 ### `rzut_koscia(zakres=20)`
 ```python
@@ -47,7 +47,7 @@ Zwraca `True`, gdy `wynik >= prog`, czyli gdy rzut był **co najmniej** równy
 progowi. Im wyższy próg, tym trudniejsza próba (trzeba wyrzucić więcej).
 
 **Uwaga na obronie:** to samo dałoby się napisać krócej jako `return wynik >= prog`.
-Forma z `if/else` jest dłuższa, ale dla początkującego czytelniejsza — od razu
+Forma z `if/else` jest dłuższa, ale dla początkującego czytelniejsza - od razu
 widać oba przypadki.
 
 **Decyzja:** kości są w osobnym pliku, bo to jasno wydzielona część zasad
@@ -56,7 +56,7 @@ dopisać.
 
 ---
 
-## 4. `engine.py` — silnik
+## 4. `engine.py` - silnik
 
 ### `wczytaj_fabule(sciezka)`
 ```python
@@ -68,7 +68,7 @@ def wczytaj_fabule(sciezka):
     return fabula
 ```
 Otwiera plik `story.json`, zamienia jego treść na **słownik** (`json.load`) i go
-zwraca. `len(fabula)` to liczba scen — wypisujemy ją dla kontroli (przyda się przy
+zwraca. `len(fabula)` to liczba scen - wypisujemy ją dla kontroli (przyda się przy
 szukaniu błędów). `encoding="utf-8"` jest konieczne ze względu na polskie znaki.
 
 **Decyzja:** fabuła jest w pliku JSON, a nie wpisana w kodzie. Dzięki temu treść
@@ -83,7 +83,7 @@ def pobierz_wezel(fabula, id_wezla):
     return fabula[id_wezla]
 ```
 Zwraca scenę o danej nazwie. Najpierw sprawdza, czy nazwa **w ogóle istnieje** w
-słowniku. Jeśli nie — wypisuje błąd i zwraca `None` (zamiast wywalić grę). To
+słowniku. Jeśli nie - wypisuje błąd i zwraca `None` (zamiast wywalić grę). To
 zabezpieczenie na wypadek literówki w danych (np. wybór prowadzący do
 nieistniejącej sceny).
 
@@ -116,7 +116,7 @@ Sprawdza, czy gracz może skorzystać z wyboru. Trzy rodzaje warunków:
   graczowi po przejściu; zwraca, czy się udało,
 - **min_hp / min_sanity** → wybór dostępny, gdy życie / poczytalność są co
   najmniej na podanym poziomie.
-Gdyby warunek był nieznany — wypisuje błąd i zwraca `False`.
+Gdyby warunek był nieznany - wypisuje błąd i zwraca `False`.
 
 **Decyzja (ważna na obronie):** sam rzut **nie zmienia** punktów. On tylko mówi
 „udało się czy nie". Punkty zmieniają się dopiero przez efekt sceny, do której
@@ -150,22 +150,22 @@ def wykonaj_wybor(fabula, wybor, stan):
     print("[engine] Przejscie ->", nowy_id)
     return nowy_id
 ```
-To najważniejsza funkcja silnika — **przejście między scenami**. Logika:
+To najważniejsza funkcja silnika - **przejście między scenami**. Logika:
 1. Pobierz warunek wyboru i sprawdź go (`sprawdz_warunek`).
 2. **Jeśli warunek niespełniony:**
    - gdy wybór ma zapasowy cel `cel_porazka` (np. nieudane wyważenie drzwi
-     prowadzi do sceny z obrażeniami) — ustaw go jako bieżącą scenę i nałóż jej
+     prowadzi do sceny z obrażeniami) - ustaw go jako bieżącą scenę i nałóż jej
      efekt,
    - w przeciwnym razie zostań na miejscu.
 3. **Jeśli warunek spełniony:**
    - dopisz dotychczasową scenę do listy `odwiedzone` (jeśli jeszcze jej tam nie
-     ma — bez duplikatów),
+     ma - bez duplikatów),
    - ustaw nową scenę (`cel`) jako bieżącą,
    - nałóż jej efekt na stan.
 
 Zwracana wartość to nazwa nowej sceny.
 
-**Decyzja:** efekt sceny nakładamy **przy wejściu** do niej — i to w obu
+**Decyzja:** efekt sceny nakładamy **przy wejściu** do niej - i to w obu
 przypadkach (sukces i porażka). Dlatego np. wejście do sceny z `{"hp": -10}`
 od razu odejmuje 10 życia.
 
@@ -183,7 +183,7 @@ Mówi reszcie programu, czy dana scena kończy grę. Osoba B na tej podstawie
 pokazuje ekran końcowy.
 
 **Dlaczego `.get(... , False)`, a nie `wezel["zakonczone"]`?** Bo `.get` z
-wartością domyślną nie wywali się, gdyby jakaś scena nie miała tego pola — po
+wartością domyślną nie wywali się, gdyby jakaś scena nie miała tego pola - po
 prostu uzna, że to nie koniec.
 
 ### Tryb konsolowy (`if __name__ == "__main__"`)
@@ -196,27 +196,27 @@ HP/Sanity spadnie do zera. Służyło do szybkiego testowania logiki bez okna.
 
 ## 5. Decyzje projektowe w Twojej części
 
-1. **Fabuła w JSON, wczytywana do słownika** — łatwo zmieniać treść bez kodu.
-2. **`pobierz_wezel` zwraca `None` przy braku sceny** — błąd w danych nie wywala
+1. **Fabuła w JSON, wczytywana do słownika** - łatwo zmieniać treść bez kodu.
+2. **`pobierz_wezel` zwraca `None` przy braku sceny** - błąd w danych nie wywala
    gry, tylko daje komunikat.
-3. **Rozdzielenie warunku i efektu** — rzut decyduje „dokąd", scena docelowa
+3. **Rozdzielenie warunku i efektu** - rzut decyduje „dokąd", scena docelowa
    decyduje „co się zmienia".
-4. **Wynik rzutu zapisywany do stanu** — silnik liczy, a GUI tylko pokazuje
+4. **Wynik rzutu zapisywany do stanu** - silnik liczy, a GUI tylko pokazuje
    (czysty podział: logika osobno, wyświetlanie osobno).
-5. **`cel_porazka`** — elegancki sposób na „udało się / nie udało" bez
+5. **`cel_porazka`** - elegancki sposób na „udało się / nie udało" bez
    rozbudowanej logiki: wystarczy podać drugi cel.
-6. **Tryb konsolowy** — pozwala testować zasady bez interfejsu.
+6. **Tryb konsolowy** - pozwala testować zasady bez interfejsu.
 
 ## 6. Co możesz powiedzieć na obronie
 
-- **„Jak działa rzut kością?”** — `rzut_koscia` losuje 1–20, `sprawdz_rzut`
+- **„Jak działa rzut kością?”** - `rzut_koscia` losuje 1–20, `sprawdz_rzut`
   porównuje z progiem; sukces, gdy wynik ≥ próg.
-- **„Co się dzieje po kliknięciu wyboru?”** — `wykonaj_wybor` sprawdza warunek,
+- **„Co się dzieje po kliknięciu wyboru?”** - `wykonaj_wybor` sprawdza warunek,
   ustawia nową scenę (główną przy sukcesie albo `cel_porazka` przy porażce) i
   nakłada jej efekt.
-- **„Czy rzut odejmuje życie?”** — nie; rzut tylko wybiera scenę, a punkty zmienia
+- **„Czy rzut odejmuje życie?”** - nie; rzut tylko wybiera scenę, a punkty zmienia
   dopiero efekt tej sceny.
-- **„Co, jeśli w danych jest literówka w nazwie sceny?”** — `pobierz_wezel`
+- **„Co, jeśli w danych jest literówka w nazwie sceny?”** - `pobierz_wezel`
   zwróci `None` i wypisze błąd, zamiast wywalić grę.
 
 ## 7. Twoje testy

@@ -18,6 +18,6 @@
 |---|---|
 | WNF-01 | System działa na Pythonie 3.x bez zewnętrznych zależności, zarówno na Linux, jak i Windows. |
 | WNF-02 | Czas uruchomienia aplikacji do momentu wyświetlenia menu nie przekracza 3 sekund na typowym komputerze biurowym. |
-| WNF-03 | Treść gry (fabuła, konfiguracja) jest przechowywana w plikach JSON oddzielonych od kodu — modyfikacja fabuły nie wymaga zmiany kodu źródłowego. |
+| WNF-03 | Treść gry (fabuła, konfiguracja) jest przechowywana w plikach JSON oddzielonych od kodu - modyfikacja fabuły nie wymaga zmiany kodu źródłowego. |
 | WNF-04 | Kod źródłowy jest podzielony na moduły z wyraźnie określonymi odpowiedzialnościami, co umożliwia niezależną pracę nad każdym z nich. |
 | WNF-05 | Aplikacja nie kończy działania nieobsłużonym wyjątkiem podczas normalnego użytkowania. |

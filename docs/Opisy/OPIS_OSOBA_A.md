@@ -1,4 +1,4 @@
-# Osoba A — Uruchomienie, budowa okna, menu i zapis gry
+# Osoba A - Uruchomienie, budowa okna, menu i zapis gry
 
 Ten dokument opisuje **bardzo szczegółowo** część, za którą odpowiada Osoba A.
 Po przeczytaniu powinieneś umieć omówić każdą swoją funkcję linijka po linijce
@@ -27,7 +27,7 @@ się, zanim gracz zacznie klikać przez kolejne sceny (tym zajmuje się Osoba B)
 
 ---
 
-## 3. `main.py` — punkt startu
+## 3. `main.py` - punkt startu
 
 ```python
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +37,7 @@ STORY = os.path.join(SCRIPT_DIR, "data", "story.json")
 
 `__file__` to ścieżka do tego pliku. `os.path.dirname(...)` daje katalog, w którym
 plik leży. Dzięki temu ścieżki do danych są liczone **względem pliku**, a nie
-względem tego, skąd uruchomiono program — gra zadziała niezależnie od katalogu.
+względem tego, skąd uruchomiono program - gra zadziała niezależnie od katalogu.
 
 ### `sprawdz_pliki()`
 
@@ -70,7 +70,7 @@ def uruchom():
 ```
 
 Kolejność: najpierw sprawdzamy pliki, potem importujemy i budujemy okno.
-`okno.mainloop()` to **pętla zdarzeń** tkintera — program „utyka" w niej i czeka
+`okno.mainloop()` to **pętla zdarzeń** tkintera - program „utyka" w niej i czeka
 na kliknięcia użytkownika aż do zamknięcia okna. Linijka po `mainloop()` wykona
 się dopiero po zamknięciu gry.
 
@@ -80,7 +80,7 @@ wewnątrz funkcji to dopuszczalne i tu wygodne rozwiązanie.
 
 ---
 
-## 4. `gui.py` — Twoje funkcje
+## 4. `gui.py` - Twoje funkcje
 
 ### `zaladuj_dane()`
 
@@ -103,7 +103,7 @@ startowy. `encoding="utf-8"` jest ważne, bo teksty mają polskie znaki.
 klasy, ale przy tej skali globalne zmienne w jednym module są czytelne i
 wystarczające.
 
-### `utworz_okno()` — najważniejsza funkcja A
+### `utworz_okno()` - najważniejsza funkcja A
 
 To tutaj powstaje całe okno. Przejdźmy po kawałkach.
 
@@ -125,7 +125,7 @@ if os.path.exists(FRAME_PATH):
         obrazek_ramki = None
 ```
 `tk.PhotoImage` wczytuje obrazek PNG. Całość jest w `try/except`, bo gdyby plik
-był uszkodzony, gra nie powinna się wywalić — po prostu zostanie bez ramki.
+był uszkodzony, gra nie powinna się wywalić - po prostu zostanie bez ramki.
 
 **3. Dobór rozmiaru do ekranu:**
 ```python
@@ -155,7 +155,7 @@ OH = OY1 - OY0
 ```
 `OTW_L`, `OTW_R`, `OTW_T`, `OTW_B` to **ułamki** (np. lewy brzeg ≈ 0,139
 szerokości). Mnożąc przez rozmiar okna, dostajemy współrzędne otworu w pikselach.
-`OCX/OCY` to środek otworu, `OW/OH` — jego szerokość i wysokość. Z tych wartości
+`OCX/OCY` to środek otworu, `OW/OH` - jego szerokość i wysokość. Z tych wartości
 Osoba B korzysta przy rozmieszczaniu treści.
 
 **5. Wczytanie i skalowanie kości** (analogicznie do ramki, pomniejszane tak, by
@@ -178,7 +178,7 @@ sztywne liczby by nie pasowały. Ułamki dopasowują się same.
 
 ### `pokaz_menu()`
 
-Rysuje menu główne — tytuł, podtytuł i trzy przyciski:
+Rysuje menu główne - tytuł, podtytuł i trzy przyciski:
 ```python
 b_kont = tk.Button(canvas, text="KONTYNUUJ", ..., command=wczytaj_gre)
 if not istnieje_zapis():
@@ -187,10 +187,10 @@ if not istnieje_zapis():
 Przyciski są umieszczane na płótnie przez `canvas.create_window(...)` na
 wysokościach liczonych od `OY0` (np. NOWA GRA na 0,53 wysokości otworu).
 Kluczowy fragment: jeśli **nie ma zapisu**, przycisk KONTYNUUJ jest wyłączany
-(`state="disabled"`) i przygaszany — nie da się go kliknąć.
+(`state="disabled"`) i przygaszany - nie da się go kliknąć.
 
 **Decyzja:** przycisk jest widoczny zawsze, ale nieaktywny bez zapisu. To czytelne
-dla gracza — od razu widać, że opcja istnieje, lecz na razie nie ma czego wczytać.
+dla gracza - od razu widać, że opcja istnieje, lecz na razie nie ma czego wczytać.
 
 ### `nowa_gra()`
 
@@ -211,7 +211,7 @@ NOWA GRA oraz „Zagraj ponownie" na ekranie końca.
 def istnieje_zapis():
     return os.path.exists(SAVE_PATH)
 ```
-Prosta funkcja: czy plik `data/save.json` istnieje. Używana przez menu.
+Prosta funkcja: czy plik `app/data/save.json` istnieje. Używana przez menu.
 
 ### `komunikat(tekst, kolor=KOLOR_ZLOTY)`
 ```python
@@ -262,39 +262,39 @@ stan = wczytany
 odswiez_scene()
 komunikat("Wczytano zapisaną grę.")
 ```
-Po kolei: jeśli nie ma zapisu — komunikat i koniec. Jeśli plik jest uszkodzony
-(`json.load` rzuci `ValueError`) — też komunikat zamiast wysypania. Jeśli
+Po kolei: jeśli nie ma zapisu - komunikat i koniec. Jeśli plik jest uszkodzony
+(`json.load` rzuci `ValueError`) - też komunikat zamiast wysypania. Jeśli
 wczytujemy z menu, fabuła może być jeszcze niewczytana (`fabula is None`), więc ją
 doczytujemy. Dokładamy brakujące pola na wszelki wypadek (gdyby zapis był stary) i
 zerujemy `ostatni_rzut` (żeby po wczytaniu nie wyświetlił się stary rzut). Na
 końcu podstawiamy stan i rysujemy scenę.
 
 **Decyzja:** wszystkie operacje na pliku są w `try/except`. Uszkodzony lub
-brakujący zapis nie może zatrzymać gry — w najgorszym razie zobaczymy komunikat.
+brakujący zapis nie może zatrzymać gry - w najgorszym razie zobaczymy komunikat.
 
 ---
 
 ## 6. Decyzje projektowe w Twojej części
 
-1. **Ścieżki liczone od `__file__`** — gra działa z dowolnego katalogu.
-2. **Sprawdzenie plików na starcie** — błąd wychodzi od razu, nie w połowie gry.
-3. **`try/except` przy wczytywaniu obrazków i pliku zapisu** — drobny problem nie
+1. **Ścieżki liczone od `__file__`** - gra działa z dowolnego katalogu.
+2. **Sprawdzenie plików na starcie** - błąd wychodzi od razu, nie w połowie gry.
+3. **`try/except` przy wczytywaniu obrazków i pliku zapisu** - drobny problem nie
    wywala całej gry.
-4. **Ułamkowe współrzędne otworu** — automatyczne skalowanie pod różne ekrany.
-5. **Jeden slot zapisu (`save.json`)** — najprostsze możliwe rozwiązanie; w pełni
+4. **Ułamkowe współrzędne otworu** - automatyczne skalowanie pod różne ekrany.
+5. **Jeden slot zapisu (`save.json`)** - najprostsze możliwe rozwiązanie; w pełni
    wystarcza, a zapis/odczyt to jeden `json.dump` / `json.load`.
-6. **KONTYNUUJ wyłączany bez zapisu** — czytelna informacja dla gracza.
+6. **KONTYNUUJ wyłączany bez zapisu** - czytelna informacja dla gracza.
 
 ## 7. Co możesz powiedzieć na obronie
 
-- **„Jak uruchamia się gra?”** — `main.py` sprawdza pliki, woła `utworz_okno`,
+- **„Jak uruchamia się gra?”** - `main.py` sprawdza pliki, woła `utworz_okno`,
   a `mainloop()` czeka na kliknięcia.
-- **„Jak działa zapis?”** — stan to słownik, więc `json.dump` zapisuje go do
+- **„Jak działa zapis?”** - stan to słownik, więc `json.dump` zapisuje go do
   `save.json`; wczytanie to `json.load`. Wszystko w `try/except`.
-- **„Czemu okno raz jest większe, raz mniejsze?”** — na małym ekranie zmniejszamy
+- **„Czemu okno raz jest większe, raz mniejsze?”** - na małym ekranie zmniejszamy
   je o połowę, a położenie treści liczymy w ułamkach, więc układ zawsze pasuje.
-- **„Po co przycisk KONTYNUUJ jest czasem szary?”** — bo `istnieje_zapis()`
-  zwraca `False`, więc go wyłączamy — nie ma jeszcze czego wczytać.
+- **„Po co przycisk KONTYNUUJ jest czasem szary?”** - bo `istnieje_zapis()`
+  zwraca `False`, więc go wyłączamy - nie ma jeszcze czego wczytać.
 
 ## 8. Twoje testy
 
