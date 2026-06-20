@@ -11,7 +11,7 @@ rzeczywistym wyjątkiem; pozostałe wynikają wprost z budowy kodu.
 |---|---|---|---|---|
 | DEF-1 | Wczytanie zapisu z nieistniejącą sceną kończy się wyjątkiem | Krytyczny | A10, A9 | Otwarty |
 | DEF-2 | Literówka w polu `cel` w fabule wywala interfejs | Wysoki | D9, C6 | Otwarty |
-| DEF-3 | Tryb konsolowy silnika nie działa z katalogu projektu | Średni | C4 | Otwarty |
+| DEF-3 | Tryb konsolowy silnika nie działa z katalogu projektu | Średni | C4 | Zamknięty |
 | DEF-4 | Brak przewijania — długa scena może wyjść poza obszar gry | Średni | B5, B10 | Otwarty |
 | DEF-5 | Zmiana rozmiaru okna rozjeżdża układ | Niski | A3, A6, A7 | Otwarty |
 | DEF-6 | „Zapisz" nadpisuje istniejący zapis bez ostrzeżenia | Niski | A10 | Otwarty |
@@ -27,7 +27,7 @@ rzeczywistym wyjątkiem; pozostałe wynikają wprost z budowy kodu.
 - **Potwierdzony:** tak (odtworzony wyjątek)
 - **Kroki reprodukcji:**
   1. Uruchom grę i kliknij **NOWA GRA**, przejdź do dowolnej sceny.
-  2. Kliknij **Zapisz** (powstanie plik `REFACTOR/data/save.json`).
+  2. Kliknij **Zapisz** (powstanie plik `data/save.json`).
   3. Zamknij grę. Otwórz `save.json` w edytorze tekstu.
   4. Zmień wartość pola `"obecny_wezel"` na nazwę sceny, której nie ma w fabule,
      np. `"scena_ktorej_nie_ma"`, i zapisz plik.
@@ -57,7 +57,7 @@ rzeczywistym wyjątkiem; pozostałe wynikają wprost z budowy kodu.
 - **Środowisko / konfiguracja:** Linux (Fedora), Python 3.14, tkinter
 - **Potwierdzony:** tak (odtworzony wyjątek)
 - **Kroki reprodukcji:**
-  1. Otwórz `REFACTOR/data/story.json`.
+  1. Otwórz `data/story.json`.
   2. W którymkolwiek wyborze zmień pole `"cel"` na nazwę nieistniejącej sceny,
      np. `"literowka_xyz"`, i zapisz plik.
   3. Uruchom grę, przejdź do sceny zawierającej ten wybór.
@@ -80,31 +80,32 @@ rzeczywistym wyjątkiem; pozostałe wynikają wprost z budowy kodu.
 
 ---
 
-## DEF-3 — Tryb konsolowy silnika nie działa z katalogu projektu
+## DEF-3 — Tryb konsolowy silnika nie działa z katalogu projektu ✓ Zamknięty
 
 - **ID:** DEF-3
 - **Tytuł / nazwa:** Tryb konsolowy silnika nie działa z katalogu projektu
 - **Istotność (priorytet):** Średni
 - **Środowisko / konfiguracja:** Linux (Fedora), Python 3.14 (konsola)
 - **Potwierdzony:** tak (odtworzony wyjątek)
-- **Kroki reprodukcji:**
+- **Status:** Zamknięty — naprawiony podczas reorganizacji struktury projektu
+- **Kroki reprodukcji (historyczne):**
   1. Otwórz terminal w katalogu głównym projektu.
-  2. Uruchom polecenie: `python REFACTOR/engine.py`.
-- **Co się dzieje (opis słowny):** Tryb konsolowy silnika próbuje otworzyć plik
+  2. Uruchom polecenie: `python src/engine.py`.
+- **Co się działo (opis słowny):** Tryb konsolowy silnika próbował otworzyć plik
   `data/config.json` ścieżką **względną do bieżącego katalogu**, a nie do
-  położenia pliku `engine.py`. Dane są w `REFACTOR/data`, więc plik nie zostaje
-  znaleziony i program przerywa działanie. Tryb działa tylko, gdy uruchomi się go
-  z wnętrza katalogu `REFACTOR`.
+  położenia pliku `engine.py`. Dane są w `data/`, więc plik nie zostawał
+  znaleziony i program przerywał działanie. Tryb działał tylko, gdy uruchomiono go
+  z wnętrza katalogu zawierającego `engine.py`.
 - **Rezultat oczekiwany:** Uruchamia się tekstowy (konsolowy) tryb przejścia gry,
   niezależnie od katalogu, z którego polecenie zostało wywołane.
-- **Rezultat faktyczny:** `FileNotFoundError: [Errno 2] No such file or directory:
+- **Rezultat faktyczny (przed naprawą):** `FileNotFoundError: [Errno 2] No such file or directory:
   'data/config.json'`.
 - **Korelacja z test case'ami:** dotyczy sekcji silnika, najbliżej testu **C4**
   (`wczytaj_fabule`); testy C1–C10 importują funkcje silnika i nie uruchamiają
   trybu konsolowego, więc tej ścieżki nie pokrywają.
-- **Prawdopodobna przyczyna / naprawa:** ścieżki w bloku `__main__` w `engine.py`
-  nie są kotwiczone do `__file__` (inaczej niż w `gui.py` i `main.py`). Wystarczy
-  policzyć ścieżki względem położenia pliku.
+- **Przyczyna / zastosowana naprawa:** ścieżki w bloku `__main__` w `src/engine.py`
+  nie były kotwiczone do `__file__`. Naprawiono przez obliczenie katalogu projektu
+  względem położenia pliku: `EDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))`.
 
 ---
 
