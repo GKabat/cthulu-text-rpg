@@ -83,12 +83,7 @@ Katalog `docs/` zawiera:
 
 | Plik | Zawartość |
 |---|---|
-| `OPIS_DZIALANIA.md` | Opis działania programu od ogółu do szczegółu |
-| `OPIS_OSOBA_GK/AC/SK/BJ.md` | Szczegółowy opis zakresu każdego z członków zespołu |
-| `FABULA.md` | Specyfikacja fabuły: drzewo scen, efekty, warunki |
-| `DiagramKlas.drawio` | Diagram klas (model pojęciowy, UML) |
 | `Karta projektu.docx` | Karta projektu |
-| `testy/TESTY.md` | Metodyka i lista 40 przypadków testowych |
 | `testy/TestCases_Cien_nad_Arkham.xlsx` | Arkusz przypadków testowych |
 | `testy/DEFEKTY.md` | Rejestr wykrytych defektów (2 pozycje) |
 | `use_cases/UseCase_System.drawio` | Diagram Use Case całego systemu |
