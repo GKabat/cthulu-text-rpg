@@ -1,0 +1,97 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0">
+  <diagram name="Use Case - System" id="ucSystem0001">
+    <mxGraphModel dx="806" dy="1385" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="box" parent="1" style="html=1;align=center;verticalAlign=top;rounded=1;absoluteArcSize=1;arcSize=20;dashed=1;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="640" width="1060" x="180" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="ttl" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1;fontSize=18;" value="System: Cień nad Arkham" vertex="1">
+          <mxGeometry height="40" width="420" x="360" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="gracz" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Gracz" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="pliki" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Pliki danych&#xa;(JSON)" vertex="1">
+          <mxGeometry height="60" width="30" x="1300" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="u_uru" parent="1" style="ellipse;" value="Uruchomienie gry" vertex="1">
+          <mxGeometry height="50" width="150" x="205" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="u_nowa" parent="1" style="ellipse;" value="Rozpoczęcie nowej gry" vertex="1">
+          <mxGeometry height="50" width="160" x="200" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="u_wybor" parent="1" style="ellipse;" value="Dokonanie wyboru" vertex="1">
+          <mxGeometry height="50" width="150" x="660" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="u_zapis" parent="1" style="ellipse;" value="Zapis gry" vertex="1">
+          <mxGeometry height="50" width="120" x="360" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="u_wczyt" parent="1" style="ellipse;" value="Wczytanie gry&#xa;(Kontynuuj)" vertex="1">
+          <mxGeometry height="60" width="160" x="435" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="u_wyj" parent="1" style="ellipse;" value="Wyjście z gry" vertex="1">
+          <mxGeometry height="50" width="120" x="220" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="u_scena" parent="1" style="ellipse;" value="Czytanie sceny" vertex="1">
+          <mxGeometry height="50" width="150" x="535" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="u_war" parent="1" style="ellipse;" value="Sprawdzenie warunku" vertex="1">
+          <mxGeometry height="50" width="160" x="905" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="u_rzut" parent="1" style="ellipse;" value="Rzut kością k20" vertex="1">
+          <mxGeometry height="50" width="130" x="920" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="u_akt" parent="1" style="ellipse;" value="Aktualizacja stanu&#xa;(HP / Sanity)" vertex="1">
+          <mxGeometry height="60" width="170" x="910" y="415" as="geometry" />
+        </mxCell>
+        <mxCell id="u_koniec" parent="1" style="ellipse;" value="Zakończenie gry" vertex="1">
+          <mxGeometry height="50" width="150" x="660" y="500" as="geometry" />
+        </mxCell>
+        <!-- asocjacje aktora Gracz -->
+        <mxCell id="e1" edge="1" parent="1" source="gracz" target="u_uru" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea1" edge="1" parent="1" source="gracz" target="u_nowa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea2" edge="1" parent="1" source="gracz" target="u_wybor" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea3" edge="1" parent="1" source="gracz" target="u_zapis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea4" edge="1" parent="1" source="gracz" target="u_wczyt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="gracz" target="u_wyj" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- asocjacja aktora Pliki danych -->
+        <mxCell id="e8" edge="1" parent="1" source="pliki" target="u_wczyt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- include / extend -->
+        <mxCell id="e9" edge="1" parent="1" source="u_nowa" target="u_scena" style="html=1;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="u_wybor" target="u_scena" style="html=1;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="u_wybor" target="u_war" style="html=1;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="u_wybor" target="u_akt" style="html=1;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="u_rzut" target="u_war" style="html=1;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="u_koniec" target="u_wybor" style="html=1;endArrow=open;endFill=0;dashed=1;rounded=0;" value="&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -208,3 +208,10 @@ __marimo__/
 
 # Zapis gry (runtime, nie wersjonujemy)
 REFACTOR/data/save.json
+
+# Archiwum poprzedniej wersji (lokalnie, nie wersjonujemy)
+ARCHIWUM/
+
+# Pliki tymczasowe
+docs/glob
+data/save.json
