@@ -26,13 +26,13 @@ i prowadzi do jednego z trzech zakończeń.
 ## Uruchomienie
 
 ```bash
-python src/main.py
+python app/src/main.py
 ```
 
 Dostępny jest też tryb konsolowy (do testowania logiki bez GUI):
 
 ```bash
-python src/engine.py
+python app/src/engine.py
 ```
 
 ## Rozgrywka
@@ -52,19 +52,20 @@ partii) oraz Wyjście.
 
 ```
 cthulu-text-rpg/
-├── src/
-│   ├── main.py          # punkt wejścia — sprawdzenie plików i start GUI
-│   ├── gui.py           # okno, menu, wyświetlanie scen, zapis/wczytanie
-│   ├── engine.py        # silnik: przejścia między scenami, warunki, efekty
-│   ├── game_state.py    # stan gracza (HP, Sanity, ekwipunek)
-│   └── mechanics.py     # rzut kością k20 i ocena wyniku
-├── data/
-│   ├── story.json       # fabuła: 17 węzłów, wybory, warunki, efekty
-│   └── config.json      # konfiguracja startowa postaci
-├── tiles/               # grafiki scen i interfejsu
+├── app/
+│   ├── src/
+│   │   ├── main.py          # punkt wejścia — sprawdzenie plików i start GUI
+│   │   ├── gui.py           # okno, menu, wyświetlanie scen, zapis/wczytanie
+│   │   ├── engine.py        # silnik: przejścia między scenami, warunki, efekty
+│   │   ├── game_state.py    # stan gracza (HP, Sanity, ekwipunek)
+│   │   └── mechanics.py     # rzut kością k20 i ocena wyniku
+│   ├── data/
+│   │   ├── story.json       # fabuła: 17 węzłów, wybory, warunki, efekty
+│   │   └── config.json      # konfiguracja startowa postaci
+│   └── tiles/               # grafiki scen i interfejsu
 ├── tests/
-│   └── test_gra.py      # 26 testów jednostkowych
-└── docs/                # dokumentacja projektu
+│   └── test_gra.py          # 26 testów jednostkowych
+└── docs/                    # dokumentacja projektu
 ```
 
 ## Testy

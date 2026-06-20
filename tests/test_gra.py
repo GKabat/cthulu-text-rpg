@@ -1,5 +1,5 @@
 # test_gra.py - proste testy logiki gry (bez okna)
-# Uruchamiac z katalogu projektu:  python REFACTOR/tests/test_gra.py
+# Uruchamiac z katalogu projektu:  python tests/test_gra.py
 # Sprawdzamy silnik, kosci, stan gry, dane fabuly i podpowiedzi - czyli to,
 # co nie wymaga klikania w oknie. Kazdy test to funkcja z assertami.
 
@@ -7,18 +7,17 @@ import os
 import sys
 import json
 
-# zeby dalo sie importowac engine/game_state/... z katalogu REFACTOR
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
-REFACTOR = os.path.dirname(TESTS_DIR)
-sys.path.insert(0, REFACTOR)
+ROOT = os.path.dirname(TESTS_DIR)
+sys.path.insert(0, os.path.join(ROOT, "app", "src"))
 
 import engine
 import game_state
 import mechanics
 import gui
 
-STORY = os.path.join(REFACTOR, "data", "story.json")
-CONFIG = os.path.join(REFACTOR, "data", "config.json")
+STORY = os.path.join(ROOT, "app", "data", "story.json")
+CONFIG = os.path.join(ROOT, "app", "data", "config.json")
 
 # wczytujemy raz, uzywamy w testach
 fabula = engine.wczytaj_fabule(STORY)
