@@ -88,6 +88,7 @@ Katalog `docs/` zawiera:
 | `testy/DEFEKTY.md` | Rejestr wykrytych defektów (2 pozycje) |
 | `use_cases/UseCase_System.drawio` | Diagram Use Case całego systemu |
 | `use_cases/UseCase_Osoba_*.drawio` | Diagramy Use Case per moduł |
+| `Opisy/OPIS_DZIALANIA.md` | Przegląd techniczny: architektura, przepływ sterowania, format danych |
 | `Opisy/OPIS_GUI.md` | Opis modułu GUI (`main.py` + `gui.py`) |
 | `Opisy/OPIS_SILNIK.md` | Opis silnika fabuły (`engine.py` + `mechanics.py`) |
 | `Opisy/OPIS_DANE.md` | Opis stanu gry i danych (`game_state.py` + `app/data/`) |
