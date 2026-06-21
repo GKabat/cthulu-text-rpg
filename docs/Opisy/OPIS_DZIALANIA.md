@@ -1,244 +1,158 @@
-# Cień nad Arkham - jak działa program (od ogółu do szczegółu)
+# Cień nad Arkham - dokumentacja techniczna
 
-Ten dokument tłumaczy, jak zbudowana jest gra i dlaczego podjęto takie, a nie
-inne decyzje. Jest napisany tak, aby po przeczytaniu można było **własnymi
-słowami opowiedzieć, co dzieje się w kodzie** - nawet bez dużego doświadczenia
-w programowaniu. Czytaj od góry do dołu: zaczynamy od ogólnego obrazu, a potem
-schodzimy do szczegółów.
+## 1. Opis ogólny
 
----
+Tekstowa gra przygodowa w klimacie grozy (inspirowana Lovecraftem i Poem).
+Gracz czyta opisy scen i dokonuje wyborów kształtujących przebieg historii.
+Część wyborów wymaga pomyślnego rzutu kością k20. Bohater posiada dwa wskaźniki:
+**HP** (życie) i **Sanity** (poczytalność), utrzymywane w zakresie 0-100.
+Gra kończy się dotarciem do sceny końcowej lub spadkiem HP/Sanity do zera.
 
-## 1. Co to za program (w dwóch zdaniach)
-
-To **tekstowa gra paragrafowa** w klimacie grozy (Lovecraft/Poe). Gracz czyta
-opis sceny, wybiera jedną z opcji, a gra przechodzi do kolejnej sceny - czasem
-o wyniku decyduje **rzut kością**. Bohater ma dwa paski: **HP** (życie) i
-**Sanity** (poczytalność). Celem jest przetrwać noc i dotrzeć do latarni morskiej.
-
-Najprościej: to taka interaktywna książka, w której to ty decydujesz, co dalej,
-a program pilnuje zasad i liczy punkty.
+Stos technologiczny: Python 3, biblioteka tkinter (stdlib), dane w JSON.
+Brak zewnętrznych zależności.
 
 ---
 
-## 2. Z czego składa się projekt (mapa plików)
+## 2. Struktura modułów
 
-Program jest podzielony na małe pliki, z których każdy odpowiada za jedną rzecz.
-Dzięki temu łatwiej się w tym połapać - każdy fragment ma swoje miejsce.
+| Moduł | Odpowiedzialność |
+|---|---|
+| `app/src/main.py` | Punkt wejścia: walidacja plików danych, uruchomienie okna |
+| `app/src/gui.py` | Interfejs graficzny: okno, menu, renderowanie scen, zapis/wczytanie |
+| `app/src/engine.py` | Silnik fabuły: przejścia między scenami, warunki, efekty |
+| `app/src/game_state.py` | Stan gracza: inicjalizacja, aktualizacja HP/Sanity/ekwipunku |
+| `app/src/mechanics.py` | Mechanika kości: rzut k20, ocena wyniku |
+| `app/data/story.json` | Fabuła: węzły scen, wybory, warunki, efekty |
+| `app/data/config.json` | Konfiguracja startowa: tytuł, HP/Sanity, scena startowa |
+| `app/tiles/` | Zasoby graficzne: ramka okna, kość, obrazki scen |
 
-| Plik | Za co odpowiada | Porównanie |
-|---|---|---|
-| `main.py` | uruchamia grę, sprawdza, czy są potrzebne pliki | włącznik / stacyjka |
-| `gui.py` | rysuje okno i wszystko, co widać; obsługuje kliknięcia | scena i to, co widzi gracz |
-| `engine.py` | „silnik" - pilnuje, w której scenie jesteśmy i jak przejść dalej | reżyser sztuki |
-| `game_state.py` | przechowuje i zmienia punkty bohatera (HP, Sanity, ekwipunek) | kartka z aktualnymi statystykami |
-| `mechanics.py` | rzut kością i sprawdzenie, czy się udało | kostka do gry |
-| `app/data/story.json` | cała fabuła: wszystkie sceny i wybory | scenariusz |
-| `app/data/config.json` | ustawienia startowe (tytuł, startowe HP/Sanity) | metryczka gry |
-| `app/tiles/` | grafiki (ramka okna, kość, obrazki scen) | dekoracje |
-
-**Dlaczego tyle plików, a nie jeden duży?** Bo gdy każdy plik robi jedną rzecz,
-łatwiej znaleźć błąd i łatwiej podzielić pracę w zespole. Jeśli coś jest nie tak
-z liczeniem życia, wiadomo, że szukamy w `game_state.py`, a nie w całości.
+Podział zapewnia izolację odpowiedzialności: logika gry (engine, mechanics, game_state)
+jest niezależna od interfejsu (gui) i może być testowana bez okna.
 
 ---
 
-## 3. Trzy pojęcia, które trzeba zrozumieć
+## 3. Kluczowe pojęcia
 
-Cała gra kręci się wokół trzech rzeczy. Jak je zrozumiesz, reszta jest prosta.
+**Fabuła** - słownik wczytany z `story.json`, mapujący identyfikatory scen
+na obiekty węzłów. Klucze to nazwy scen (np. `"rozdroze"`), wartości to deskryptory scen.
 
-**Fabuła** - to cała historia wczytana z pliku `story.json`. W kodzie jest to
-**słownik** (po angielsku *dictionary*): zbiór par „klucz → wartość". Kluczem
-jest nazwa sceny (np. `rozdroze`), a wartością - opis tej sceny.
+**Węzeł** - pojedyncza scena: tekst, opcjonalny obrazek, lista wyborów,
+opcjonalny efekt (zmiana HP/Sanity/ekwipunku), flaga końca gry.
 
-**Węzeł (scena)** - pojedynczy element fabuły, czyli jedna „strona" gry. Każdy
-węzeł ma: tekst do przeczytania, obrazek, listę wyborów oraz ewentualny
-**efekt** (np. utrata 10 punktów Sanity). Słowo „węzeł" pochodzi stąd, że sceny
-łączą się ze sobą jak punkty na mapie połączone ścieżkami.
+**Stan gry** - słownik przechowujący bieżący stan bohatera:
+obecna scena, HP, Sanity, nazwa postaci, lista odwiedzonych scen, ekwipunek,
+wynik ostatniego rzutu kością.
 
-**Stan gry** - to „kartka", na której zapisane jest wszystko, co dotyczy
-bohatera **w danej chwili**: w której scenie jest, ile ma HP i Sanity, co ma
-w ekwipunku. W kodzie stan to też słownik.
+**Efekt** - słownik opisujący zmianę stanu przy wejściu do sceny: `hp`, `sanity`,
+`dodaj_przedmiot`. Wszystkie pola opcjonalne.
 
-Do tego dochodzi **k20** - kość dwudziestościenna (jak w grach RPG). Losuje
-liczbę od 1 do 20; im wyższa, tym lepiej.
+**Warunek** - ograniczenie dostępu do wyboru: rzut kością k20 z progiem,
+minimum HP lub minimum Sanity. Brak warunku (`null`) oznacza wybór zawsze dostępny.
 
 ---
 
-## 4. Jak gra działa krok po kroku (cykl gry)
-
-Najważniejsza rzecz: gra to **pętla**, która powtarza się w kółko aż do końca.
+## 4. Przepływ sterowania
 
 ```
-   uruchomienie (main.py)
-        │
-        ▼
-   zbudowanie okna + menu (gui.py)
-        │   klikasz NOWA GRA
-        ▼
-   wczytanie danych → stan startowy (HP 100, Sanity 100, scena "intro")
-        │
-        ▼
- ┌───────────────────────────────────────────┐
- │  odswiez_scene(): narysuj aktualną scenę   │ ◄───┐
- │  (tekst, obrazek, statystyki, przyciski)   │     │
- └───────────────────────────────────────────┘     │
-        │   gracz klika wybór                       │
-        ▼                                           │
-   obsluz_wybor() → engine.wykonaj_wybor():         │
-   • sprawdź warunek (czasem rzut kością)           │
-   • przejdź do nowej sceny                         │
-   • nałóż efekt nowej sceny (zmień HP/Sanity)      │
-        │                                           │
-        └───────────────────────────────────────────┘
-        │   gdy scena jest końcowa albo HP/Sanity = 0
-        ▼
-   ekran końcowy (ZWYCIESTWO albo KONIEC GRY)
+main.py: sprawdz_pliki() -> uruchom()
+         |
+         v
+gui.py: utworz_okno() -> pokaz_menu()
+         |
+         | NOWA GRA / KONTYNUUJ
+         v
+gui.py: zaladuj_dane() / wczytaj_gre()
+         |
+         v
+         +-------------------------------+
+         |  odswiez_scene()              | <----+
+         |  (scena, statystyki, wybory)  |      |
+         +-------------------------------+      |
+                    |                           |
+                    | klik wyboru               |
+                    v                           |
+         obsluz_wybor(wybor)                    |
+                    |                           |
+                    v                           |
+         engine.wykonaj_wybor():                |
+           1. sprawdz_warunek()                 |
+           2. ustaw obecny_wezel                |
+           3. aktualizuj_stan() [efekt sceny]   |
+                    |                           |
+                    +---------------------------+
+                    |
+                    | scena końcowa lub HP/Sanity = 0
+                    v
+         ekran_koncowy()
 ```
 
-Słownie: program rysuje scenę i czeka. Gdy klikniesz wybór, silnik przelicza, co
-ma się stać, zmienia stan, ustawia nową scenę - i znowu ją rysuje. I tak w kółko,
-aż dojdziesz do zakończenia albo bohater straci wszystkie punkty.
-
-**Ważny szczegół:** efekt sceny (np. „−10 Sanity") nakłada się **w chwili
-wejścia** do tej sceny, a nie w trakcie jej wyświetlania. Czyli najpierw silnik
-przenosi cię do nowej sceny i odejmuje punkty, a dopiero potem okno ją rysuje.
+Efekt wejścia do sceny nakładany jest w momencie przejścia (przed renderowaniem),
+nie podczas wyświetlania.
 
 ---
 
-## 5. Każdy plik szczegółowo
+## 5. Opis modułów
 
-Teraz po kolei, od najprostszych plików do najbardziej rozbudowanego.
+### `mechanics.py`
 
-### 5.1. `mechanics.py` - kostka
+Dwie funkcje bezstanowe:
 
-Najmniejszy plik. Dwie funkcje:
+- `rzut_koscia(zakres=20)` - zwraca losową liczbę całkowitą z zakresu [1, zakres].
+- `sprawdz_rzut(wynik, prog)` - zwraca `True` gdy `wynik >= prog`.
 
-- `rzut_koscia(zakres=20)` - losuje liczbę od 1 do 20 (używa gotowego
-  `random.randint`).
-- `sprawdz_rzut(wynik, prog)` - zwraca `True`, jeśli `wynik >= prog`, czyli gdy
-  rzut był wystarczająco wysoki. Im wyższy próg, tym trudniejsza próba.
+### `game_state.py`
 
-**Dlaczego osobny plik na dwie funkcje?** Bo „losowanie" to jedna, wyraźnie
-oddzielona część zasad. Gdybyśmy chcieli kiedyś dodać inne kości, wiemy gdzie.
+- `inicjalizuj_stan(config)` - tworzy słownik stanu na podstawie `config.json`:
+  HP i Sanity z konfiguracji, scena z pola `start_wezel`, puste listy odwiedzonych
+  i ekwipunku, `ostatni_rzut = None`.
+- `aktualizuj_stan(stan, efekt)` - aplikuje efekt sceny; HP i Sanity przycinane
+  do zakresu 0-100 (clamping).
+- `pobierz_stan(stan)` - zwraca płytką kopię stanu.
 
-### 5.2. `game_state.py` - punkty bohatera
+### `engine.py`
 
-Trzy funkcje pracujące na słowniku ze stanem:
+- `wczytaj_fabule(sciezka)` - deserializuje `story.json` do słownika.
+- `pobierz_wezel(fabula, id_wezla)` - zwraca węzeł lub `None` przy braku klucza.
+- `sprawdz_warunek(warunek, stan)` - ewaluuje warunek wyboru; przy rzucie kością
+  zapisuje wynik do `stan["ostatni_rzut"]` (odczytywany przez GUI po renderowaniu).
+- `wykonaj_wybor(fabula, wybor, stan)` - główna funkcja przejścia: sprawdza warunek,
+  wyznacza cel (`cel` lub `cel_porazka`), aktualizuje `obecny_wezel` i nakłada efekt.
+- `czy_koniec(wezel)` - zwraca wartość pola `zakonczone` (domyślnie `False`).
 
-- `inicjalizuj_stan(config)` - tworzy nowy stan na początku gry: ustawia HP i
-  Sanity z pliku konfiguracyjnego, scenę startową, pusty ekwipunek.
-- `aktualizuj_stan(stan, efekt)` - nakłada efekt sceny: dodaje lub odejmuje HP /
-  Sanity, ewentualnie dokłada przedmiot do ekwipunku.
-- `pobierz_stan(stan)` - zwraca kopię stanu.
+Moduł zawiera tryb konsolowy (`__main__`), pozwalający przechodzić grę w terminalu
+bez uruchamiania GUI. Ścieżki danych kotwiczone względem `__file__`.
 
-**Najważniejsza decyzja tutaj - „przycinanie" (clamping).** Po każdej zmianie
-HP i Sanity są pilnowane, żeby nie wyszły poza zakres **0–100**:
+### `gui.py`
 
-```python
-stan["hp"] = stan["hp"] + efekt["hp"]
-if stan["hp"] < 0:
-    stan["hp"] = 0
-if stan["hp"] > 100:
-    stan["hp"] = 100
-```
+Zbudowany na `tk.Canvas` - jeden Canvas wypełnia okno, wszystkie elementy
+(tekst, obrazki, przyciski) pozycjonowane współrzędnymi bezwzględnymi.
 
-Dzięki temu życie nie spadnie poniżej zera ani nie urośnie powyżej 100 -
-statystyki zawsze mają sens.
+Ramka okna (`tiles/frame.png`) renderowana na wierzchu; jej środek jest
+przezroczysty i wyznacza obszar treści. Pozycja i rozmiar obszaru przechowywane
+jako ułamki wymiarów okna, co umożliwia skalowanie na ekranach o różnej rozdzielczości
+(pełny rozmiar 1184x912, mały 592x456).
 
-### 5.3. `engine.py` - silnik gry
+Zmienne globalne modułu (`fabula`, `stan`, `canvas`, itp.) pełnią rolę wspólnego
+stanu UI, dostępnego dla wszystkich funkcji modułu.
 
-To „mózg" zasad. Najważniejsze funkcje:
+Podpowiedzi efektów na przyciskach wyborów (`podpowiedz_efektu`) generowane
+dynamicznie z danych sceny.
 
-- `wczytaj_fabule(sciezka)` - otwiera plik `story.json` i zamienia go na słownik
-  węzłów.
-- `pobierz_wezel(fabula, id_wezla)` - zwraca scenę o podanej nazwie. Jeśli takiej
-  nazwy nie ma - zwraca `None` i wypisuje komunikat o błędzie (zamiast wywalić
-  całą grę).
-- `sprawdz_warunek(warunek, stan)` - sprawdza, czy gracz może skorzystać z danego
-  wyboru. Są trzy rodzaje warunków:
-  - **rzut kością** (`rzut_koscia` + `prog`) - losuje k20 i porównuje z progiem;
-    wynik zapisuje do stanu, żeby okno mogło go pokazać,
-  - **minimum Sanity** (`min_sanity`) - wybór dostępny, gdy Sanity ≥ podana liczba,
-  - **minimum HP** (`min_hp`) - analogicznie dla życia.
-  Gdy warunek to `None` (brak), wybór po prostu zawsze prowadzi dalej.
-- `wykonaj_wybor(fabula, wybor, stan)` - to serce przejścia między scenami:
-  1. sprawdza warunek,
-  2. jeśli warunek **niespełniony** i wybór ma zapasowy cel `cel_porazka` -
-     idzie tam (np. nieudane wyważenie drzwi prowadzi do sceny z obrażeniami),
-  3. jeśli warunek **spełniony** - przechodzi do głównego celu `cel`,
-  4. po wejściu do nowej sceny nakłada jej efekt na stan.
-- `czy_koniec(wezel)` - mówi, czy scena jest oznaczona jako koniec gry.
+Zapis gry: `json.dump(stan, plik)` - stan jako słownik prostych typów
+serializuje się bez dodatkowego kodu. Jeden slot zapisu (`app/data/save.json`).
 
-**Decyzja: rozdzielenie „warunku" i „efektu".** Rzut kością sam w sobie **nie
-zmienia** punktów - on tylko decyduje, do której sceny pójdziemy. Dopiero scena,
-do której trafimy, ma swój efekt. To upraszcza zasady: jedno miejsce decyduje
-„dokąd", drugie „co się zmienia".
+### `main.py`
 
-`engine.py` ma też na końcu **tryb konsolowy** (uruchamiany przez
-`python engine.py`), który pozwala przejść grę w samym tekście, bez okna.
-Służył do szybkiego sprawdzania logiki w trakcie pisania.
-
-### 5.4. `gui.py` - okno i wszystko, co widać
-
-Największy plik, bo interfejs zawsze ma najwięcej szczegółów. Używa biblioteki
-**tkinter** (wbudowanej w Pythona). Najważniejsze pomysły:
-
-**Wszystko rysujemy na jednym płótnie (`Canvas`).** Canvas to taki obszar, na
-którym można kłaść teksty, obrazki i przyciski w dowolnym miejscu (podając
-współrzędne). Tło całego płótna jest brązowe.
-
-**Ramka leży na wierzchu.** Grafika ramki (`app/tiles/frame.png`) ma **przezroczysty
-środek** - przez tę „dziurę" widać brązowe tło, a kamienne brzegi zasłaniają
-wszystko poza środkiem. Treść gry (tekst, przyciski) trzymamy dokładnie w tym
-przezroczystym otworze.
-
-**Otwór liczony w ułamkach.** Położenie otworu zapisaliśmy jako ułamki rozmiaru
-ramki (np. lewy brzeg to ok. 0,139 szerokości). Dzięki temu, gdy na małym
-ekranie zmniejszymy okno o połowę, otwór sam się przeliczy i wszystko nadal
-pasuje.
-
-Najważniejsze funkcje:
-
-- `utworz_okno()` - buduje okno: wczytuje ramkę i grafikę kości, dobiera rozmiar
-  okna do ekranu (duży 1184×912 lub mały 592×456), tworzy Canvas, pokazuje menu.
-- `pokaz_menu()` - rysuje menu główne: **NOWA GRA**, **KONTYNUUJ** (aktywne tylko
-  gdy istnieje zapis) i **WYJSCIE**.
-- `nowa_gra()` - wczytuje dane i rysuje pierwszą scenę.
-- `odswiez_scene()` - najważniejsza funkcja widoku. Czyści ekran i rysuje od nowa:
-  statystyki (HP, Sanity, ekwipunek), obrazek sceny, tekst, a pod nim przyciski
-  wyborów. Jeśli właśnie był rzut kością - pokazuje pod przyciskami grafikę kości
-  i wynik.
-- `obsluz_wybor(wybor)` - wywoływana po kliknięciu przycisku: prosi silnik o
-  wykonanie wyboru, a potem znów odświeża scenę.
-- `ekran_koncowy(typ)` - pokazuje napis **ZWYCIESTWO** albo **KONIEC GRY** oraz
-  przyciski „Zagraj ponownie" i „Wróć do menu".
-
-**Podpowiedzi na przyciskach.** Pod tekstem każdego wyboru pojawia się druga
-linijka z informacją, co dany wybór robi (np. „( Sanity -10 )" albo
-„rzut k20 >= 12 | sukces: ... | porażka: HP -10"). Te podpowiedzi nie są wpisane
-ręcznie - funkcje `opis_efektu`, `opis_celu` i `podpowiedz_efektu` **tworzą je
-automatycznie** na podstawie danych sceny. Dzięki temu, gdy zmienimy fabułę,
-podpowiedzi same się zaktualizują.
-
-**Zapis i wczytanie gry.** Przyciski „Zapisz" / „Wczytaj" w grze oraz
-„KONTYNUUJ" w menu. Zapis to jeden plik `app/data/save.json`. Ponieważ stan gry to
-zwykły słownik, zapis sprowadza się do jednej operacji `json.dump`, a wczytanie
-do `json.load`.
-
-### 5.5. `main.py` - uruchamianie
-
-Krótki plik, od którego wszystko się zaczyna:
-
-- `sprawdz_pliki()` - sprawdza, czy istnieją pliki z danymi. Jeśli ich brakuje,
-  wypisuje komunikat i kończy program (lepiej zatrzymać się od razu niż w połowie
-  gry).
-- `uruchom()` - woła sprawdzenie plików, a potem buduje i pokazuje okno.
+- `sprawdz_pliki()` - weryfikuje istnienie `config.json` i `story.json`;
+  przy braku kończy proces z kodem 1.
+- `uruchom()` - wczytuje GUI przez opóźniony import (po walidacji plików),
+  buduje okno i wchodzi w pętlę zdarzeń tkinter.
 
 ---
 
-## 6. Format danych - jak wygląda jedna scena
+## 6. Format danych
 
-Cała fabuła siedzi w `story.json`. Pojedyncza scena (węzeł) wygląda tak:
+### `story.json`
 
 ```json
 "rozdroze": {
@@ -246,101 +160,43 @@ Cała fabuła siedzi w `story.json`. Pojedyncza scena (węzeł) wygląda tak:
   "obrazek": "tiles/wood_road.png",
   "wybory": [
     {"tekst": "Zejść do jaskini.", "cel": "jaskinia", "warunek": null},
-    {"tekst": "Pójść leśnym duktem.", "cel": "polana", "warunek": null},
-    {"tekst": "Naprzeć na drzwi.", "cel": "chata",
-     "warunek": {"rzut_koscia": true, "prog": 12}, "cel_porazka": "chata_porazka"}
+    {
+      "tekst": "Naprzeć na drzwi.",
+      "cel": "chata",
+      "warunek": {"rzut_koscia": true, "prog": 12},
+      "cel_porazka": "chata_porazka"
+    }
   ],
-  "efekt": null,
+  "efekt": {"sanity": -10},
   "zakonczone": false
 }
 ```
 
-Co znaczą pola:
-- `tekst` - opis sceny do przeczytania,
-- `obrazek` - ścieżka do grafiki,
-- `wybory` - lista opcji; każda ma swój `tekst`, `cel` (dokąd prowadzi),
-  opcjonalny `warunek` i opcjonalny `cel_porazka` (dokąd iść przy nieudanym
-  warunku),
-- `efekt` - co zmienia wejście do sceny (np. `{"hp": -10}`), albo `null`,
-- `zakonczone` - czy to koniec gry; jeśli tak, dochodzi `zakonczenie` o wartości
-  `"dobry"` (ZWYCIESTWO) lub `"zly"` (KONIEC GRY).
+Pole `obrazek` zawiera ścieżkę względną do `ROOT` (`app/`), łączoną przez GUI
+przy wczytywaniu zasobu. Pole `efekt` i `warunek` opcjonalne (`null` = brak).
+Sceny końcowe zawierają dodatkowo `"zakonczenie": "dobry"` lub `"zly"`.
 
-**Dlaczego fabuła jest w osobnym pliku, a nie w kodzie?** Bo dzięki temu można
-zmieniać, dopisywać i poprawiać historię **bez dotykania kodu**. Scenarzysta
-edytuje `story.json`, a programista nie musi nic robić.
+### `config.json`
 
----
-
-## 7. Decyzje projektowe - dlaczego tak, a nie inaczej
-
-To jest sedno: nie chodzi tylko o to, *co* robi kod, ale *dlaczego* robi to
-w ten sposób. Oto najważniejsze wybory i ich uzasadnienia.
-
-1. **Stan gry w słowniku, a nie w klasie.** Słownik to najprostsza struktura
-   „klucz → wartość". Do przechowania HP, Sanity i bieżącej sceny w zupełności
-   wystarcza. Klasa wymagałaby pisania konstruktora i metod - to byłoby
-   niepotrzebne komplikowanie tak prostej rzeczy.
-
-2. **Fabuła w pliku JSON, nie w kodzie.** Oddzielamy treść od programu. Historię
-   można rozwijać bez znajomości Pythona, a sam kod pozostaje krótki.
-
-3. **Biblioteka tkinter, nie pygame/PyQt.** `tkinter` jest **wbudowany** w
-   Pythona - nie trzeba nic instalować. Inne biblioteki trzeba by doinstalować,
-   co utrudnia oddanie i uruchomienie projektu na innym komputerze.
-
-4. **Bez biblioteki Pillow.** Tkinter od nowszych wersji Pythona sam wyświetla
-   pliki PNG. Skoro umie to „z pudełka", nie dokładamy kolejnej zależności.
-
-5. **Ramka na wierzchu Canvasa.** Brązowe tło wypełnia całe okno, a ramka z
-   przezroczystym środkiem leży na nim. Dzięki temu nic nie „przebija" zza ramki
-   i całość wygląda jak spójny obrazek, a nie jak panel doklejony na siłę.
-
-6. **Otwór ramki liczony ułamkami.** Pozwala zmniejszyć okno na małym ekranie
-   bez psucia układu - wszystko skaluje się proporcjonalnie.
-
-7. **Podpowiedzi generowane automatycznie.** Zamiast wpisywać przy każdym wyborze
-   ręcznie „to odejmuje 10 Sanity", program odczytuje efekt z danych i sam
-   tworzy opis. Mniej pracy i brak ryzyka, że podpowiedź rozjedzie się z fabułą.
-
-8. **Zapis przez `json.dump`.** Skoro stan to słownik z prostych wartości, zapis
-   i odczyt to dosłownie jedna linijka - żadnej dodatkowej biblioteki.
-
-9. **Proste funkcje zamiast zaawansowanych technik.** W całym projekcie
-   świadomie nie używamy klas dziedziczonych, dekoratorów, programowania
-   asynchronicznego itp. Gra jest mała i niczego takiego nie potrzebuje. Zasada:
-   **najprostsze rozwiązanie, które działa.**
+```json
+{
+  "tytul": "Cień nad Arkham",
+  "wersja": "2.0",
+  "postac": {"nazwa": "Badacz", "hp": 100, "sanity": 100},
+  "start_wezel": "intro"
+}
+```
 
 ---
 
-## 8. Jak opowiedzieć o tym w minutę
+## 7. Decyzje projektowe
 
-Gdyby ktoś zapytał „o co chodzi w tym programie?", można odpowiedzieć tak:
-
-> To tekstowa gra paragrafowa. Fabuła siedzi w pliku JSON jako zbiór scen -
-> każda ma tekst, wybory i efekt. Program trzyma stan bohatera (HP, Sanity,
-> położenie) w słowniku. Gdy gracz klika wybór, silnik sprawdza warunek (czasem
-> rzuca kością k20), przechodzi do nowej sceny i nakłada jej efekt na stan.
-> Okno (zrobione na tkinter) po każdej zmianie rysuje scenę od nowa. Gra kończy
-> się, gdy dojdziemy do sceny końcowej albo gdy HP lub Sanity spadnie do zera.
-> Trzymaliśmy się prostych rozwiązań, bo gra jest mała i nie wymaga niczego
-> bardziej skomplikowanego.
-
----
-
-## 9. Słowniczek pojęć
-
-- **Słownik (dictionary)** - struktura „klucz → wartość", np. `{"hp": 100}`.
-- **JSON** - tekstowy format zapisu danych; wygląda jak słowniki i listy.
-  Używamy go na fabułę, ustawienia i zapis gry.
-- **Węzeł / scena** - jedna „strona" gry: tekst, obrazek, wybory, efekt.
-- **Stan gry** - bieżące dane bohatera (HP, Sanity, scena, ekwipunek).
-- **Efekt** - zmiana, jaką wprowadza wejście do sceny (np. `−10 Sanity`).
-- **Warunek** - co musi być spełnione, by skorzystać z wyboru (rzut kością albo
-  minimum HP/Sanity).
-- **k20** - kość dwudziestościenna; losuje liczbę 1–20.
-- **Przycięcie (clamping)** - pilnowanie, by wartość nie wyszła poza zakres
-  (tu: HP i Sanity zawsze 0–100).
-- **tkinter** - wbudowana w Pythona biblioteka do okien i przycisków.
-- **Canvas (płótno)** - obszar okna, na którym kładziemy teksty, obrazki i
-  przyciski we wskazanych miejscach.
-- **Widget** - element interfejsu, np. przycisk czy etykieta tekstowa.
+| Decyzja | Uzasadnienie |
+|---|---|
+| Stan jako słownik | Serializowalny przez `json.dump` bez dodatkowego kodu; wystarczający dla prostej struktury |
+| Fabuła w JSON | Separacja treści od logiki; możliwość edycji bez znajomości Pythona |
+| tkinter (stdlib) | Brak zewnętrznych zależności; działa na standardowej instalacji Python 3 |
+| Bez Pillow | tkinter obsługuje PNG natywnie od Pythona 3.x |
+| Clamping HP/Sanity w `aktualizuj_stan` | Jedno miejsce pilnuje niezmiennika 0-100 |
+| Efekt przy wejściu do sceny | Uproszczony model: wybór decyduje o celu, scena decyduje o skutkach |
+| Proste funkcje zamiast klas | Skala projektu nie uzasadnia narzutu obiektowości |
