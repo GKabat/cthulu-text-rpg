@@ -74,7 +74,7 @@ cthulu-text-rpg/
 python tests/test_gra.py
 ```
 
-Wynik: `PRZESZLO 26 / 26`. Szczegółowe przypadki testowe (40 testów, 10 na osobę)
+Wynik: `PRZESZLO 26 / 26`. Szczegółowe przypadki testowe (40 przypadków)
 dostępne są w `docs/testy/TestCases_Cien_nad_Arkham.xlsx` i `docs/testy/TESTY.md`.
 
 ## Dokumentacja
@@ -87,18 +87,17 @@ Katalog `docs/` zawiera:
 | `testy/TestCases_Cien_nad_Arkham.xlsx` | Arkusz przypadków testowych |
 | `testy/DEFEKTY.md` | Rejestr wykrytych defektów (2 pozycje) |
 | `use_cases/UseCase_System.drawio` | Diagram Use Case całego systemu |
-| `use_cases/UseCase_Osoba_GK/AC/SK/BJ.drawio` | Diagramy Use Case per osoba |
+| `use_cases/UseCase_Osoba_*.drawio` | Diagramy Use Case per moduł |
+| `Opisy/OPIS_GUI.md` | Opis modułu GUI (`main.py` + `gui.py`) |
+| `Opisy/OPIS_SILNIK.md` | Opis silnika fabuły (`engine.py` + `mechanics.py`) |
+| `Opisy/OPIS_DANE.md` | Opis stanu gry i danych (`game_state.py` + `app/data/`) |
 
 Pliki `.drawio` można otwierać w [draw.io / diagrams.net](https://app.diagrams.net).
 
-## Zespół
+## Kontekst akademicki
 
-| Inicjały | Zakres odpowiedzialności |
-|---|---|
-| GK | Uruchomienie, okno i menu, zapis/wczytywanie (`main.py`, część `gui.py`) |
-| AC | Wyświetlanie scen i ekranów, podpowiedzi efektów (część `gui.py`) |
-| SK | Silnik fabuły i mechanika kości (`engine.py`, `mechanics.py`) |
-| BJ | Stan gry oraz dane: fabuła i konfiguracja (`game_state.py`, `app/data/`) |
+Projekt zrealizowany jako zaliczenie przedmiotu **Inżynieria Systemów i Analiza Systemowa**
+na Uniwersytecie WSB Merito w Gdańsku. Tworzony z wykorzystaniem AI (Claude).
 
 ## Uwagi techniczne
 

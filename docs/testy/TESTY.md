@@ -1,7 +1,7 @@
 # Przypadki testowe - Cień nad Arkham
 
-40 przypadków testowych (10 na osobę), po jednym zestawie dla każdej z czterech
-sekcji projektu. Każdy test jest unikalny i sprawdza inny fragment zachowania kodu.
+40 przypadków testowych podzielonych na cztery sekcje odpowiadające modułom
+projektu. Każdy test jest unikalny i sprawdza inne zachowanie kodu.
 
 ## Jak podchodzimy do testowania (metodyka)
 
@@ -38,7 +38,7 @@ N = niski (kosmetyka / rzadki przypadek).
 
 ---
 
-## Sekcja A - Uruchomienie, okno i menu (`main.py` + część `gui.py`)
+## Sekcja A - Uruchomienie i okno (`main.py` + część `gui.py`)
 
 Funkcje: `sprawdz_pliki`, `utworz_okno`, `zaladuj_dane`, `pokaz_menu`.
 
@@ -57,7 +57,7 @@ Funkcje: `sprawdz_pliki`, `utworz_okno`, `zaladuj_dane`, `pokaz_menu`.
 
 ---
 
-## Sekcja B - Renderowanie sceny i ekrany (część `gui.py`)
+## Sekcja B - Renderowanie sceny i interfejs (część `gui.py`)
 
 Funkcje: `odswiez_scene`, `podpowiedz_efektu`, `ekran_koncowy`, `obsluz_wybor`.
 
@@ -115,7 +115,7 @@ Funkcje: `inicjalizuj_stan`, `aktualizuj_stan`, `pobierz_stan` + walidacja danyc
 
 ---
 
-## Pokrycie - co który zestaw sprawdza
+## Pokrycie - co sprawdza każda sekcja
 
 - **A (10)** - start aplikacji, kontrola plików, budowa i skalowanie okna,
   wczytanie zasobów, stan startowy, logika menu (Kontynuuj).
